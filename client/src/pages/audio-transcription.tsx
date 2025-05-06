@@ -1,6 +1,14 @@
 import { useState, useRef } from "react";
 import { motion } from "framer-motion";
-import { Upload, Mic, FileText, Trash2, TextSelect, ArrowDown, FileAudio, FolderOpen } from "lucide-react";
+import { 
+  ArrowUpTrayIcon, 
+  MicrophoneIcon,
+  DocumentTextIcon, 
+  TrashIcon, 
+  DocumentArrowDownIcon, 
+  FolderOpenIcon,
+  MusicalNoteIcon
+} from "@heroicons/react/24/outline";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
 import { Badge } from "@/components/ui/badge";
@@ -106,7 +114,7 @@ export default function AudioTranscription() {
     >
       <div className="text-center mb-8">
         <div className="mx-auto mb-4 bg-muted rounded-xl p-6 inline-block">
-          <Mic className="h-12 w-12 text-foreground/70" />
+          <MicrophoneIcon className="h-12 w-12 text-foreground/70" />
         </div>
         <h1 className="text-2xl font-bold mb-2">{title}</h1>
         <p className="text-muted-foreground max-w-lg mx-auto">
@@ -151,7 +159,7 @@ export default function AudioTranscription() {
             size="lg"
             onClick={handleFileClick}
           >
-            <Upload className="h-5 w-5 mr-2" />
+            <ArrowUpTrayIcon className="h-5 w-5 mr-2" />
             {uploadLabel}
           </Button>
           
@@ -160,7 +168,7 @@ export default function AudioTranscription() {
             className="w-full py-3 px-4 rounded-lg transition-colors flex items-center justify-center"
             size="lg"
           >
-            <FolderOpen className="h-5 w-5 mr-2" />
+            <FolderOpenIcon className="h-5 w-5 mr-2" />
             {selectFromAssetsLabel}
           </Button>
           
@@ -169,7 +177,7 @@ export default function AudioTranscription() {
             className="w-full py-3 px-4 rounded-lg transition-colors flex items-center justify-center"
             size="lg"
           >
-            <Mic className="h-5 w-5 mr-2" />
+            <MicrophoneIcon className="h-5 w-5 mr-2" />
             {recordLabel}
           </Button>
         </div>
@@ -184,7 +192,7 @@ export default function AudioTranscription() {
         >
           <div className="flex items-center gap-3 mb-4">
             <div className="bg-muted rounded-lg h-16 w-16 flex items-center justify-center">
-              <FileAudio className="h-6 w-6 text-foreground/70" />
+              <MusicalNoteIcon className="h-6 w-6 text-foreground/70" />
             </div>
             <div className="flex-1">
               <h3 className="font-medium text-sm">{file.name}</h3>

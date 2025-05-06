@@ -13,7 +13,9 @@ import {
   MoonIcon,
   GlobeAltIcon,
   Bars3Icon,
-  XMarkIcon
+  XMarkIcon,
+  UserIcon,
+  CurrencyDollarIcon
 } from "@heroicons/react/24/outline";
 import {
   DropdownMenu,
@@ -64,9 +66,9 @@ export default function Header() {
   return (
     <header className="sticky top-0 z-50 bg-background/80 backdrop-blur-md border-b border-border px-4">
       <div className="max-w-7xl mx-auto flex items-center h-16">
-        <div className="flex-none flex items-center">
-          <Link href="/" onClick={closeMenu} className="flex items-center mr-10">
-            <svg className="w-6 h-6" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <div className="flex-none flex items-center w-[160px]">
+          <Link href="/" onClick={closeMenu} className="flex items-center">
+            <svg className="w-7 h-7" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
               <rect width="24" height="24" rx="4" fill={theme === 'dark' ? '#FFFFFF' : '#000000'} />
             </svg>
           </Link>
@@ -83,7 +85,7 @@ export default function Header() {
         </div>
 
         <div className={cn(
-          "hidden md:flex flex-1 items-center justify-center space-x-8",
+          "hidden md:flex flex-1 items-center justify-center space-x-10",
           isMobile && isOpen && "absolute top-16 left-0 right-0 flex flex-col items-start p-4 bg-background border-b border-border space-y-2 space-x-0"
         )}>
           {NavItems.map((item) => (
@@ -103,7 +105,7 @@ export default function Header() {
           ))}
         </div>
 
-        <div className="flex-none flex items-center space-x-4 ml-10">
+        <div className="flex-none flex items-center space-x-4 w-[160px] justify-end">
           <button
             onClick={toggleTheme}
             className="h-8 w-8 flex items-center justify-center rounded-full hover:bg-muted transition-colors"
@@ -166,20 +168,13 @@ export default function Header() {
           <div className="border-t border-border pt-2 mt-2 flex flex-col space-y-2">
             <Link href="/pricing" onClick={closeMenu} className="flex items-center p-2 rounded-md hover:bg-muted transition-colors">
               <span className="w-6 h-6 flex items-center justify-center">
-                <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                  <line x1="12" y1="1" x2="12" y2="23"></line>
-                  <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path>
-                </svg>
+                <CurrencyDollarIcon className="h-5 w-5" />
               </span>
               <span className="font-medium">{t("pricing")}</span>
             </Link>
             <Link href="/auth" onClick={closeMenu} className="flex items-center p-2 rounded-md hover:bg-muted transition-colors">
               <span className="w-6 h-6 flex items-center justify-center">
-                <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                  <path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"></path>
-                  <polyline points="10 17 15 12 10 7"></polyline>
-                  <line x1="15" y1="12" x2="3" y2="12"></line>
-                </svg>
+                <UserIcon className="h-5 w-5" />
               </span>
               <span className="font-medium">{t("logIn")}</span>
             </Link>
@@ -191,7 +186,7 @@ export default function Header() {
             </div>
             <div className="flex items-center p-2 rounded-md hover:bg-muted transition-colors" onClick={toggleTheme}>
               <span className="w-6 h-6 flex items-center justify-center">
-                {theme === "dark" ? <Sun className="h-5 w-5" /> : <Moon className="h-5 w-5" />}
+                {theme === "dark" ? <SunIcon className="h-5 w-5" /> : <MoonIcon className="h-5 w-5" />}
               </span>
               <span className="font-medium">{theme === "dark" ? t("lightMode") : t("darkMode")}</span>
             </div>
