@@ -2,6 +2,8 @@ import { useState } from "react";
 import { Link } from "wouter";
 import { ChevronRight } from "lucide-react";
 import { motion } from "framer-motion";
+import { useLanguage } from "@/hooks/use-language";
+import { useTheme } from "@/hooks/use-theme";
 
 interface GalleryItem {
   id: string;
@@ -18,16 +20,18 @@ interface GallerySectionProps {
 
 export default function GallerySection({ items }: GallerySectionProps) {
   const [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
+  const { language } = useLanguage();
+  const { theme } = useTheme();
 
   return (
     <div>
       <div className="flex items-center justify-between mb-4">
-        <h2 className="text-xl font-bold">Gallery</h2>
+        <h2 className="text-xl font-bold">{language === "zh" ? "画廊" : "Gallery"}</h2>
         <Link 
           href="/feed" 
-          className="text-sm text-blue-500 flex items-center"
+          className="text-sm text-primary flex items-center"
         >
-          Open Gallery
+          {language === "zh" ? "打开画廊" : "Open Gallery"}
           <ChevronRight className="h-4 w-4 ml-1" />
         </Link>
       </div>

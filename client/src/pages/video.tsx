@@ -4,9 +4,13 @@ import { Folder, Wand2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import VideoModelCard from "@/components/video-model-card";
+import { useLanguage } from "@/hooks/use-language";
+import { useTheme } from "@/hooks/use-theme";
 
 export default function Video() {
   const [prompt, setPrompt] = useState("");
+  const { language } = useLanguage();
+  const { theme } = useTheme();
 
   const handlePromptChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     setPrompt(e.target.value);
@@ -16,6 +20,16 @@ export default function Video() {
     // Handle video generation
     console.log("Generating video with prompt:", prompt);
   };
+
+  const placeholder = language === "zh" 
+    ? "描述一个视频并点击生成..."
+    : "Describe a video and click generate...";
+
+  const startFrameLabel = language === "zh" ? "开始帧" : "Start frame";
+  const endFrameLabel = language === "zh" ? "结束帧" : "End frame";
+  const styleLabel = language === "zh" ? "风格" : "Style";
+  const generateLabel = language === "zh" ? "生成" : "Generate";
+  const modelsLabel = language === "zh" ? "模型" : "Models";
 
   const videoModels = [
     {
@@ -66,10 +80,10 @@ export default function Video() {
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.5 }}
     >
-      <div className="w-full max-w-2xl bg-gray-100 p-6 rounded-xl">
+      <div className="w-full max-w-2xl bg-muted p-6 rounded-xl">
         <Textarea 
-          placeholder="Describe a video and click generate..." 
-          className="w-full p-4 h-24 bg-white rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-none"
+          placeholder={placeholder} 
+          className="w-full p-4 h-24 bg-card rounded-lg border border-border focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent resize-none"
           value={prompt}
           onChange={handlePromptChange}
         />
@@ -78,31 +92,31 @@ export default function Video() {
           <Button 
             variant="outline" 
             size="sm"
-            className="px-3 py-1 bg-gray-200 text-gray-800 rounded-md flex items-center text-sm hover:bg-gray-300 transition-colors"
+            className="px-3 py-1 rounded-md flex items-center text-sm transition-colors"
           >
             <Folder className="h-4 w-4 mr-1" />
-            Start frame
+            {startFrameLabel}
           </Button>
           <Button 
             variant="outline" 
             size="sm"
-            className="px-3 py-1 bg-gray-200 text-gray-800 rounded-md flex items-center text-sm hover:bg-gray-300 transition-colors"
+            className="px-3 py-1 rounded-md flex items-center text-sm transition-colors"
           >
             <Folder className="h-4 w-4 mr-1" />
-            End frame
+            {endFrameLabel}
           </Button>
           <Button 
             variant="outline" 
             size="sm"
-            className="px-3 py-1 bg-gray-200 text-gray-800 rounded-md flex items-center text-sm hover:bg-gray-300 transition-colors"
+            className="px-3 py-1 rounded-md flex items-center text-sm transition-colors"
           >
             <Wand2 className="h-4 w-4 mr-1" />
-            Style
+            {styleLabel}
           </Button>
           <Button 
             variant="outline" 
             size="sm"
-            className="px-3 py-1 bg-gray-200 text-gray-800 rounded-md text-sm hover:bg-gray-300 transition-colors"
+            className="px-3 py-1 rounded-md text-sm transition-colors"
           >
             720p
           </Button>
@@ -110,31 +124,41 @@ export default function Video() {
         
         <div className="flex justify-end mt-4">
           <Button 
-            className="px-6 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors"
+            className="px-6 py-2 bg-primary text-primary-foreground rounded-lg hover:bg-primary/90 transition-colors"
             onClick={handleGenerate}
           >
-            Generate
+            {generateLabel}
           </Button>
         </div>
       </div>
       
       <div className="w-full max-w-2xl mt-8">
-        <h3 className="font-medium text-lg mb-4">Models</h3>
+        <h3 className="font-medium text-lg mb-4">{modelsLabel}</h3>
         
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-          {videoModels.map((model, index) => (
-            <VideoModelCard
-              key={index}
-              name={model.name}
-              description={model.description}
-              duration={model.duration}
-              icon={model.icon}
-              features={model.features}
-              isExpensiveModel={model.isExpensiveModel}
-              bgColor={model.bgColor}
-              textColor={model.textColor}
-            />
-          ))}
+          {videoModels.map((model, index) => {
+            const features = model.features?.map(feat => 
+              feat === "Start frame" ? startFrameLabel : feat
+            );
+            
+            return (
+              <VideoModelCard
+                key={index}
+                name={model.name}
+                description={language === "zh" ? 
+                  (model.name === "Wan 2.1" ? "带实时预览的快速新模型" : 
+                   model.name === "Hunyuan" ? "快速高质量模型" :
+                   "新一代前沿模型") : 
+                  model.description}
+                duration={model.duration}
+                icon={model.icon}
+                features={features}
+                isExpensiveModel={model.isExpensiveModel}
+                bgColor={model.bgColor}
+                textColor={model.textColor}
+              />
+            );
+          })}
         </div>
       </div>
     </motion.div>

@@ -3,9 +3,13 @@ import { motion } from "framer-motion";
 import { Upload, User, Wand2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
+import { useLanguage } from "@/hooks/use-language";
+import { useTheme } from "@/hooks/use-theme";
 
 export default function Image() {
   const [prompt, setPrompt] = useState("");
+  const { t, language } = useLanguage();
+  const { theme } = useTheme();
 
   const handlePromptChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     setPrompt(e.target.value);
@@ -16,6 +20,15 @@ export default function Image() {
     console.log("Generating image with prompt:", prompt);
   };
 
+  const placeholder = language === "zh" 
+    ? "描述一个图像并点击生成..."
+    : "Describe an image and click generate...";
+
+  const uploadLabel = language === "zh" ? "上传图像" : "Upload image";
+  const addPersonLabel = language === "zh" ? "添加人物" : "Add person";
+  const applyStyleLabel = language === "zh" ? "应用样式" : "Apply style";
+  const generateLabel = language === "zh" ? "生成" : "Generate";
+
   return (
     <motion.div 
       className="flex flex-col items-center justify-center min-h-[70vh]"
@@ -23,10 +36,10 @@ export default function Image() {
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.5 }}
     >
-      <div className="w-full max-w-2xl bg-gray-100 p-6 rounded-xl">
+      <div className="w-full max-w-2xl bg-muted p-6 rounded-xl">
         <Textarea 
-          placeholder="Describe an image and click generate..." 
-          className="w-full p-4 h-24 bg-white rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-none"
+          placeholder={placeholder} 
+          className="w-full p-4 h-24 bg-card rounded-lg border border-border focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent resize-none"
           value={prompt}
           onChange={handlePromptChange}
         />
@@ -36,34 +49,34 @@ export default function Image() {
             <Button 
               size="icon" 
               variant="outline" 
-              className="w-8 h-8 rounded bg-gray-200 hover:bg-gray-300 transition-colors"
+              className="w-8 h-8 rounded"
             >
               <Upload className="h-5 w-5" />
-              <span className="sr-only">Upload image</span>
+              <span className="sr-only">{uploadLabel}</span>
             </Button>
             <Button 
               size="icon" 
               variant="outline" 
-              className="w-8 h-8 rounded bg-gray-200 hover:bg-gray-300 transition-colors"
+              className="w-8 h-8 rounded"
             >
               <User className="h-5 w-5" />
-              <span className="sr-only">Add person</span>
+              <span className="sr-only">{addPersonLabel}</span>
             </Button>
             <Button 
               size="icon" 
               variant="outline" 
-              className="w-8 h-8 rounded bg-gray-200 hover:bg-gray-300 transition-colors"
+              className="w-8 h-8 rounded"
             >
               <Wand2 className="h-5 w-5" />
-              <span className="sr-only">Apply style</span>
+              <span className="sr-only">{applyStyleLabel}</span>
             </Button>
           </div>
           
           <Button 
-            className="px-6 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors"
+            className="px-6 py-2 bg-primary text-primary-foreground rounded-lg hover:bg-primary/90 transition-colors"
             onClick={handleGenerate}
           >
-            Generate
+            {generateLabel}
           </Button>
         </div>
       </div>

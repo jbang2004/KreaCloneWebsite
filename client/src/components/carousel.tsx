@@ -98,8 +98,10 @@ export default function Carousel({ items, autoplayInterval = 5000 }: CarouselPro
           <button 
             key={index}
             className={cn(
-              "carousel-indicator h-2 bg-white/50 rounded-full",
-              index === currentIndex ? "active w-6 bg-white" : "w-2"
+              "carousel-indicator h-2 rounded-full",
+              index === currentIndex 
+                ? "active w-6 bg-primary" 
+                : "w-2 bg-primary/40"
             )}
             onClick={() => goToSlide(index)}
             aria-label={`Go to slide ${index + 1}`}
@@ -109,14 +111,14 @@ export default function Carousel({ items, autoplayInterval = 5000 }: CarouselPro
       
       {/* Carousel Navigation */}
       <button 
-        className="absolute left-4 top-1/2 transform -translate-y-1/2 w-10 h-10 bg-white/80 rounded-full flex items-center justify-center hover:bg-white transition-colors"
+        className="absolute left-4 top-1/2 transform -translate-y-1/2 w-10 h-10 bg-background/80 border border-border rounded-full flex items-center justify-center hover:bg-background transition-colors"
         onClick={prevSlide}
         aria-label="Previous slide"
       >
         <ChevronLeft className="h-6 w-6" />
       </button>
       <button 
-        className="absolute right-4 top-1/2 transform -translate-y-1/2 w-10 h-10 bg-white/80 rounded-full flex items-center justify-center hover:bg-white transition-colors"
+        className="absolute right-4 top-1/2 transform -translate-y-1/2 w-10 h-10 bg-background/80 border border-border rounded-full flex items-center justify-center hover:bg-background transition-colors"
         onClick={nextSlide}
         aria-label="Next slide"
       >
