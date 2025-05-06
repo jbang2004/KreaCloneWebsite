@@ -1,19 +1,31 @@
 import { useState, useEffect } from "react";
 import { useLocation, useRoute } from "wouter";
 import { motion } from "framer-motion";
-import { Mail } from "lucide-react";
+import { Mail, User, Lock } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Separator } from "@/components/ui/separator";
 import { useToast } from "@/hooks/use-toast";
 import { useLanguage } from "@/hooks/use-language";
+import { useAuth } from "@/hooks/use-auth";
 
 export default function AuthPage() {
   const [isMatch, params] = useRoute("/auth");
   const [, navigate] = useLocation();
-  const [email, setEmail] = useState("");
+  const [isRegistering, setIsRegistering] = useState(false);
+  const [username, setUsername] = useState("");
+  const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
   const { toast } = useToast();
   const { t } = useLanguage();
+  const { user, loginMutation, registerMutation } = useAuth();
+
+  // Redirect if already logged in
+  useEffect(() => {
+    if (user) {
+      navigate("/");
+    }
+  }, [user, navigate]);
 
   const handleGoogleLogin = () => {
     toast({
@@ -23,22 +35,51 @@ export default function AuthPage() {
     });
   };
 
-  const handleEmailLogin = (e: React.FormEvent) => {
+  const handleToggleMode = () => {
+    setIsRegistering(!isRegistering);
+  };
+
+  const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (!email.trim()) {
+    
+    if (!username.trim()) {
       toast({
-        title: t("emailRequired"),
-        description: t("pleaseEnterEmail"),
+        title: "Username required",
+        description: "Please enter your username",
         variant: "destructive",
       });
       return;
     }
-    
-    toast({
-      title: t("emailLoginNotAvailable"),
-      description: t("featureNotImplemented"),
-      variant: "destructive",
-    });
+
+    if (!password) {
+      toast({
+        title: "Password required",
+        description: "Please enter your password",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    if (isRegistering && password !== confirmPassword) {
+      toast({
+        title: "Passwords do not match",
+        description: "Please make sure your passwords match",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    if (isRegistering) {
+      registerMutation.mutate({
+        username,
+        password,
+      });
+    } else {
+      loginMutation.mutate({
+        username,
+        password,
+      });
+    }
   };
 
   return (
@@ -89,25 +130,69 @@ export default function AuthPage() {
             </div>
           </div>
 
-          <form onSubmit={handleEmailLogin}>
+          <form onSubmit={handleSubmit}>
             <div className="space-y-4">
               <div className="relative">
                 <Input
-                  type="email"
-                  placeholder={t("email")}
+                  type="text"
+                  placeholder="Username"
                   className="pl-10 py-5"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
+                  value={username}
+                  onChange={(e) => setUsername(e.target.value)}
                 />
-                <Mail className="h-5 w-5 absolute left-3 top-2.5 text-gray-400" />
+                <User className="h-5 w-5 absolute left-3 top-2.5 text-gray-400" />
               </div>
               
-              <Button type="submit" className="w-full bg-blue-600 hover:bg-blue-700 py-5 flex items-center gap-2">
-                {t("continueWithEmail")}
-                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                  <path d="m9 18 6-6-6-6"/>
-                </svg>
+              <div className="relative">
+                <Input
+                  type="password"
+                  placeholder="Password"
+                  className="pl-10 py-5"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                />
+                <Lock className="h-5 w-5 absolute left-3 top-2.5 text-gray-400" />
+              </div>
+
+              {isRegistering && (
+                <div className="relative">
+                  <Input
+                    type="password"
+                    placeholder="Confirm Password"
+                    className="pl-10 py-5"
+                    value={confirmPassword}
+                    onChange={(e) => setConfirmPassword(e.target.value)}
+                  />
+                  <Lock className="h-5 w-5 absolute left-3 top-2.5 text-gray-400" />
+                </div>
+              )}
+              
+              <Button 
+                type="submit" 
+                className="w-full bg-blue-600 hover:bg-blue-700 py-5"
+                disabled={loginMutation.isPending || registerMutation.isPending}
+              >
+                {isRegistering ? "Sign Up" : "Login"}
+                {(loginMutation.isPending || registerMutation.isPending) && (
+                  <svg className="animate-spin ml-2 h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                    <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                  </svg>
+                )}
               </Button>
+
+              <div className="text-center text-sm">
+                <span className="text-gray-600">
+                  {isRegistering ? "Already have an account?" : "Don't have an account?"}
+                </span>
+                <button
+                  type="button"
+                  className="text-blue-600 ml-1 hover:underline"
+                  onClick={handleToggleMode}
+                >
+                  {isRegistering ? "Login" : "Sign up"}
+                </button>
+              </div>
             </div>
           </form>
 
