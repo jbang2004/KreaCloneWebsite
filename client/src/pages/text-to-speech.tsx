@@ -110,7 +110,17 @@ export default function TextToSpeech() {
     >
       <div className="text-center mb-8">
         <div className="mx-auto mb-4 bg-muted rounded-xl p-6 inline-block">
-          <Music className="h-12 w-12 text-foreground/70" />
+          <svg className="h-12 w-12 text-foreground/70" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M12 14C13.1046 14 14 13.1046 14 12C14 10.8954 13.1046 10 12 10C10.8954 10 10 10.8954 10 12C10 13.1046 10.8954 14 12 14Z" stroke="currentColor" strokeWidth="1.5" />
+            <path d="M7 8C7.55228 8 8 7.55228 8 7C8 6.44772 7.55228 6 7 6C6.44772 6 6 6.44772 6 7C6 7.55228 6.44772 8 7 8Z" stroke="currentColor" strokeWidth="1.5" />
+            <path d="M19 8C19.5523 8 20 7.55228 20 7C20 6.44772 19.5523 6 19 6C18.4477 6 18 6.44772 18 7C18 7.55228 18.4477 8 19 8Z" stroke="currentColor" strokeWidth="1.5" />
+            <path d="M16 20H14C11.7909 20 10 18.2091 10 16V16" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
+            <path d="M7 12V16C7 16.5523 6.55228 17 6 17H4C3.44772 17 3 16.5523 3 16V8C3 7.44772 3.44772 7 4 7H6" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
+            <path d="M17 12V16C17 16.5523 17.4477 17 18 17H20C20.5523 17 21 16.5523 21 16V8C21 7.44772 20.5523 7 20 7H18" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
+            <path d="M12 14V19" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
+            <path d="M15 19L9 19" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
+            <path d="M12 10V4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
+          </svg>
         </div>
         <h1 className="text-2xl font-bold mb-2">{title}</h1>
         <p className="text-muted-foreground max-w-lg mx-auto">

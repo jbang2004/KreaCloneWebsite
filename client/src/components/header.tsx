@@ -32,8 +32,12 @@ const NavItems: NavItem[] = [
     path: "/audio-transcription",
     labelKey: "audioTranscription",
     icon: (
-      <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-        <path fillRule="evenodd" d="M7 4a3 3 0 016 0v4a3 3 0 11-6 0V4zm4 10.93A7.001 7.001 0 0017 8a1 1 0 10-2 0A5 5 0 015 8a1 1 0 00-2 0 7.001 7.001 0 006 6.93V17H6a1 1 0 100 2h8a1 1 0 100-2h-3v-2.07z" clipRule="evenodd" />
+      <svg className="h-5 w-5" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M10 12.5C11.3807 12.5 12.5 11.3807 12.5 10C12.5 8.61929 11.3807 7.5 10 7.5C8.61929 7.5 7.5 8.61929 7.5 10C7.5 11.3807 8.61929 12.5 10 12.5Z" fill="currentColor" />
+        <path d="M7.5 15H12.5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
+        <path d="M17.5 10V10.8333C17.5 14.055 14.8883 16.6667 11.6667 16.6667H8.33333C5.11167 16.6667 2.5 14.055 2.5 10.8333V6.66667C2.5 6.20643 2.87309 5.83334 3.33333 5.83334H4.58333C4.8134 5.83334 5 6.01993 5 6.25001V7.08334C5 7.31342 4.8134 7.50001 4.58333 7.50001H3.33333" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
+        <path d="M14.1667 7.91666V6.66666M14.1667 5V6.66666M15.8333 6.66666H12.5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
+        <rect x="5.83333" y="1.66666" width="8.33333" height="3.33333" rx="1.66667" stroke="currentColor" strokeWidth="1.5" />
       </svg>
     ),
   },
@@ -41,8 +45,16 @@ const NavItems: NavItem[] = [
     path: "/text-to-speech",
     labelKey: "textToSpeech",
     icon: (
-      <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-        <path fillRule="evenodd" d="M18 3a1 1 0 00-1.447-.894L8.763 6H5a3 3 0 000 6h.28l1.771 5.316A1 1 0 008 18h1a1 1 0 001-1v-4.382l6.553 3.276A1 1 0 0018 15V3z" clipRule="evenodd" />
+      <svg className="h-5 w-5" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M10 11.6667C10.9205 11.6667 11.6667 10.9205 11.6667 10C11.6667 9.07957 10.9205 8.33334 10 8.33334C9.07957 8.33334 8.33333 9.07957 8.33333 10C8.33333 10.9205 9.07957 11.6667 10 11.6667Z" stroke="currentColor" strokeWidth="1.5" />
+        <path d="M5.83333 6.66666C6.2936 6.66666 6.66667 6.2936 6.66667 5.83333C6.66667 5.37307 6.2936 5 5.83333 5C5.37307 5 5 5.37307 5 5.83333C5 6.2936 5.37307 6.66666 5.83333 6.66666Z" stroke="currentColor" strokeWidth="1.5" />
+        <path d="M15.8333 6.66666C16.2936 6.66666 16.6667 6.2936 16.6667 5.83333C16.6667 5.37307 16.2936 5 15.8333 5C15.3731 5 15 5.37307 15 5.83333C15 6.2936 15.3731 6.66666 15.8333 6.66666Z" stroke="currentColor" strokeWidth="1.5" />
+        <path d="M13.3333 16.6667H11.6667C9.82572 16.6667 8.33334 15.1743 8.33334 13.3333V13.3333" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
+        <path d="M5.83333 10V13.3333C5.83333 13.7936 5.46026 14.1667 5 14.1667H3.33333C2.87309 14.1667 2.5 13.7936 2.5 13.3333V6.66667C2.5 6.20643 2.87309 5.83334 3.33333 5.83334H5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
+        <path d="M14.1667 10V13.3333C14.1667 13.7936 14.5398 14.1667 15 14.1667H16.6667C17.1269 14.1667 17.5 13.7936 17.5 13.3333V6.66667C17.5 6.20643 17.1269 5.83334 16.6667 5.83334H15" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
+        <path d="M10 11.6667V15.8333" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
+        <path d="M12.5 15.8333L7.5 15.8333" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
+        <path d="M10 8.33334V3.33334" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
       </svg>
     ),
   },
@@ -50,26 +62,13 @@ const NavItems: NavItem[] = [
     path: "/video-translation",
     labelKey: "videoTranslation",
     icon: (
-      <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-        <path d="M2 6a2 2 0 012-2h6a2 2 0 012 2v8a2 2 0 01-2 2H4a2 2 0 01-2-2V6zM14.553 7.106A1 1 0 0014 8v4a1 1 0 00.553.894l2 1A1 1 0 0018 13V7a1 1 0 00-1.447-.894l-2 1z" />
-      </svg>
-    ),
-  },
-  {
-    path: "/image",
-    labelKey: "image",
-    icon: (
-      <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-        <path fillRule="evenodd" d="M4 3a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V5a2 2 0 00-2-2H4zm12 12H4l4-8 3 6 2-4 3 6z" clipRule="evenodd" />
-      </svg>
-    ),
-  },
-  {
-    path: "/enhancer",
-    labelKey: "enhancer",
-    icon: (
-      <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-        <path fillRule="evenodd" d="M11.3 1.046A1 1 0 0112 2v5h4a1 1 0 01.82 1.573l-7 10A1 1 0 018 18v-5H4a1 1 0 01-.82-1.573l7-10a1 1 0 011.12-.38z" clipRule="evenodd" />
+      <svg className="h-5 w-5" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M17.5 10V10.8333C17.5 14.055 14.8883 16.6667 11.6667 16.6667H8.33333C5.11167 16.6667 2.5 14.055 2.5 10.8333V6.66667C2.5 5.28596 3.61929 4.16667 5 4.16667H5.83333" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
+        <rect x="5.83333" y="3.33334" width="6.66667" height="4.16667" rx="0.833333" stroke="currentColor" strokeWidth="1.5" />
+        <path d="M12.5 7.5V13.3333C12.5 13.7936 12.1269 14.1667 11.6667 14.1667H9.16667C8.24619 14.1667 7.5 13.4205 7.5 12.5V7.5" stroke="currentColor" strokeWidth="1.5" />
+        <path d="M14.1667 7.91666V6.66666M14.1667 5V6.66666M15.8333 6.66666H12.5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
+        <path d="M15.8333 11.6667L17.5 12.5M17.5 12.5L15.8333 13.3333M17.5 12.5H14.1667" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
+        <path d="M4.16667 11.6667L2.5 12.5M2.5 12.5L4.16667 13.3333M2.5 12.5H5.83333" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
       </svg>
     ),
   },

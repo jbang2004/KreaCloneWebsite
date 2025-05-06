@@ -75,7 +75,14 @@ export default function VideoTranslation() {
     >
       <div className="text-center mb-8">
         <div className="mx-auto mb-4 bg-muted rounded-xl p-6 inline-block">
-          <Languages className="h-12 w-12 text-foreground/70" />
+          <svg className="h-12 w-12 text-foreground/70" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M21 12V13C21 16.866 17.866 20 14 20H10C6.13401 20 3 16.866 3 13V8C3 6.34315 4.34315 5 6 5H7" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
+            <rect x="7" y="4" width="8" height="5" rx="1" stroke="currentColor" strokeWidth="1.5" />
+            <path d="M15 9V16C15 16.5523 14.5523 17 14 17H11C9.89543 17 9 16.1046 9 15V9" stroke="currentColor" strokeWidth="1.5" />
+            <path d="M17 9.5L17 8M17 6L17 8M19 8L15 8" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
+            <path d="M19 14L21 15M21 15L19 16M21 15H17" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
+            <path d="M5 14L3 15M3 15L5 16M3 15H7" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
+          </svg>
         </div>
         <h1 className="text-2xl font-bold mb-2">{title}</h1>
         <p className="text-muted-foreground max-w-lg mx-auto">

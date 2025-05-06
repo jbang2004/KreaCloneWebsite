@@ -106,7 +106,13 @@ export default function AudioTranscription() {
     >
       <div className="text-center mb-8">
         <div className="mx-auto mb-4 bg-muted rounded-xl p-6 inline-block">
-          <TextSelect className="h-12 w-12 text-foreground/70" />
+          <svg className="h-12 w-12 text-foreground/70" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M12 15C13.6569 15 15 13.6569 15 12C15 10.3431 13.6569 9 12 9C10.3431 9 9 10.3431 9 12C9 13.6569 10.3431 15 12 15Z" stroke="currentColor" strokeWidth="1.5" />
+            <path d="M9 18L15 18" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
+            <path d="M21 12L21 13C21 16.866 17.866 20 14 20L10 20C6.13401 20 3 16.866 3 13L3 8C3 7.44772 3.44772 7 4 7L5.5 7C5.77614 7 6 7.22386 6 7.5L6 8.5C6 8.77614 5.77614 9 5.5 9L4 9" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
+            <path d="M17 9.5V8M17 6V8M19 8H15" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
+            <rect x="7" y="2" width="10" height="4" rx="2" stroke="currentColor" strokeWidth="1.5" />
+          </svg>
         </div>
         <h1 className="text-2xl font-bold mb-2">{title}</h1>
         <p className="text-muted-foreground max-w-lg mx-auto">

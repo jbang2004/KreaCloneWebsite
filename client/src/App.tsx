@@ -6,9 +6,6 @@ import { Toaster } from "@/components/ui/toaster";
 import Header from "@/components/header";
 import PageTransition from "@/components/page-transition";
 import Home from "@/pages/home";
-import Image from "@/pages/image";
-import Video from "@/pages/video";
-import Enhancer from "@/pages/enhancer";
 import Pricing from "@/pages/pricing";
 import AuthPage from "@/pages/auth-page";
 import NotFound from "@/pages/not-found";
@@ -42,9 +39,6 @@ function App() {
                 <PageTransition location={location} previousLocation={previousLocation}>
                   <Switch>
                     <Route path="/" component={Home} />
-                    <Route path="/image" component={Image} />
-                    <Route path="/video" component={Video} />
-                    <Route path="/enhancer" component={Enhancer} />
                     <Route path="/pricing" component={Pricing} />
                     <Route path="/auth" component={AuthPage} />
                     <Route path="/login" component={AuthPage} />
