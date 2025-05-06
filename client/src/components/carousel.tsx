@@ -57,7 +57,7 @@ export default function Carousel({ items, autoplayInterval = 5000 }: CarouselPro
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
           transition={{ duration: 0.5 }}
-          className="carousel-item bg-white rounded-2xl overflow-hidden"
+          className="carousel-item bg-card rounded-2xl overflow-hidden"
         >
           <div className="grid md:grid-cols-2 gap-0">
             {/* Left Image */}
@@ -74,15 +74,15 @@ export default function Carousel({ items, autoplayInterval = 5000 }: CarouselPro
             <div className="flex items-center p-8">
               <div>
                 {items[currentIndex].tag && (
-                  <span className="inline-block px-2 py-1 mb-2 text-xs font-medium bg-gray-100 rounded-full">
+                  <span className="inline-block px-2 py-1 mb-2 text-xs font-medium bg-muted rounded-full">
                     {items[currentIndex].tag}
                   </span>
                 )}
                 <h2 className="text-2xl md:text-3xl font-bold mb-2">{items[currentIndex].title}</h2>
-                <p className="text-gray-600 mb-6">{items[currentIndex].description}</p>
+                <p className="text-muted-foreground mb-6">{items[currentIndex].description}</p>
                 <a 
                   href={items[currentIndex].buttonLink}
-                  className="bg-white border border-gray-200 rounded-full px-6 py-2 font-medium hover:bg-gray-50 transition-colors inline-block"
+                  className="bg-card border border-border rounded-full px-6 py-2 font-medium hover:bg-muted transition-colors inline-block"
                 >
                   {items[currentIndex].buttonText}
                 </a>
