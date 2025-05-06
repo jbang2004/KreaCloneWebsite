@@ -101,13 +101,13 @@ export default function AuthPage() {
             </svg>
           </div>
           <h1 className="text-2xl font-semibold text-center">{t("welcomeToKrea")}</h1>
-          <p className="text-sm text-gray-500 mt-1">{t("loginOrSignup")}</p>
+          <p className="text-sm text-muted-foreground mt-1">{t("loginOrSignup")}</p>
         </div>
 
         <div className="space-y-4">
           <Button 
             variant="outline" 
-            className="w-full flex items-center justify-center gap-2 py-5 border-gray-300"
+            className="w-full flex items-center justify-center gap-2 py-5 border-border"
             onClick={handleGoogleLogin}
           >
             <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -124,7 +124,7 @@ export default function AuthPage() {
               <Separator />
             </div>
             <div className="relative flex justify-center text-xs uppercase">
-              <span className="bg-white px-2 text-gray-500">
+              <span className="bg-background px-2 text-muted-foreground">
                 {t("or")}
               </span>
             </div>
@@ -135,35 +135,35 @@ export default function AuthPage() {
               <div className="relative">
                 <Input
                   type="text"
-                  placeholder="Username"
+                  placeholder={language === "zh" ? "用户名" : "Username"}
                   className="pl-10 py-5"
                   value={username}
                   onChange={(e) => setUsername(e.target.value)}
                 />
-                <User className="h-5 w-5 absolute left-3 top-2.5 text-gray-400" />
+                <User className="h-5 w-5 absolute left-3 top-2.5 text-muted-foreground/60" />
               </div>
               
               <div className="relative">
                 <Input
                   type="password"
-                  placeholder="Password"
+                  placeholder={language === "zh" ? "密码" : "Password"}
                   className="pl-10 py-5"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                 />
-                <Lock className="h-5 w-5 absolute left-3 top-2.5 text-gray-400" />
+                <Lock className="h-5 w-5 absolute left-3 top-2.5 text-muted-foreground/60" />
               </div>
 
               {isRegistering && (
                 <div className="relative">
                   <Input
                     type="password"
-                    placeholder="Confirm Password"
+                    placeholder={language === "zh" ? "确认密码" : "Confirm Password"}
                     className="pl-10 py-5"
                     value={confirmPassword}
                     onChange={(e) => setConfirmPassword(e.target.value)}
                   />
-                  <Lock className="h-5 w-5 absolute left-3 top-2.5 text-gray-400" />
+                  <Lock className="h-5 w-5 absolute left-3 top-2.5 text-muted-foreground/60" />
                 </div>
               )}
               
