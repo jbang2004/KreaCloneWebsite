@@ -35,6 +35,11 @@ export type TranslationKey =
   | "darkMode"
   | "lightMode"
   
+  // New features
+  | "audioTranscription"
+  | "textToSpeech"
+  | "videoTranslation"
+  
   // Home page
   | "heroTitle"
   | "heroSubtitle"
@@ -133,6 +138,11 @@ const translations: Record<"en" | "zh", Translations> = {
     darkMode: "Dark Mode",
     lightMode: "Light Mode",
     
+    // New features
+    audioTranscription: "Audio Transcription",
+    textToSpeech: "Text to Speech",
+    videoTranslation: "Video Translation",
+    
     // Home page
     heroTitle: "AI-Powered Image & Video Creation",
     heroSubtitle: "Create stunning visuals with the power of AI. Generate, enhance, and transform your creative ideas into reality.",
@@ -224,6 +234,11 @@ const translations: Record<"en" | "zh", Translations> = {
     pageNotFound: "页面未找到",
     darkMode: "深色模式",
     lightMode: "浅色模式",
+    
+    // New features
+    audioTranscription: "音频转录",
+    textToSpeech: "文本配音",
+    videoTranslation: "视频翻译",
     
     // Home page
     heroTitle: "AI驱动的图像和视频创作",

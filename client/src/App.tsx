@@ -12,6 +12,9 @@ import Enhancer from "@/pages/enhancer";
 import Pricing from "@/pages/pricing";
 import AuthPage from "@/pages/auth-page";
 import NotFound from "@/pages/not-found";
+import AudioTranscription from "@/pages/audio-transcription";
+import TextToSpeech from "@/pages/text-to-speech";
+import VideoTranslation from "@/pages/video-translation";
 import { LanguageProvider } from "@/hooks/use-language";
 import { AuthProvider } from "@/hooks/use-auth";
 import { ThemeProvider } from "@/hooks/use-theme";
@@ -40,6 +43,9 @@ function App() {
                     <Route path="/video" component={Video} />
                     <Route path="/enhancer" component={Enhancer} />
                     <Route path="/pricing" component={Pricing} />
+                    <Route path="/audio-transcription" component={AudioTranscription} />
+                    <Route path="/text-to-speech" component={TextToSpeech} />
+                    <Route path="/video-translation" component={VideoTranslation} />
                     <Route path="/auth" component={AuthPage} />
                     <Route path="/login" component={AuthPage} />
                     <Route component={NotFound} />
