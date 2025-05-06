@@ -3,7 +3,8 @@ import { Link, useLocation } from "wouter";
 import { cn } from "@/lib/utils";
 import { useMobile } from "@/hooks/use-mobile";
 import { useLanguage, TranslationKey } from "@/hooks/use-language";
-import { Menu, X, Globe } from "lucide-react";
+import { useTheme } from "@/hooks/use-theme";
+import { Menu, X, Globe, Sun, Moon } from "lucide-react";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -61,6 +62,7 @@ export default function Header() {
   const [location] = useLocation();
   const isMobile = useMobile();
   const { t, language, setLanguage } = useLanguage();
+  const { theme, toggleTheme } = useTheme();
 
   const toggleMenu = () => setIsOpen(!isOpen);
   const closeMenu = () => setIsOpen(false);
