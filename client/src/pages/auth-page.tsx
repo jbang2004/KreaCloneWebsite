@@ -17,7 +17,7 @@ export default function AuthPage() {
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const { toast } = useToast();
-  const { t } = useLanguage();
+  const { t, language } = useLanguage();
   const { user, loginMutation, registerMutation } = useAuth();
 
   // Redirect if already logged in
@@ -169,10 +169,12 @@ export default function AuthPage() {
               
               <Button 
                 type="submit" 
-                className="w-full bg-blue-600 hover:bg-blue-700 py-5"
+                className="w-full bg-primary hover:bg-primary/90 text-primary-foreground py-5"
                 disabled={loginMutation.isPending || registerMutation.isPending}
               >
-                {isRegistering ? "Sign Up" : "Login"}
+                {isRegistering 
+                  ? (language === "zh" ? "注册" : "Sign Up") 
+                  : (language === "zh" ? "登录" : "Login")}
                 {(loginMutation.isPending || registerMutation.isPending) && (
                   <svg className="animate-spin ml-2 h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
                     <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
@@ -182,23 +184,27 @@ export default function AuthPage() {
               </Button>
 
               <div className="text-center text-sm">
-                <span className="text-gray-600">
-                  {isRegistering ? "Already have an account?" : "Don't have an account?"}
+                <span className="text-muted-foreground">
+                  {isRegistering 
+                    ? (language === "zh" ? "已有账户？" : "Already have an account?") 
+                    : (language === "zh" ? "还没有账户？" : "Don't have an account?")}
                 </span>
                 <button
                   type="button"
-                  className="text-blue-600 ml-1 hover:underline"
+                  className="text-primary ml-1 hover:underline"
                   onClick={handleToggleMode}
                 >
-                  {isRegistering ? "Login" : "Sign up"}
+                  {isRegistering 
+                    ? (language === "zh" ? "登录" : "Login") 
+                    : (language === "zh" ? "注册" : "Sign up")}
                 </button>
               </div>
             </div>
           </form>
 
-          <p className="text-xs text-center text-gray-500 mt-6">
-            {t("bySigningUp")} <a href="#" className="text-blue-600 hover:underline">{t("termsOfService")}</a> &{" "}
-            <a href="#" className="text-blue-600 hover:underline">{t("privacyPolicy")}</a>.
+          <p className="text-xs text-center text-muted-foreground mt-6">
+            {t("bySigningUp")} <a href="#" className="text-primary hover:underline">{t("termsOfService")}</a> &{" "}
+            <a href="#" className="text-primary hover:underline">{t("privacyPolicy")}</a>.
           </p>
         </div>
       </motion.div>
