@@ -10,7 +10,9 @@ import Image from "@/pages/image";
 import Video from "@/pages/video";
 import Enhancer from "@/pages/enhancer";
 import Pricing from "@/pages/pricing";
+import AuthPage from "@/pages/auth-page";
 import NotFound from "@/pages/not-found";
+import { LanguageProvider } from "@/hooks/use-language";
 
 function App() {
   const [location] = useLocation();
@@ -22,23 +24,27 @@ function App() {
 
   return (
     <QueryClientProvider client={queryClient}>
-      <div className="min-h-screen bg-white">
-        <Header />
-        
-        <main className="max-w-7xl mx-auto px-4 py-6">
-          <PageTransition location={location} previousLocation={previousLocation}>
-            <Switch>
-              <Route path="/" component={Home} />
-              <Route path="/image" component={Image} />
-              <Route path="/video" component={Video} />
-              <Route path="/enhancer" component={Enhancer} />
-              <Route path="/pricing" component={Pricing} />
-              <Route component={NotFound} />
-            </Switch>
-          </PageTransition>
-        </main>
-      </div>
-      <Toaster />
+      <LanguageProvider>
+        <div className="min-h-screen bg-white">
+          <Header />
+          
+          <main className="max-w-7xl mx-auto px-4 py-6">
+            <PageTransition location={location} previousLocation={previousLocation}>
+              <Switch>
+                <Route path="/" component={Home} />
+                <Route path="/image" component={Image} />
+                <Route path="/video" component={Video} />
+                <Route path="/enhancer" component={Enhancer} />
+                <Route path="/pricing" component={Pricing} />
+                <Route path="/auth" component={AuthPage} />
+                <Route path="/login" component={AuthPage} />
+                <Route component={NotFound} />
+              </Switch>
+            </PageTransition>
+          </main>
+        </div>
+        <Toaster />
+      </LanguageProvider>
     </QueryClientProvider>
   );
 }
