@@ -1,10 +1,18 @@
-import { useState } from "react";
+import { useState, useRef } from "react";
 import { motion } from "framer-motion";
-import { Upload, Mic, FileText, Trash2 } from "lucide-react";
+import { Upload, Mic, FileText, Trash2, TextSelect, ArrowDown, FileAudio, FolderOpen } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
+import { Badge } from "@/components/ui/badge";
 import { useLanguage } from "@/hooks/use-language";
 import { useTheme } from "@/hooks/use-theme";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
 export default function AudioTranscription() {
   const { language } = useLanguage();
@@ -13,6 +21,8 @@ export default function AudioTranscription() {
   const [transcriptionStarted, setTranscriptionStarted] = useState(false);
   const [progress, setProgress] = useState(0);
   const [transcriptionResult, setTranscriptionResult] = useState<string[]>([]);
+  const [selectedLanguage, setSelectedLanguage] = useState<string>(language === "zh" ? "zh-CN" : "en-US");
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   // 模拟转录过程
   const startTranscription = () => {
@@ -40,6 +50,10 @@ export default function AudioTranscription() {
     }, 100);
   };
 
+  const handleFileClick = () => {
+    fileInputRef.current?.click();
+  };
+
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const selectedFile = e.target.files?.[0];
     if (selectedFile) {
@@ -49,42 +63,39 @@ export default function AudioTranscription() {
     }
   };
 
-  const handleDrop = (e: React.DragEvent<HTMLDivElement>) => {
-    e.preventDefault();
-    const droppedFile = e.dataTransfer.files?.[0];
-    if (droppedFile) {
-      setFile(droppedFile);
-      setTranscriptionStarted(false);
-      setTranscriptionResult([]);
-    }
-  };
-
-  const handleDragOver = (e: React.DragEvent<HTMLDivElement>) => {
-    e.preventDefault();
-  };
-
   const clearFile = () => {
     setFile(null);
     setTranscriptionStarted(false);
     setTranscriptionResult([]);
   };
 
+  // 语言选项
+  const languageOptions = [
+    { value: "zh-CN", label: language === "zh" ? "中文（简体）" : "Chinese (Simplified)" },
+    { value: "en-US", label: language === "zh" ? "英语（美国）" : "English (US)" },
+    { value: "ja-JP", label: language === "zh" ? "日语" : "Japanese" },
+    { value: "ko-KR", label: language === "zh" ? "韩语" : "Korean" },
+    { value: "fr-FR", label: language === "zh" ? "法语" : "French" },
+    { value: "de-DE", label: language === "zh" ? "德语" : "German" },
+    { value: "es-ES", label: language === "zh" ? "西班牙语" : "Spanish" },
+  ];
+
   const title = language === "zh" ? "音频转录" : "Audio Transcription";
-  const subTitle = language === "zh" 
-    ? "上传音频文件或录制语音，获取精准的文字转录" 
-    : "Upload audio files or record your voice to get accurate text transcriptions";
-  const uploadLabel = language === "zh" ? "上传音频" : "Upload Audio";
-  const recordLabel = language === "zh" ? "录制语音" : "Record Audio";
-  const dropzoneText = language === "zh" ? "拖放音频文件到这里" : "Drop audio file here";
-  const orText = language === "zh" ? "或" : "or";
-  const browseText = language === "zh" ? "浏览文件" : "Browse Files";
-  const supportedFormats = language === "zh" 
-    ? "支持的格式: MP3, WAV, M4A, FLAC" 
-    : "Supported formats: MP3, WAV, M4A, FLAC";
+  const description = language === "zh" 
+    ? "将语音自动转换为文本，支持多种语言的精准识别和转录" 
+    : "Automatically convert speech to text with accurate recognition and transcription in multiple languages";
+  const uploadLabel = language === "zh" ? "上传音频文件" : "Upload Audio File";
+  const selectFromAssetsLabel = language === "zh" ? "从资源库选择" : "Select from Assets";
+  const recordLabel = language === "zh" ? "录制语音" : "Record Voice";
+  const supportText = language === "zh" 
+    ? "上传音频文件以转录成文本。支持格式：MP3, WAV, M4A, FLAC。文件大小限制：20MB。" 
+    : "Upload an audio file to transcribe into text. Supported formats: MP3, WAV, M4A, FLAC. File size limit: 20MB.";
+  const languageSelectorLabel = language === "zh" ? "音频语言" : "Audio Language";
   const transcribeText = language === "zh" ? "开始转录" : "Start Transcription";
   const processingText = language === "zh" ? "处理中..." : "Processing...";
   const transcriptionResultText = language === "zh" ? "转录结果" : "Transcription Result";
-  const removeFileText = language === "zh" ? "移除文件" : "Remove File";
+  const copyAllText = language === "zh" ? "复制全部" : "Copy All";
+  const exportText = language === "zh" ? "导出" : "Export";
 
   return (
     <motion.div 
@@ -93,113 +104,166 @@ export default function AudioTranscription() {
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.5 }}
     >
-      <div className="max-w-3xl w-full mx-auto px-4">
-        <div className="text-center mb-10">
-          <h1 className="text-3xl font-bold mb-2">{title}</h1>
-          <p className="text-muted-foreground">{subTitle}</p>
+      <div className="text-center mb-8">
+        <div className="mx-auto mb-4 bg-muted rounded-xl p-6 inline-block">
+          <TextSelect className="h-12 w-12 text-foreground/70" />
         </div>
-
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
-          <Button
-            variant="outline"
-            size="lg"
-            className="h-24 flex flex-col items-center justify-center gap-2 p-4 border-2 border-dashed border-primary/30 hover:border-primary/70 rounded-xl"
+        <h1 className="text-2xl font-bold mb-2">{title}</h1>
+        <p className="text-muted-foreground max-w-lg mx-auto">
+          {description}
+        </p>
+      </div>
+      
+      <div className="w-full max-w-md mb-8">
+        <div className="bg-card p-4 rounded-xl border border-border mb-6">
+          <div className="flex items-center justify-between mb-4">
+            <div className="text-sm font-medium">{languageSelectorLabel}</div>
+          </div>
+          
+          <Select
+            value={selectedLanguage}
+            onValueChange={setSelectedLanguage}
           >
-            <Upload size={24} className="text-primary" />
-            <span>{uploadLabel}</span>
+            <SelectTrigger className="w-full">
+              <SelectValue />
+            </SelectTrigger>
+            <SelectContent>
+              {languageOptions.map(lang => (
+                <SelectItem key={`lang-${lang.value}`} value={lang.value}>
+                  {lang.label}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        </div>
+        
+        <input
+          ref={fileInputRef}
+          type="file"
+          accept=".mp3,.wav,.m4a,.flac"
+          className="hidden"
+          onChange={handleFileChange}
+        />
+        
+        <div className="flex flex-col items-center gap-4 w-full">
+          <Button
+            className="w-full py-3 px-4 bg-primary hover:bg-primary/90 text-primary-foreground rounded-lg transition-colors flex items-center justify-center"
+            size="lg"
+            onClick={handleFileClick}
+          >
+            <Upload className="h-5 w-5 mr-2" />
+            {uploadLabel}
           </Button>
           
           <Button
             variant="outline"
+            className="w-full py-3 px-4 rounded-lg transition-colors flex items-center justify-center"
             size="lg"
-            className="h-24 flex flex-col items-center justify-center gap-2 p-4 border-2 border-dashed border-primary/30 hover:border-primary/70 rounded-xl"
           >
-            <Mic size={24} className="text-primary" />
-            <span>{recordLabel}</span>
+            <FolderOpen className="h-5 w-5 mr-2" />
+            {selectFromAssetsLabel}
+          </Button>
+          
+          <Button
+            variant="outline"
+            className="w-full py-3 px-4 rounded-lg transition-colors flex items-center justify-center"
+            size="lg"
+          >
+            <Mic className="h-5 w-5 mr-2" />
+            {recordLabel}
           </Button>
         </div>
+      </div>
 
-        {!file ? (
-          <div 
-            className="border-2 border-dashed border-border rounded-xl p-10 text-center cursor-pointer hover:border-primary/50 transition-colors"
-            onDrop={handleDrop}
-            onDragOver={handleDragOver}
-            onClick={() => document.getElementById('audio-file-input')?.click()}
-          >
-            <input 
-              type="file" 
-              id="audio-file-input" 
-              className="hidden" 
-              accept=".mp3,.wav,.m4a,.flac"
-              onChange={handleFileChange}
-            />
-            <div className="flex flex-col items-center">
-              <FileText size={40} className="mb-4 text-muted-foreground" />
-              <h3 className="text-xl font-medium mb-2">{dropzoneText}</h3>
-              <p className="mb-4 text-muted-foreground">{orText}</p>
-              <Button variant="outline" className="mb-4">
-                {browseText}
-              </Button>
-              <p className="text-sm text-muted-foreground">{supportedFormats}</p>
+      {file && (
+        <motion.div 
+          className="w-full max-w-md bg-card rounded-xl border border-border p-4 mt-4"
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.3 }}
+        >
+          <div className="flex items-center gap-3 mb-4">
+            <div className="bg-muted rounded-lg h-16 w-16 flex items-center justify-center">
+              <FileAudio className="h-6 w-6 text-foreground/70" />
             </div>
+            <div className="flex-1">
+              <h3 className="font-medium text-sm">{file.name}</h3>
+              <p className="text-xs text-muted-foreground">
+                {(file.size / (1024 * 1024)).toFixed(2)} MB
+              </p>
+              <Badge variant="outline" className="mt-1 text-xs">
+                {languageOptions.find(l => l.value === selectedLanguage)?.label}
+              </Badge>
+            </div>
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={clearFile}
+              className="self-start"
+            >
+              <Trash2 size={18} className="text-muted-foreground" />
+            </Button>
           </div>
-        ) : (
-          <div className="border border-border rounded-xl p-6">
-            <div className="flex justify-between items-center mb-4">
-              <div className="flex items-center">
-                <FileText size={24} className="mr-2 text-primary" />
-                <div>
-                  <h3 className="font-medium">{file.name}</h3>
-                  <p className="text-sm text-muted-foreground">
-                    {(file.size / (1024 * 1024)).toFixed(2)} MB
-                  </p>
+
+          {!transcriptionStarted ? (
+            <Button 
+              className="w-full bg-primary hover:bg-primary/90 text-primary-foreground rounded"
+              onClick={startTranscription}
+            >
+              {transcribeText}
+            </Button>
+          ) : progress < 100 ? (
+            <div className="space-y-2">
+              <Progress value={progress} className="h-2" />
+              <p className="text-sm text-center text-muted-foreground">{processingText} {progress}%</p>
+            </div>
+          ) : (
+            <motion.div 
+              className="mt-6"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ duration: 0.5 }}
+            >
+              <div className="flex justify-between items-center mb-3">
+                <h3 className="font-medium">{transcriptionResultText}</h3>
+                <div className="flex gap-2">
+                  <Button variant="outline" size="sm">
+                    {copyAllText}
+                  </Button>
+                  <Button variant="outline" size="sm">
+                    {exportText}
+                  </Button>
                 </div>
               </div>
-              <Button variant="ghost" size="icon" onClick={clearFile}>
-                <Trash2 size={18} className="text-muted-foreground" />
-                <span className="sr-only">{removeFileText}</span>
-              </Button>
-            </div>
-
-            {!transcriptionStarted ? (
-              <Button 
-                className="w-full" 
-                onClick={startTranscription}
-              >
-                {transcribeText}
-              </Button>
-            ) : progress < 100 ? (
-              <div className="space-y-2">
-                <Progress value={progress} className="h-2" />
-                <p className="text-sm text-center text-muted-foreground">{processingText} {progress}%</p>
-              </div>
-            ) : (
-              <motion.div 
-                className="mt-6"
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                transition={{ duration: 0.5 }}
-              >
-                <h3 className="font-medium mb-3">{transcriptionResultText}</h3>
-                <div className="bg-muted p-4 rounded-lg space-y-4">
-                  {transcriptionResult.map((line, index) => (
-                    <div key={index} className="flex gap-4">
-                      <div className="flex-shrink-0 text-muted-foreground text-sm">
-                        {String(index + 1).padStart(2, '0')}
-                      </div>
-                      <div className="flex-grow">
-                        <div className="p-2 bg-card rounded border border-border">
-                          {line}
-                        </div>
+              <div className="bg-muted p-4 rounded-lg space-y-4">
+                {transcriptionResult.map((line, index) => (
+                  <div key={index} className="flex gap-4">
+                    <div className="flex-shrink-0 text-muted-foreground text-sm">
+                      {String(index + 1).padStart(2, '0')}
+                    </div>
+                    <div className="flex-grow">
+                      <div className="p-2 bg-card rounded border border-border">
+                        {line}
                       </div>
                     </div>
-                  ))}
-                </div>
-              </motion.div>
-            )}
-          </div>
-        )}
-      </div>
+                  </div>
+                ))}
+              </div>
+            </motion.div>
+          )}
+        </motion.div>
+      )}
+
+      <motion.div 
+        className="mt-12 text-center text-muted-foreground max-w-md"
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ delay: 0.3, duration: 0.5 }}
+      >
+        <p className="text-sm">
+          {supportText}
+        </p>
+      </motion.div>
     </motion.div>
   );
 }
