@@ -1,9 +1,15 @@
 import { useState, useRef } from "react";
 import { motion } from "framer-motion";
-import { Languages, Upload, FolderOpen, Video, ArrowRight } from "lucide-react";
+import { 
+  Languages, Upload, FolderOpen, Video, ArrowRight, Play, Pause, 
+  Edit, Download, Clock, Save, Volume2
+} from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useLanguage } from "@/hooks/use-language";
 import { useTheme } from "@/hooks/use-theme";
+import { Progress } from "@/components/ui/progress";
+import { Textarea } from "@/components/ui/textarea";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import {
   Select,
   SelectContent,
@@ -28,6 +34,12 @@ export default function VideoTranslation() {
   const [sourceLanguage, setSourceLanguage] = useState<string>("zh");
   const [targetLanguage, setTargetLanguage] = useState<string>("en");
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const [isProcessing, setIsProcessing] = useState(false);
+  const [progress, setProgress] = useState(0);
+  const [isProcessed, setIsProcessed] = useState(false);
+  const [currentTab, setCurrentTab] = useState("original");
+  const [isPlaying, setIsPlaying] = useState(false);
+  const [subtitles, setSubtitles] = useState<Subtitle[]>([]);
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const selectedFile = e.target.files?.[0];
@@ -35,11 +47,86 @@ export default function VideoTranslation() {
       setFile(selectedFile);
       const url = URL.createObjectURL(selectedFile);
       setVideoUrl(url);
+      setIsProcessed(false);
+      setIsProcessing(false);
+      setProgress(0);
+      setSubtitles([]);
     }
   };
 
   const handleUploadClick = () => {
     fileInputRef.current?.click();
+  };
+  
+  const startProcessing = () => {
+    if (!file) return;
+    
+    setIsProcessing(true);
+    setProgress(0);
+    
+    // 模拟进度条
+    const interval = setInterval(() => {
+      setProgress(prev => {
+        if (prev >= 100) {
+          clearInterval(interval);
+          setIsProcessing(false);
+          setIsProcessed(true);
+          // 模拟字幕提取结果
+          setSubtitles([
+            {
+              id: "1",
+              startTime: "00:00:01,200",
+              endTime: "00:00:04,500",
+              text: "嗨，谢谢你点开我们的视频",
+              translation: "Hi, thank you for clicking on our video"
+            },
+            {
+              id: "2",
+              startTime: "00:00:05,000",
+              endTime: "00:00:09,800",
+              text: "今天我要介绍我们公司的产品",
+              translation: "Today I'm going to introduce our company's product"
+            },
+            {
+              id: "3",
+              startTime: "00:00:10,200",
+              endTime: "00:00:15,500",
+              text: "我们的产品是基于人工智能的创新解决方案",
+              translation: "Our product is an innovative solution based on artificial intelligence"
+            },
+            {
+              id: "4",
+              startTime: "00:00:16,000",
+              endTime: "00:00:19,800",
+              text: "可以帮助客户提高效率",
+              translation: "It can help customers improve efficiency"
+            }
+          ]);
+          return 100;
+        }
+        return prev + 1;
+      });
+    }, 50);
+  };
+  
+  const togglePlayback = () => {
+    setIsPlaying(!isPlaying);
+  };
+  
+  const updateSubtitleTranslation = (id: string, translation: string) => {
+    setSubtitles(prev => 
+      prev.map(subtitle => 
+        subtitle.id === id ? { ...subtitle, translation } : subtitle
+      )
+    );
+  };
+
+  const updateSubtitleText = (id: string, text: string) => {
+    setSubtitles(prev => 
+      prev.map(subtitle => 
+        subtitle.id === id ? { ...subtitle, text } : subtitle
+      )
+    );
   };
 
   // 语言选项
@@ -167,7 +254,7 @@ export default function VideoTranslation() {
         </div>
       </div>
 
-      {file && (
+      {file && !isProcessing && !isProcessed && (
         <motion.div 
           className="w-full max-w-md bg-card rounded-xl border border-border p-4 mt-4"
           initial={{ opacity: 0, y: 20 }}
@@ -186,23 +273,170 @@ export default function VideoTranslation() {
             </div>
             <Button
               className="bg-primary hover:bg-primary/90 text-primary-foreground rounded"
+              onClick={startProcessing}
             >
               {language === "zh" ? "开始处理" : "Process"}
             </Button>
           </div>
         </motion.div>
       )}
+      
+      {isProcessing && (
+        <motion.div 
+          className="w-full max-w-md bg-card rounded-xl border border-border p-4 mt-4"
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.3 }}
+        >
+          <div className="mb-2 text-center">
+            <p className="text-sm font-medium">{language === "zh" ? "处理中..." : "Processing..."}</p>
+          </div>
+          <Progress value={progress} className="h-2 mb-2" />
+          <div className="flex justify-between text-xs text-muted-foreground">
+            <span>{language === "zh" ? "提取字幕中..." : "Extracting subtitles..."}</span>
+            <span>{progress}%</span>
+          </div>
+        </motion.div>
+      )}
+      
+      {isProcessed && (
+        <motion.div 
+          className="w-full max-w-4xl mb-8"
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.3 }}
+        >
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+            {/* 视频播放区域 */}
+            <div className="bg-card p-4 rounded-xl border border-border">
+              <div className="relative aspect-video bg-black rounded-lg overflow-hidden mb-4">
+                <div className="absolute inset-0 flex items-center justify-center">
+                  {file && (
+                    <img 
+                      src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iODAiIGhlaWdodD0iODAiIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMjQiIGhlaWdodD0iMjQiIGZpbGw9InRyYW5zcGFyZW50Ii8+PHBhdGggZD0iTTExLjk2OSAyQzYuNDY1IDIgMiA2LjQ3NSAyIDEyQzIgMTcuNTM0IDYuNDc1IDIyIDEyIDIyQzE3LjUzNCAyMiAyMiAxNy41MjUgMjIgMTJDMjIgNi40NjUgMTcuNTIzIDIgMTEuOTY5IDJaTTEwIDguNzVWMTUuMjVMMTUuNSAxMkwxMCA4Ljc1WiIgZmlsbD0iI2ZmZmZmZiIvPjwvc3ZnPg==" 
+                      alt="Video thumbnail" 
+                      className="w-full h-full object-cover opacity-50"
+                    />
+                  )}
+                  <Button
+                    size="icon"
+                    variant="ghost"
+                    className="absolute w-16 h-16 rounded-full bg-background/20 hover:bg-background/30 text-white"
+                    onClick={togglePlayback}
+                  >
+                    {isPlaying ? <Pause size={32} /> : <Play size={32} />}
+                  </Button>
+                </div>
+                <div className="absolute bottom-4 left-0 right-0 px-4 text-center">
+                  <p className="text-sm bg-background/50 backdrop-blur-sm text-white p-2 rounded">
+                    {currentTab === "original" ? subtitles[0]?.text : subtitles[0]?.translation}
+                  </p>
+                </div>
+              </div>
+              
+              <div className="flex items-center justify-between mb-4">
+                <Button variant="outline" size="sm">
+                  <Volume2 className="mr-2 h-4 w-4" />
+                  {language === "zh" ? "生成配音" : "Generate Voiceover"}
+                </Button>
+                <div className="flex space-x-2">
+                  <Button variant="outline" size="sm">
+                    <Download className="mr-2 h-4 w-4" />
+                    {language === "zh" ? "下载视频" : "Download Video"}
+                  </Button>
+                </div>
+              </div>
+              
+              <div className="mb-2 px-2">
+                <h3 className="text-sm font-medium">{file?.name}</h3>
+              </div>
+            </div>
+            
+            {/* 字幕编辑区域 */}
+            <div className="bg-card p-4 rounded-xl border border-border">
+              <div className="flex justify-between items-center mb-4">
+                <h3 className="text-lg font-medium">
+                  {language === "zh" ? "视频字幕" : "Video Subtitles"}
+                </h3>
+                <div className="flex space-x-2">
+                  <Button size="sm" variant="outline">
+                    <Save className="mr-2 h-4 w-4" />
+                    {language === "zh" ? "保存全部" : "Save All"}
+                  </Button>
+                  <Button size="sm" variant="outline">
+                    <Download className="mr-2 h-4 w-4" />
+                    {language === "zh" ? "下载SRT" : "Download SRT"}
+                  </Button>
+                </div>
+              </div>
+              
+              <Tabs value={currentTab} onValueChange={setCurrentTab} className="w-full">
+                <TabsList className="w-full mb-4">
+                  <TabsTrigger value="original" className="flex-1">{language === "zh" ? "原始字幕" : "Original Subtitles"}</TabsTrigger>
+                  <TabsTrigger value="translated" className="flex-1">{language === "zh" ? "翻译字幕" : "Translated Subtitles"}</TabsTrigger>
+                </TabsList>
+                
+                <TabsContent value="original" className="space-y-4 max-h-[400px] overflow-y-auto">
+                  {subtitles.map((subtitle) => (
+                    <div key={subtitle.id} className="bg-muted p-3 rounded-lg border border-border">
+                      <div className="flex items-center justify-between mb-2">
+                        <div className="flex items-center text-xs text-muted-foreground">
+                          <Clock className="h-3 w-3 mr-1" />
+                          <span>{subtitle.startTime} → {subtitle.endTime}</span>
+                        </div>
+                        <Button variant="ghost" size="sm" className="h-6 px-2">
+                          <Edit className="h-3 w-3 mr-1" />
+                          <span className="text-xs">{language === "zh" ? "编辑" : "Edit"}</span>
+                        </Button>
+                      </div>
+                      <Textarea
+                        value={subtitle.text}
+                        onChange={(e) => updateSubtitleText(subtitle.id, e.target.value)}
+                        className="min-h-0 h-14 text-sm resize-none bg-card"
+                      />
+                    </div>
+                  ))}
+                </TabsContent>
+                
+                <TabsContent value="translated" className="space-y-4 max-h-[400px] overflow-y-auto">
+                  {subtitles.map((subtitle) => (
+                    <div key={subtitle.id} className="bg-muted p-3 rounded-lg border border-border">
+                      <div className="flex items-center justify-between mb-2">
+                        <div className="flex items-center text-xs text-muted-foreground">
+                          <Clock className="h-3 w-3 mr-1" />
+                          <span>{subtitle.startTime} → {subtitle.endTime}</span>
+                        </div>
+                        <Button variant="ghost" size="sm" className="h-6 px-2">
+                          <Edit className="h-3 w-3 mr-1" />
+                          <span className="text-xs">{language === "zh" ? "编辑" : "Edit"}</span>
+                        </Button>
+                      </div>
+                      <Textarea
+                        value={subtitle.translation}
+                        onChange={(e) => updateSubtitleTranslation(subtitle.id, e.target.value)}
+                        className="min-h-0 h-14 text-sm resize-none bg-card"
+                      />
+                    </div>
+                  ))}
+                </TabsContent>
+              </Tabs>
+            </div>
+          </div>
+        </motion.div>
+      )}
 
-      <motion.div 
-        className="mt-12 text-center text-muted-foreground max-w-md"
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ delay: 0.3, duration: 0.5 }}
-      >
-        <p className="text-sm">
-          {supportText}
-        </p>
-      </motion.div>
+      {!isProcessed && (
+        <motion.div 
+          className="mt-12 text-center text-muted-foreground max-w-md"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 0.3, duration: 0.5 }}
+        >
+          <p className="text-sm">
+            {supportText}
+          </p>
+        </motion.div>
+      )}
     </motion.div>
   );
 }
