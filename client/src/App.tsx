@@ -12,9 +12,12 @@ import Enhancer from "@/pages/enhancer";
 import Pricing from "@/pages/pricing";
 import AuthPage from "@/pages/auth-page";
 import NotFound from "@/pages/not-found";
-import AudioTranscription from "@/pages/audio-transcription";
-import TextToSpeech from "@/pages/text-to-speech";
-import VideoTranslation from "@/pages/video-translation";
+import { lazy, Suspense } from "react";
+
+// 懒加载新添加的页面以提高性能
+const AudioTranscription = lazy(() => import("@/pages/audio-transcription"));
+const TextToSpeech = lazy(() => import("@/pages/text-to-speech"));
+const VideoTranslation = lazy(() => import("@/pages/video-translation"));
 import { LanguageProvider } from "@/hooks/use-language";
 import { AuthProvider } from "@/hooks/use-auth";
 import { ThemeProvider } from "@/hooks/use-theme";
@@ -43,11 +46,29 @@ function App() {
                     <Route path="/video" component={Video} />
                     <Route path="/enhancer" component={Enhancer} />
                     <Route path="/pricing" component={Pricing} />
-                    <Route path="/audio-transcription" component={AudioTranscription} />
-                    <Route path="/text-to-speech" component={TextToSpeech} />
-                    <Route path="/video-translation" component={VideoTranslation} />
                     <Route path="/auth" component={AuthPage} />
                     <Route path="/login" component={AuthPage} />
+                    <Route path="/audio-transcription">
+                      <Suspense fallback={<div className="flex items-center justify-center h-[60vh]">
+                        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-primary"></div>
+                      </div>}>
+                        <AudioTranscription />
+                      </Suspense>
+                    </Route>
+                    <Route path="/text-to-speech">
+                      <Suspense fallback={<div className="flex items-center justify-center h-[60vh]">
+                        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-primary"></div>
+                      </div>}>
+                        <TextToSpeech />
+                      </Suspense>
+                    </Route>
+                    <Route path="/video-translation">
+                      <Suspense fallback={<div className="flex items-center justify-center h-[60vh]">
+                        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-primary"></div>
+                      </div>}>
+                        <VideoTranslation />
+                      </Suspense>
+                    </Route>
                     <Route component={NotFound} />
                   </Switch>
                 </PageTransition>
