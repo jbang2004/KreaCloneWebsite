@@ -68,18 +68,18 @@ export default function Header() {
   const closeMenu = () => setIsOpen(false);
 
   return (
-    <header className="sticky top-0 z-50 bg-white/80 backdrop-blur-md border-b border-gray-200 px-4">
+    <header className="sticky top-0 z-50 bg-background/80 backdrop-blur-md border-b border-border px-4">
       <div className="max-w-7xl mx-auto flex items-center justify-between h-16">
         <div className="flex items-center space-x-4">
           <Link href="/" onClick={closeMenu} className="flex items-center">
             <svg className="w-6 h-6" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <rect width="24" height="24" rx="4" fill="#000000" />
+              <rect width="24" height="24" rx="4" fill={theme === 'dark' ? '#FFFFFF' : '#000000'} />
             </svg>
           </Link>
 
           {isMobile && (
             <button 
-              className="h-10 w-10 flex items-center justify-center rounded-full hover:bg-gray-100 transition-colors md:hidden"
+              className="h-10 w-10 flex items-center justify-center rounded-full hover:bg-muted transition-colors md:hidden"
               onClick={toggleMenu}
               aria-label="Toggle menu"
             >
@@ -90,7 +90,7 @@ export default function Header() {
 
         <div className={cn(
           "hidden md:flex items-center justify-center space-x-1",
-          isMobile && isOpen && "absolute top-16 left-0 right-0 flex flex-col items-start p-4 bg-white border-b border-gray-200 space-y-2 space-x-0"
+          isMobile && isOpen && "absolute top-16 left-0 right-0 flex flex-col items-start p-4 bg-background border-b border-border space-y-2 space-x-0"
         )}>
           {NavItems.map((item) => (
             <Link 
@@ -98,9 +98,9 @@ export default function Header() {
               href={item.path}
               onClick={closeMenu}
               className={cn(
-                "h-10 w-10 flex items-center justify-center rounded-full hover:bg-gray-100 transition-colors",
+                "h-10 w-10 flex items-center justify-center rounded-full hover:bg-muted transition-colors",
                 isMobile && isOpen && "w-full justify-start space-x-2 px-2 py-2",
-                location === item.path && "bg-gray-100"
+                location === item.path && "bg-muted"
               )}
               aria-label={t(item.labelKey)}
             >
@@ -111,10 +111,18 @@ export default function Header() {
         </div>
 
         <div className="flex items-center space-x-4">
+          <button
+            onClick={toggleTheme}
+            className="h-8 w-8 flex items-center justify-center rounded-full hover:bg-muted transition-colors"
+            aria-label={theme === "dark" ? t("lightMode") : t("darkMode")}
+          >
+            {theme === "dark" ? <Sun size={18} /> : <Moon size={18} />}
+          </button>
+
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <button 
-                className="h-8 w-8 flex items-center justify-center rounded-full hover:bg-gray-100 transition-colors"
+                className="h-8 w-8 flex items-center justify-center rounded-full hover:bg-muted transition-colors"
                 aria-label={t("switchLanguage")}
               >
                 <Globe size={18} />
@@ -134,41 +142,45 @@ export default function Header() {
             </DropdownMenuContent>
           </DropdownMenu>
 
-          <Link href="/pricing" className="hidden md:block text-sm font-medium text-gray-700 hover:text-gray-900">
+          <Link href="/pricing" className="hidden md:block text-sm font-medium hover:text-primary transition-colors">
             {t("pricing")}
           </Link>
-          <Link href="/auth" className="hidden md:block text-sm font-medium text-gray-700 hover:text-gray-900">
+          <Link href="/auth" className="hidden md:block text-sm font-medium hover:text-primary transition-colors">
             {t("logIn")}
           </Link>
-          <Link href="/auth" className="text-sm font-medium bg-blue-500 text-white px-4 py-2 rounded-full hover:bg-blue-600 transition-colors">
+          <Link href="/auth" className="text-sm font-medium bg-primary text-primary-foreground px-4 py-2 rounded-full hover:bg-primary/90 transition-colors">
             {t("signUp")}
           </Link>
         </div>
       </div>
       
       {isMobile && isOpen && (
-        <div className="md:hidden absolute top-16 left-0 right-0 bg-white border-b border-gray-200 p-4 space-y-2">
+        <div className="md:hidden absolute top-16 left-0 right-0 bg-background border-b border-border p-4 space-y-2">
           {NavItems.map((item) => (
             <Link 
               key={item.path} 
               href={item.path}
               onClick={closeMenu}
-              className="flex items-center space-x-2 p-2 rounded-lg hover:bg-gray-100"
+              className="flex items-center space-x-2 p-2 rounded-lg hover:bg-muted transition-colors"
             >
               <span className="w-6 h-6 flex items-center justify-center">{item.icon}</span>
               <span>{t(item.labelKey)}</span>
             </Link>
           ))}
-          <div className="border-t border-gray-200 pt-2 mt-2 flex flex-col space-y-2">
-            <Link href="/pricing" onClick={closeMenu} className="flex items-center p-2 rounded-lg hover:bg-gray-100">
+          <div className="border-t border-border pt-2 mt-2 flex flex-col space-y-2">
+            <Link href="/pricing" onClick={closeMenu} className="flex items-center p-2 rounded-lg hover:bg-muted transition-colors">
               {t("pricing")}
             </Link>
-            <Link href="/auth" onClick={closeMenu} className="flex items-center p-2 rounded-lg hover:bg-gray-100">
+            <Link href="/auth" onClick={closeMenu} className="flex items-center p-2 rounded-lg hover:bg-muted transition-colors">
               {t("logIn")}
             </Link>
-            <div className="flex items-center p-2 rounded-lg hover:bg-gray-100" onClick={() => setLanguage(language === "en" ? "zh" : "en")}>
+            <div className="flex items-center p-2 rounded-lg hover:bg-muted transition-colors" onClick={() => setLanguage(language === "en" ? "zh" : "en")}>
               <Globe className="h-5 w-5 mr-2" />
               {t("switchLanguage")}
+            </div>
+            <div className="flex items-center p-2 rounded-lg hover:bg-muted transition-colors" onClick={toggleTheme}>
+              {theme === "dark" ? <Sun className="h-5 w-5 mr-2" /> : <Moon className="h-5 w-5 mr-2" />}
+              {theme === "dark" ? t("lightMode") : t("darkMode")}
             </div>
           </div>
         </div>
