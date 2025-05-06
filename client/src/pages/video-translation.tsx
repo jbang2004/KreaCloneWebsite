@@ -75,13 +75,18 @@ export default function VideoTranslation() {
     >
       <div className="text-center mb-8">
         <div className="mx-auto mb-4 bg-muted rounded-xl p-6 inline-block">
-          <svg className="h-12 w-12 text-foreground/70" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <path d="M21 12V13C21 16.866 17.866 20 14 20H10C6.13401 20 3 16.866 3 13V8C3 6.34315 4.34315 5 6 5H7" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
-            <rect x="7" y="4" width="8" height="5" rx="1" stroke="currentColor" strokeWidth="1.5" />
-            <path d="M15 9V16C15 16.5523 14.5523 17 14 17H11C9.89543 17 9 16.1046 9 15V9" stroke="currentColor" strokeWidth="1.5" />
-            <path d="M17 9.5L17 8M17 6L17 8M19 8L15 8" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
-            <path d="M19 14L21 15M21 15L19 16M21 15H17" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
-            <path d="M5 14L3 15M3 15L5 16M3 15H7" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
+          <svg xmlns="http://www.w3.org/2000/svg" className="h-12 w-12 text-foreground/70" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+            <rect x="2" y="2" width="20" height="20" rx="2.18" ry="2.18"></rect>
+            <line x1="2" y1="10" x2="22" y2="10"></line>
+            <line x1="12" y1="2" x2="12" y2="22"></line>
+            <path d="M17 4 L17 2"></path>
+            <path d="M19 4 L19 2"></path>
+            <path d="M17 20 L17 22"></path>
+            <path d="M19 20 L19 22"></path>
+            <path d="M7 4 L7 2"></path>
+            <path d="M5 4 L5 2"></path>
+            <path d="M7 20 L7 22"></path>
+            <path d="M5 20 L5 22"></path>
           </svg>
         </div>
         <h1 className="text-2xl font-bold mb-2">{title}</h1>

@@ -23,8 +23,9 @@ const NavItems: NavItem[] = [
     path: "/",
     labelKey: "home",
     icon: (
-      <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-        <path d="M10.707 2.293a1 1 0 00-1.414 0l-7 7a1 1 0 001.414 1.414L4 10.414V17a1 1 0 001 1h2a1 1 0 001-1v-2a1 1 0 011-1h2a1 1 0 011 1v2a1 1 0 001 1h2a1 1 0 001-1v-6.586l.293.293a1 1 0 001.414-1.414l-7-7z" />
+      <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+        <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
+        <polyline points="9 22 9 12 15 12 15 22"></polyline>
       </svg>
     ),
   },
@@ -32,12 +33,11 @@ const NavItems: NavItem[] = [
     path: "/audio-transcription",
     labelKey: "audioTranscription",
     icon: (
-      <svg className="h-5 w-5" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
-        <path d="M10 12.5C11.3807 12.5 12.5 11.3807 12.5 10C12.5 8.61929 11.3807 7.5 10 7.5C8.61929 7.5 7.5 8.61929 7.5 10C7.5 11.3807 8.61929 12.5 10 12.5Z" fill="currentColor" />
-        <path d="M7.5 15H12.5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
-        <path d="M17.5 10V10.8333C17.5 14.055 14.8883 16.6667 11.6667 16.6667H8.33333C5.11167 16.6667 2.5 14.055 2.5 10.8333V6.66667C2.5 6.20643 2.87309 5.83334 3.33333 5.83334H4.58333C4.8134 5.83334 5 6.01993 5 6.25001V7.08334C5 7.31342 4.8134 7.50001 4.58333 7.50001H3.33333" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
-        <path d="M14.1667 7.91666V6.66666M14.1667 5V6.66666M15.8333 6.66666H12.5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
-        <rect x="5.83333" y="1.66666" width="8.33333" height="3.33333" rx="1.66667" stroke="currentColor" strokeWidth="1.5" />
+      <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+        <path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"></path>
+        <path d="M19 10v2a7 7 0 0 1-14 0v-2"></path>
+        <line x1="12" y1="19" x2="12" y2="23"></line>
+        <line x1="8" y1="23" x2="16" y2="23"></line>
       </svg>
     ),
   },
@@ -45,16 +45,8 @@ const NavItems: NavItem[] = [
     path: "/text-to-speech",
     labelKey: "textToSpeech",
     icon: (
-      <svg className="h-5 w-5" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
-        <path d="M10 11.6667C10.9205 11.6667 11.6667 10.9205 11.6667 10C11.6667 9.07957 10.9205 8.33334 10 8.33334C9.07957 8.33334 8.33333 9.07957 8.33333 10C8.33333 10.9205 9.07957 11.6667 10 11.6667Z" stroke="currentColor" strokeWidth="1.5" />
-        <path d="M5.83333 6.66666C6.2936 6.66666 6.66667 6.2936 6.66667 5.83333C6.66667 5.37307 6.2936 5 5.83333 5C5.37307 5 5 5.37307 5 5.83333C5 6.2936 5.37307 6.66666 5.83333 6.66666Z" stroke="currentColor" strokeWidth="1.5" />
-        <path d="M15.8333 6.66666C16.2936 6.66666 16.6667 6.2936 16.6667 5.83333C16.6667 5.37307 16.2936 5 15.8333 5C15.3731 5 15 5.37307 15 5.83333C15 6.2936 15.3731 6.66666 15.8333 6.66666Z" stroke="currentColor" strokeWidth="1.5" />
-        <path d="M13.3333 16.6667H11.6667C9.82572 16.6667 8.33334 15.1743 8.33334 13.3333V13.3333" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
-        <path d="M5.83333 10V13.3333C5.83333 13.7936 5.46026 14.1667 5 14.1667H3.33333C2.87309 14.1667 2.5 13.7936 2.5 13.3333V6.66667C2.5 6.20643 2.87309 5.83334 3.33333 5.83334H5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
-        <path d="M14.1667 10V13.3333C14.1667 13.7936 14.5398 14.1667 15 14.1667H16.6667C17.1269 14.1667 17.5 13.7936 17.5 13.3333V6.66667C17.5 6.20643 17.1269 5.83334 16.6667 5.83334H15" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
-        <path d="M10 11.6667V15.8333" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
-        <path d="M12.5 15.8333L7.5 15.8333" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
-        <path d="M10 8.33334V3.33334" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
+      <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+        <path d="M9 17H5a2 2 0 0 0-2 2 2 2 0 0 0 2 2h2a2 2 0 0 0 2-2zm12-2h-4l4-7h-4l4-7h-4L9 9H5l-3 6h4l-3 6h4l3-6z"></path>
       </svg>
     ),
   },
@@ -62,13 +54,9 @@ const NavItems: NavItem[] = [
     path: "/video-translation",
     labelKey: "videoTranslation",
     icon: (
-      <svg className="h-5 w-5" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
-        <path d="M17.5 10V10.8333C17.5 14.055 14.8883 16.6667 11.6667 16.6667H8.33333C5.11167 16.6667 2.5 14.055 2.5 10.8333V6.66667C2.5 5.28596 3.61929 4.16667 5 4.16667H5.83333" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
-        <rect x="5.83333" y="3.33334" width="6.66667" height="4.16667" rx="0.833333" stroke="currentColor" strokeWidth="1.5" />
-        <path d="M12.5 7.5V13.3333C12.5 13.7936 12.1269 14.1667 11.6667 14.1667H9.16667C8.24619 14.1667 7.5 13.4205 7.5 12.5V7.5" stroke="currentColor" strokeWidth="1.5" />
-        <path d="M14.1667 7.91666V6.66666M14.1667 5V6.66666M15.8333 6.66666H12.5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
-        <path d="M15.8333 11.6667L17.5 12.5M17.5 12.5L15.8333 13.3333M17.5 12.5H14.1667" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
-        <path d="M4.16667 11.6667L2.5 12.5M2.5 12.5L4.16667 13.3333M2.5 12.5H5.83333" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
+      <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+        <polygon points="23 7 16 12 23 17 23 7"></polygon>
+        <rect x="1" y="5" width="15" height="14" rx="2" ry="2"></rect>
       </svg>
     ),
   },
@@ -86,8 +74,8 @@ export default function Header() {
 
   return (
     <header className="sticky top-0 z-50 bg-background/80 backdrop-blur-md border-b border-border px-4">
-      <div className="max-w-7xl mx-auto flex items-center justify-between h-16">
-        <div className="flex items-center space-x-4">
+      <div className="max-w-7xl mx-auto flex items-center h-16">
+        <div className="flex-none flex items-center mr-8">
           <Link href="/" onClick={closeMenu} className="flex items-center">
             <svg className="w-6 h-6" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
               <rect width="24" height="24" rx="4" fill={theme === 'dark' ? '#FFFFFF' : '#000000'} />
@@ -96,7 +84,7 @@ export default function Header() {
 
           {isMobile && (
             <button 
-              className="h-10 w-10 flex items-center justify-center rounded-full hover:bg-muted transition-colors md:hidden"
+              className="h-10 w-10 ml-4 flex items-center justify-center rounded-full hover:bg-muted transition-colors md:hidden"
               onClick={toggleMenu}
               aria-label="Toggle menu"
             >
@@ -106,7 +94,7 @@ export default function Header() {
         </div>
 
         <div className={cn(
-          "hidden md:flex items-center justify-center space-x-1",
+          "hidden md:flex flex-1 items-center justify-center space-x-6",
           isMobile && isOpen && "absolute top-16 left-0 right-0 flex flex-col items-start p-4 bg-background border-b border-border space-y-2 space-x-0"
         )}>
           {NavItems.map((item) => (
@@ -115,19 +103,19 @@ export default function Header() {
               href={item.path}
               onClick={closeMenu}
               className={cn(
-                "h-10 w-10 flex items-center justify-center rounded-full hover:bg-muted transition-colors",
+                "h-10 px-3 flex items-center justify-center rounded-md hover:bg-muted transition-colors",
                 isMobile && isOpen && "w-full justify-start space-x-2 px-2 py-2",
                 location === item.path && "bg-muted"
               )}
               aria-label={t(item.labelKey)}
             >
               {item.icon}
-              {isMobile && isOpen && <span>{t(item.labelKey)}</span>}
+              <span className="ml-2 text-sm font-medium">{t(item.labelKey)}</span>
             </Link>
           ))}
         </div>
 
-        <div className="flex items-center space-x-4">
+        <div className="flex-none flex items-center space-x-4">
           <button
             onClick={toggleTheme}
             className="h-8 w-8 flex items-center justify-center rounded-full hover:bg-muted transition-colors"
@@ -178,26 +166,46 @@ export default function Header() {
               key={item.path} 
               href={item.path}
               onClick={closeMenu}
-              className="flex items-center space-x-2 p-2 rounded-lg hover:bg-muted transition-colors"
+              className={cn(
+                "flex items-center space-x-2 p-2 rounded-md hover:bg-muted transition-colors",
+                location === item.path && "bg-muted"
+              )}
             >
               <span className="w-6 h-6 flex items-center justify-center">{item.icon}</span>
-              <span>{t(item.labelKey)}</span>
+              <span className="font-medium">{t(item.labelKey)}</span>
             </Link>
           ))}
           <div className="border-t border-border pt-2 mt-2 flex flex-col space-y-2">
-            <Link href="/pricing" onClick={closeMenu} className="flex items-center p-2 rounded-lg hover:bg-muted transition-colors">
-              {t("pricing")}
+            <Link href="/pricing" onClick={closeMenu} className="flex items-center p-2 rounded-md hover:bg-muted transition-colors">
+              <span className="w-6 h-6 flex items-center justify-center">
+                <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <line x1="12" y1="1" x2="12" y2="23"></line>
+                  <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path>
+                </svg>
+              </span>
+              <span className="font-medium">{t("pricing")}</span>
             </Link>
-            <Link href="/auth" onClick={closeMenu} className="flex items-center p-2 rounded-lg hover:bg-muted transition-colors">
-              {t("logIn")}
+            <Link href="/auth" onClick={closeMenu} className="flex items-center p-2 rounded-md hover:bg-muted transition-colors">
+              <span className="w-6 h-6 flex items-center justify-center">
+                <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"></path>
+                  <polyline points="10 17 15 12 10 7"></polyline>
+                  <line x1="15" y1="12" x2="3" y2="12"></line>
+                </svg>
+              </span>
+              <span className="font-medium">{t("logIn")}</span>
             </Link>
-            <div className="flex items-center p-2 rounded-lg hover:bg-muted transition-colors" onClick={() => setLanguage(language === "en" ? "zh" : "en")}>
-              <Globe className="h-5 w-5 mr-2" />
-              {t("switchLanguage")}
+            <div className="flex items-center p-2 rounded-md hover:bg-muted transition-colors" onClick={() => setLanguage(language === "en" ? "zh" : "en")}>
+              <span className="w-6 h-6 flex items-center justify-center">
+                <Globe className="h-5 w-5" />
+              </span>
+              <span className="font-medium">{t("switchLanguage")}</span>
             </div>
-            <div className="flex items-center p-2 rounded-lg hover:bg-muted transition-colors" onClick={toggleTheme}>
-              {theme === "dark" ? <Sun className="h-5 w-5 mr-2" /> : <Moon className="h-5 w-5 mr-2" />}
-              {theme === "dark" ? t("lightMode") : t("darkMode")}
+            <div className="flex items-center p-2 rounded-md hover:bg-muted transition-colors" onClick={toggleTheme}>
+              <span className="w-6 h-6 flex items-center justify-center">
+                {theme === "dark" ? <Sun className="h-5 w-5" /> : <Moon className="h-5 w-5" />}
+              </span>
+              <span className="font-medium">{theme === "dark" ? t("lightMode") : t("darkMode")}</span>
             </div>
           </div>
         </div>
