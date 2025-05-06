@@ -209,7 +209,7 @@ export default function AudioTranscription() {
               onClick={clearFile}
               className="self-start"
             >
-              <Trash2 size={18} className="text-muted-foreground" />
+              <TrashIcon className="h-5 w-5 text-muted-foreground" />
             </Button>
           </div>
 
