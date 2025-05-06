@@ -4,7 +4,17 @@ import { cn } from "@/lib/utils";
 import { useMobile } from "@/hooks/use-mobile";
 import { useLanguage, TranslationKey } from "@/hooks/use-language";
 import { useTheme } from "@/hooks/use-theme";
-import { Menu, X, Globe, Sun, Moon, Home, Mic, Volume2, Video } from "lucide-react";
+import {
+  HomeIcon,
+  MicrophoneIcon,
+  SpeakerWaveIcon,
+  FilmIcon,
+  SunIcon,
+  MoonIcon,
+  GlobeAltIcon,
+  Bars3Icon,
+  XMarkIcon
+} from "@heroicons/react/24/outline";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -22,22 +32,22 @@ const NavItems: NavItem[] = [
   {
     path: "/",
     labelKey: "home",
-    icon: <Home className="h-5 w-5" />,
+    icon: <HomeIcon className="h-6 w-6" />,
   },
   {
     path: "/audio-transcription",
     labelKey: "audioTranscription",
-    icon: <Mic className="h-5 w-5" />,
+    icon: <MicrophoneIcon className="h-6 w-6" />,
   },
   {
     path: "/text-to-speech",
     labelKey: "textToSpeech",
-    icon: <Volume2 className="h-5 w-5" />,
+    icon: <SpeakerWaveIcon className="h-6 w-6" />,
   },
   {
     path: "/video-translation",
     labelKey: "videoTranslation",
-    icon: <Video className="h-5 w-5" />,
+    icon: <FilmIcon className="h-6 w-6" />,
   },
 ];
 
@@ -67,7 +77,7 @@ export default function Header() {
               onClick={toggleMenu}
               aria-label="Toggle menu"
             >
-              {isOpen ? <X size={20} /> : <Menu size={20} />}
+              {isOpen ? <XMarkIcon className="h-5 w-5" /> : <Bars3Icon className="h-5 w-5" />}
             </button>
           )}
         </div>
@@ -99,7 +109,7 @@ export default function Header() {
             className="h-8 w-8 flex items-center justify-center rounded-full hover:bg-muted transition-colors"
             aria-label={theme === "dark" ? t("lightMode") : t("darkMode")}
           >
-            {theme === "dark" ? <Sun size={18} /> : <Moon size={18} />}
+            {theme === "dark" ? <SunIcon className="h-5 w-5" /> : <MoonIcon className="h-5 w-5" />}
           </button>
 
           <DropdownMenu>
@@ -108,7 +118,7 @@ export default function Header() {
                 className="h-8 w-8 flex items-center justify-center rounded-full hover:bg-muted transition-colors"
                 aria-label={t("switchLanguage")}
               >
-                <Globe size={18} />
+                <GlobeAltIcon className="h-5 w-5" />
               </button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end">
@@ -175,7 +185,7 @@ export default function Header() {
             </Link>
             <div className="flex items-center p-2 rounded-md hover:bg-muted transition-colors" onClick={() => setLanguage(language === "en" ? "zh" : "en")}>
               <span className="w-6 h-6 flex items-center justify-center">
-                <Globe className="h-5 w-5" />
+                <GlobeAltIcon className="h-5 w-5" />
               </span>
               <span className="font-medium">{t("switchLanguage")}</span>
             </div>
