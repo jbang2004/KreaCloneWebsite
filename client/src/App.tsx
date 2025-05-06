@@ -5,19 +5,21 @@ import { queryClient } from "./lib/queryClient";
 import { Toaster } from "@/components/ui/toaster";
 import Header from "@/components/header";
 import PageTransition from "@/components/page-transition";
+import { lazy, Suspense } from "react";
+import { LanguageProvider } from "@/hooks/use-language";
+import { AuthProvider } from "@/hooks/use-auth";
+import { ThemeProvider } from "@/hooks/use-theme";
+
+// 页面导入
 import Home from "@/pages/home";
 import Pricing from "@/pages/pricing";
 import AuthPage from "@/pages/auth-page";
 import NotFound from "@/pages/not-found";
-import { lazy, Suspense } from "react";
 
 // 懒加载新添加的页面以提高性能
-const AudioTranscription = lazy(() => import("@/pages/audio-transcription"));
-const TextToSpeech = lazy(() => import("@/pages/text-to-speech"));
-const VideoTranslation = lazy(() => import("@/pages/video-translation"));
-import { LanguageProvider } from "@/hooks/use-language";
-import { AuthProvider } from "@/hooks/use-auth";
-import { ThemeProvider } from "@/hooks/use-theme";
+const AudioTranscription = lazy(() => import("./pages/audio-transcription"));
+const TextToSpeech = lazy(() => import("./pages/text-to-speech"));
+const VideoTranslation = lazy(() => import("./pages/video-translation"));
 
 function App() {
   const [location] = useLocation();

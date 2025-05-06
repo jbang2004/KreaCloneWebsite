@@ -4,7 +4,7 @@ import { cn } from "@/lib/utils";
 import { useMobile } from "@/hooks/use-mobile";
 import { useLanguage, TranslationKey } from "@/hooks/use-language";
 import { useTheme } from "@/hooks/use-theme";
-import { Menu, X, Globe, Sun, Moon } from "lucide-react";
+import { Menu, X, Globe, Sun, Moon, Home, Mic, Volume2, Video } from "lucide-react";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -22,43 +22,22 @@ const NavItems: NavItem[] = [
   {
     path: "/",
     labelKey: "home",
-    icon: (
-      <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-        <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
-        <polyline points="9 22 9 12 15 12 15 22"></polyline>
-      </svg>
-    ),
+    icon: <Home className="h-5 w-5" />,
   },
   {
     path: "/audio-transcription",
     labelKey: "audioTranscription",
-    icon: (
-      <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-        <path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"></path>
-        <path d="M19 10v2a7 7 0 0 1-14 0v-2"></path>
-        <line x1="12" y1="19" x2="12" y2="23"></line>
-        <line x1="8" y1="23" x2="16" y2="23"></line>
-      </svg>
-    ),
+    icon: <Mic className="h-5 w-5" />,
   },
   {
     path: "/text-to-speech",
     labelKey: "textToSpeech",
-    icon: (
-      <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-        <path d="M9 17H5a2 2 0 0 0-2 2 2 2 0 0 0 2 2h2a2 2 0 0 0 2-2zm12-2h-4l4-7h-4l4-7h-4L9 9H5l-3 6h4l-3 6h4l3-6z"></path>
-      </svg>
-    ),
+    icon: <Volume2 className="h-5 w-5" />,
   },
   {
     path: "/video-translation",
     labelKey: "videoTranslation",
-    icon: (
-      <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-        <polygon points="23 7 16 12 23 17 23 7"></polygon>
-        <rect x="1" y="5" width="15" height="14" rx="2" ry="2"></rect>
-      </svg>
-    ),
+    icon: <Video className="h-5 w-5" />,
   },
 ];
 
@@ -75,8 +54,8 @@ export default function Header() {
   return (
     <header className="sticky top-0 z-50 bg-background/80 backdrop-blur-md border-b border-border px-4">
       <div className="max-w-7xl mx-auto flex items-center h-16">
-        <div className="flex-none flex items-center mr-8">
-          <Link href="/" onClick={closeMenu} className="flex items-center">
+        <div className="flex-none flex items-center">
+          <Link href="/" onClick={closeMenu} className="flex items-center mr-10">
             <svg className="w-6 h-6" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
               <rect width="24" height="24" rx="4" fill={theme === 'dark' ? '#FFFFFF' : '#000000'} />
             </svg>
@@ -94,7 +73,7 @@ export default function Header() {
         </div>
 
         <div className={cn(
-          "hidden md:flex flex-1 items-center justify-center space-x-6",
+          "hidden md:flex flex-1 items-center justify-center space-x-8",
           isMobile && isOpen && "absolute top-16 left-0 right-0 flex flex-col items-start p-4 bg-background border-b border-border space-y-2 space-x-0"
         )}>
           {NavItems.map((item) => (
@@ -103,19 +82,18 @@ export default function Header() {
               href={item.path}
               onClick={closeMenu}
               className={cn(
-                "h-10 px-3 flex items-center justify-center rounded-md hover:bg-muted transition-colors",
+                "h-10 w-10 flex items-center justify-center rounded-full hover:bg-muted transition-colors",
                 isMobile && isOpen && "w-full justify-start space-x-2 px-2 py-2",
                 location === item.path && "bg-muted"
               )}
               aria-label={t(item.labelKey)}
             >
               {item.icon}
-              <span className="ml-2 text-sm font-medium">{t(item.labelKey)}</span>
             </Link>
           ))}
         </div>
 
-        <div className="flex-none flex items-center space-x-4">
+        <div className="flex-none flex items-center space-x-4 ml-10">
           <button
             onClick={toggleTheme}
             className="h-8 w-8 flex items-center justify-center rounded-full hover:bg-muted transition-colors"
