@@ -7,7 +7,7 @@ import {
   Cog6ToothIcon, 
   ArrowDownTrayIcon
 } from "@heroicons/react/24/outline";
-import SpeechParticles from "@/components/particle-animations/SpeechParticles";
+import SpeechAnimation from "@/components/animations/SpeechAnimation";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Slider } from "@/components/ui/slider";
@@ -117,7 +117,7 @@ export default function TextToSpeech() {
     >
       <div className="text-center mb-8 relative">
         <div className="mx-auto mb-4 bg-muted rounded-xl p-4 inline-block relative overflow-hidden h-[160px] w-[160px]">
-          <SpeechParticles isActive={true} intensity="medium" />
+          <SpeechAnimation isActive={true} intensity="medium" />
           <div className="absolute inset-0 flex items-center justify-center">
             <SpeakerWaveIcon className="h-12 w-12 text-primary z-10" />
           </div>

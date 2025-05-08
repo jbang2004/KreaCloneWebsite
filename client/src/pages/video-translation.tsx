@@ -14,7 +14,7 @@ import {
   DocumentCheckIcon, 
   SpeakerWaveIcon
 } from "@heroicons/react/24/outline";
-import VideoParticles from "@/components/particle-animations/VideoParticles";
+import VideoAnimation from "@/components/animations/VideoAnimation";
 import { Button } from "@/components/ui/button";
 import { useLanguage } from "@/hooks/use-language";
 import { useTheme } from "@/hooks/use-theme";
@@ -173,7 +173,7 @@ export default function VideoTranslation() {
     >
       <div className="text-center mb-8 relative">
         <div className="mx-auto mb-4 bg-muted rounded-xl p-4 inline-block relative overflow-hidden h-[160px] w-[160px]">
-          <VideoParticles isActive={true} intensity="medium" />
+          <VideoAnimation isActive={true} intensity="medium" />
           <div className="absolute inset-0 flex items-center justify-center">
             <FilmIcon className="h-12 w-12 text-primary z-10" />
           </div>
