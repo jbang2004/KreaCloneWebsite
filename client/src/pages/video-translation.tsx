@@ -1,9 +1,20 @@
 import { useState, useRef } from "react";
 import { motion } from "framer-motion";
 import { 
-  Languages, Upload, FolderOpen, Video, ArrowRight, Play, Pause, 
-  Edit, Download, Clock, Save, Volume2
-} from "lucide-react";
+  LanguageIcon, 
+  ArrowUpTrayIcon, 
+  FolderOpenIcon, 
+  FilmIcon, 
+  ArrowRightIcon, 
+  PlayIcon, 
+  PauseIcon, 
+  PencilSquareIcon, 
+  ArrowDownTrayIcon, 
+  ClockIcon, 
+  DocumentCheckIcon, 
+  SpeakerWaveIcon
+} from "@heroicons/react/24/outline";
+import LottieAnimation from "@/components/lottie-animation";
 import { Button } from "@/components/ui/button";
 import { useLanguage } from "@/hooks/use-language";
 import { useTheme } from "@/hooks/use-theme";
@@ -161,20 +172,8 @@ export default function VideoTranslation() {
       transition={{ duration: 0.5 }}
     >
       <div className="text-center mb-8">
-        <div className="mx-auto mb-4 bg-muted rounded-xl p-6 inline-block">
-          <svg xmlns="http://www.w3.org/2000/svg" className="h-12 w-12 text-foreground/70" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
-            <rect x="2" y="2" width="20" height="20" rx="2.18" ry="2.18"></rect>
-            <line x1="2" y1="10" x2="22" y2="10"></line>
-            <line x1="12" y1="2" x2="12" y2="22"></line>
-            <path d="M17 4 L17 2"></path>
-            <path d="M19 4 L19 2"></path>
-            <path d="M17 20 L17 22"></path>
-            <path d="M19 20 L19 22"></path>
-            <path d="M7 4 L7 2"></path>
-            <path d="M5 4 L5 2"></path>
-            <path d="M7 20 L7 22"></path>
-            <path d="M5 20 L5 22"></path>
-          </svg>
+        <div className="mx-auto mb-4 bg-muted rounded-xl p-4 inline-block">
+          <LottieAnimation type="video" width={100} height={100} />
         </div>
         <h1 className="text-2xl font-bold mb-2">{title}</h1>
         <p className="text-muted-foreground max-w-lg mx-auto">
@@ -186,7 +185,7 @@ export default function VideoTranslation() {
         <div className="bg-card p-4 rounded-xl border border-border mb-6">
           <div className="flex items-center justify-between mb-2">
             <div className="text-sm font-medium">{fromLanguageLabel}</div>
-            <ArrowRight className="h-4 w-4 text-muted-foreground mx-2" />
+            <ArrowRightIcon className="h-4 w-4 text-muted-foreground mx-2" />
             <div className="text-sm font-medium">{toLanguageLabel}</div>
           </div>
           
@@ -239,7 +238,7 @@ export default function VideoTranslation() {
             size="lg"
             onClick={handleUploadClick}
           >
-            <Upload className="h-5 w-5 mr-2" />
+            <ArrowUpTrayIcon className="h-5 w-5 mr-2" />
             {uploadVideoLabel}
           </Button>
           
@@ -248,7 +247,7 @@ export default function VideoTranslation() {
             className="w-full py-3 px-4 rounded-lg transition-colors flex items-center justify-center"
             size="lg"
           >
-            <FolderOpen className="h-5 w-5 mr-2" />
+            <FolderOpenIcon className="h-5 w-5 mr-2" />
             {selectFromAssetsLabel}
           </Button>
         </div>
@@ -263,7 +262,7 @@ export default function VideoTranslation() {
         >
           <div className="flex items-center gap-3">
             <div className="bg-muted rounded-lg h-16 w-16 flex items-center justify-center">
-              <Video className="h-6 w-6 text-foreground/70" />
+              <FilmIcon className="h-6 w-6 text-foreground/70" />
             </div>
             <div className="flex-1">
               <h3 className="font-medium text-sm">{file.name}</h3>
