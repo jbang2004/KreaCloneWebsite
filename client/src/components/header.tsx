@@ -67,8 +67,8 @@ export default function Header() {
   const closeMenu = () => setIsOpen(false);
 
   return (
-    <header className="sticky top-0 z-50 bg-background/80 backdrop-blur-md px-4">
-      <div className="max-w-7xl mx-auto flex items-center justify-between h-16">
+    <header className="sticky top-0 z-50 bg-background px-6 py-3">
+      <div className="max-w-7xl mx-auto flex items-center justify-between h-10">
         {/* Logo */}
         <div className="flex items-center">
           <Link href="/" onClick={closeMenu} className="flex items-center">
@@ -78,15 +78,18 @@ export default function Header() {
           </Link>
         </div>
 
-        {/* Navigation - Center aligned like Krea.ai */}
-        <div className="hidden md:flex items-center bg-muted/70 rounded-full px-1.5 py-1.5 absolute left-1/2 transform -translate-x-1/2">
+        {/* Navigation - Floating center menu like Krea.ai */}
+        <div 
+          className="hidden md:flex items-center bg-muted/70 rounded-full px-1.5 py-1.5 absolute left-1/2 transform -translate-x-1/2 shadow-sm"
+          style={{ backdropFilter: 'blur(8px)' }}
+        >
           {NavItems.map((item) => (
             <Link 
               key={item.path} 
               href={item.path}
               onClick={closeMenu}
               className={cn(
-                "h-9 w-9 flex items-center justify-center rounded-full transition-colors",
+                "h-9 w-9 flex items-center justify-center rounded-full transition-colors mx-0.5",
                 location === item.path ? "bg-background shadow-sm" : "hover:bg-background/50"
               )}
               aria-label={t(item.labelKey)}
@@ -107,11 +110,11 @@ export default function Header() {
           </button>
         )}
 
-        {/* Right side menu */}
-        <div className="flex items-center space-x-4">
+        {/* Right side menu - Floating buttons like Krea.ai */}
+        <div className="flex items-center space-x-3">
           <button
             onClick={toggleTheme}
-            className="h-8 w-8 flex items-center justify-center rounded-full hover:bg-muted transition-colors"
+            className="hidden md:flex h-8 w-8 items-center justify-center rounded-full hover:bg-muted transition-colors"
             aria-label={theme === "dark" ? t("lightMode") : t("darkMode")}
           >
             {theme === "dark" ? <SunIcon className="h-5 w-5" /> : <MoonIcon className="h-5 w-5" />}
@@ -120,7 +123,7 @@ export default function Header() {
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <button 
-                className="h-8 w-8 flex items-center justify-center rounded-full hover:bg-muted transition-colors"
+                className="hidden md:flex h-8 w-8 items-center justify-center rounded-full hover:bg-muted transition-colors"
                 aria-label={t("switchLanguage")}
               >
                 <GlobeAltIcon className="h-5 w-5" />
@@ -140,13 +143,19 @@ export default function Header() {
             </DropdownMenuContent>
           </DropdownMenu>
 
-          <Link href="/pricing" className="hidden md:block text-sm font-medium hover:text-primary transition-colors">
+          {/* Floating button for Pricing */}
+          <Link 
+            href="/pricing" 
+            className="hidden md:block py-2 px-4 rounded-full bg-gray-200 dark:bg-gray-700 text-sm font-medium hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors"
+          >
             {t("pricing")}
           </Link>
-          <Link href="/auth" className="hidden md:block text-sm font-medium hover:text-primary transition-colors">
-            {t("logIn")}
-          </Link>
-          <Link href="/auth" className="text-sm font-medium bg-primary text-primary-foreground px-4 py-2 rounded-full hover:bg-primary/90 transition-colors">
+          
+          {/* Floating button for Sign Up */}
+          <Link 
+            href="/auth" 
+            className="py-2 px-4 rounded-full bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium transition-colors"
+          >
             {t("signUp")}
           </Link>
         </div>
