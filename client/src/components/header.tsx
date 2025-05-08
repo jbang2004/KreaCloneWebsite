@@ -54,16 +54,6 @@ const NavItems: NavItem[] = [
     labelKey: "videoTranslation",
     icon: <FilmIcon className="h-5 w-5" />,
   },
-  {
-    path: "/image",
-    labelKey: "image",
-    icon: <PhotoIcon className="h-5 w-5" />,
-  },
-  {
-    path: "/enhancer", 
-    labelKey: "enhancer",
-    icon: <AdjustmentsHorizontalIcon className="h-5 w-5" />,
-  },
 ];
 
 export default function Header() {
@@ -89,7 +79,7 @@ export default function Header() {
         </div>
 
         {/* Navigation - Center aligned like Krea.ai */}
-        <div className="hidden md:flex items-center bg-muted/70 rounded-full px-1.5 py-1.5 mx-4">
+        <div className="hidden md:flex items-center bg-muted/70 rounded-full px-1.5 py-1.5 absolute left-1/2 transform -translate-x-1/2">
           {NavItems.map((item) => (
             <Link 
               key={item.path} 
