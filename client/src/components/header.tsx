@@ -9,6 +9,9 @@ import {
   MicrophoneIcon,
   SpeakerWaveIcon,
   FilmIcon,
+  PhotoIcon,
+  AdjustmentsHorizontalIcon,
+  PaintBrushIcon,
   SunIcon,
   MoonIcon,
   GlobeAltIcon,
@@ -34,22 +37,32 @@ const NavItems: NavItem[] = [
   {
     path: "/",
     labelKey: "home",
-    icon: <HomeIcon className="h-6 w-6" />,
+    icon: <HomeIcon className="h-5 w-5" />,
   },
   {
     path: "/audio-transcription",
     labelKey: "audioTranscription",
-    icon: <MicrophoneIcon className="h-6 w-6" />,
+    icon: <MicrophoneIcon className="h-5 w-5" />,
   },
   {
     path: "/text-to-speech",
     labelKey: "textToSpeech",
-    icon: <SpeakerWaveIcon className="h-6 w-6" />,
+    icon: <SpeakerWaveIcon className="h-5 w-5" />,
   },
   {
     path: "/video-translation",
     labelKey: "videoTranslation",
-    icon: <FilmIcon className="h-6 w-6" />,
+    icon: <FilmIcon className="h-5 w-5" />,
+  },
+  {
+    path: "/image",
+    labelKey: "image",
+    icon: <PhotoIcon className="h-5 w-5" />,
+  },
+  {
+    path: "/enhancer", 
+    labelKey: "enhancer",
+    icon: <AdjustmentsHorizontalIcon className="h-5 w-5" />,
   },
 ];
 
@@ -64,39 +77,27 @@ export default function Header() {
   const closeMenu = () => setIsOpen(false);
 
   return (
-    <header className="sticky top-0 z-50 bg-background/80 backdrop-blur-md border-b border-border px-4">
-      <div className="max-w-7xl mx-auto flex items-center h-16">
-        <div className="flex-none flex items-center w-[160px]">
+    <header className="sticky top-0 z-50 bg-background/80 backdrop-blur-md px-4">
+      <div className="max-w-7xl mx-auto flex items-center justify-between h-16">
+        {/* Logo */}
+        <div className="flex items-center">
           <Link href="/" onClick={closeMenu} className="flex items-center">
             <svg className="w-7 h-7" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
               <rect width="24" height="24" rx="4" fill={theme === 'dark' ? '#FFFFFF' : '#000000'} />
             </svg>
           </Link>
-
-          {isMobile && (
-            <button 
-              className="h-10 w-10 ml-4 flex items-center justify-center rounded-full hover:bg-muted transition-colors md:hidden"
-              onClick={toggleMenu}
-              aria-label="Toggle menu"
-            >
-              {isOpen ? <XMarkIcon className="h-5 w-5" /> : <Bars3Icon className="h-5 w-5" />}
-            </button>
-          )}
         </div>
 
-        <div className={cn(
-          "hidden md:flex flex-1 items-center justify-center space-x-10",
-          isMobile && isOpen && "absolute top-16 left-0 right-0 flex flex-col items-start p-4 bg-background border-b border-border space-y-2 space-x-0"
-        )}>
+        {/* Navigation - Center aligned like Krea.ai */}
+        <div className="hidden md:flex items-center bg-muted/70 rounded-full px-1.5 py-1.5 mx-4">
           {NavItems.map((item) => (
             <Link 
               key={item.path} 
               href={item.path}
               onClick={closeMenu}
               className={cn(
-                "h-10 w-10 flex items-center justify-center rounded-full hover:bg-muted transition-colors",
-                isMobile && isOpen && "w-full justify-start space-x-2 px-2 py-2",
-                location === item.path && "bg-muted"
+                "h-9 w-9 flex items-center justify-center rounded-full transition-colors",
+                location === item.path ? "bg-background shadow-sm" : "hover:bg-background/50"
               )}
               aria-label={t(item.labelKey)}
             >
@@ -104,8 +105,20 @@ export default function Header() {
             </Link>
           ))}
         </div>
+        
+        {/* Mobile menu button */}
+        {isMobile && (
+          <button 
+            className="h-9 w-9 ml-2 flex items-center justify-center rounded-full hover:bg-muted transition-colors md:hidden"
+            onClick={toggleMenu}
+            aria-label="Toggle menu"
+          >
+            {isOpen ? <XMarkIcon className="h-5 w-5" /> : <Bars3Icon className="h-5 w-5" />}
+          </button>
+        )}
 
-        <div className="flex-none flex items-center space-x-4 w-[160px] justify-end">
+        {/* Right side menu */}
+        <div className="flex items-center space-x-4">
           <button
             onClick={toggleTheme}
             className="h-8 w-8 flex items-center justify-center rounded-full hover:bg-muted transition-colors"
@@ -149,8 +162,9 @@ export default function Header() {
         </div>
       </div>
       
+      {/* Mobile Menu */}
       {isMobile && isOpen && (
-        <div className="md:hidden absolute top-16 left-0 right-0 bg-background border-b border-border p-4 space-y-2">
+        <div className="md:hidden absolute top-16 left-0 right-0 bg-background border-b border-border p-4 space-y-2 z-50">
           {NavItems.map((item) => (
             <Link 
               key={item.path} 

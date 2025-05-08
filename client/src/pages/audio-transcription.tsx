@@ -9,6 +9,7 @@ import {
   FolderOpenIcon,
   MusicalNoteIcon
 } from "@heroicons/react/24/outline";
+import LottieAnimation from "@/components/lottie-animation";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
 import { Badge } from "@/components/ui/badge";
