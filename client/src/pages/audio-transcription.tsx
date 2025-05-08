@@ -9,7 +9,7 @@ import {
   FolderOpenIcon,
   MusicalNoteIcon
 } from "@heroicons/react/24/outline";
-import AudioAnimation from "@/components/animations/AudioAnimation";
+import LottieAnimation from "@/components/lottie-animation";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
 import { Badge } from "@/components/ui/badge";
@@ -113,12 +113,9 @@ export default function AudioTranscription() {
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.5 }}
     >
-      <div className="text-center mb-8 relative">
-        <div className="mx-auto mb-4 bg-muted rounded-xl p-4 inline-block relative overflow-hidden h-[160px] w-[160px]">
-          <AudioAnimation isActive={true} intensity="medium" />
-          <div className="absolute inset-0 flex items-center justify-center">
-            <MicrophoneIcon className="h-12 w-12 text-primary z-10" />
-          </div>
+      <div className="text-center mb-8">
+        <div className="mx-auto mb-4 bg-muted rounded-xl p-4 inline-block">
+          <LottieAnimation type="microphone" width={100} height={100} />
         </div>
         <h1 className="text-2xl font-bold mb-2">{title}</h1>
         <p className="text-muted-foreground max-w-lg mx-auto">
