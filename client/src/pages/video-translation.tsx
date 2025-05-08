@@ -323,7 +323,7 @@ export default function VideoTranslation() {
                     className="absolute w-16 h-16 rounded-full bg-background/20 hover:bg-background/30 text-white"
                     onClick={togglePlayback}
                   >
-                    {isPlaying ? <Pause size={32} /> : <Play size={32} />}
+                    {isPlaying ? <PauseIcon className="h-8 w-8" /> : <PlayIcon className="h-8 w-8" />}
                   </Button>
                 </div>
                 <div className="absolute bottom-4 left-0 right-0 px-4 text-center">
@@ -335,12 +335,12 @@ export default function VideoTranslation() {
               
               <div className="flex items-center justify-between mb-4">
                 <Button variant="outline" size="sm">
-                  <Volume2 className="mr-2 h-4 w-4" />
+                  <SpeakerWaveIcon className="mr-2 h-4 w-4" />
                   {language === "zh" ? "生成配音" : "Generate Voiceover"}
                 </Button>
                 <div className="flex space-x-2">
                   <Button variant="outline" size="sm">
-                    <Download className="mr-2 h-4 w-4" />
+                    <ArrowDownTrayIcon className="mr-2 h-4 w-4" />
                     {language === "zh" ? "下载视频" : "Download Video"}
                   </Button>
                 </div>
@@ -359,11 +359,11 @@ export default function VideoTranslation() {
                 </h3>
                 <div className="flex space-x-2">
                   <Button size="sm" variant="outline">
-                    <Save className="mr-2 h-4 w-4" />
+                    <DocumentCheckIcon className="mr-2 h-4 w-4" />
                     {language === "zh" ? "保存全部" : "Save All"}
                   </Button>
                   <Button size="sm" variant="outline">
-                    <Download className="mr-2 h-4 w-4" />
+                    <ArrowDownTrayIcon className="mr-2 h-4 w-4" />
                     {language === "zh" ? "下载SRT" : "Download SRT"}
                   </Button>
                 </div>
