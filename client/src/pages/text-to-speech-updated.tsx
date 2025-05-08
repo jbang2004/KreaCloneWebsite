@@ -172,7 +172,7 @@ export default function TextToSpeech() {
                           {voice.avatar ? (
                             <img src={voice.avatar} alt={voice.name} className="w-full h-full object-cover" />
                           ) : (
-                            <User className="w-full h-full p-4 text-muted-foreground" />
+                            <UserIcon className="w-full h-full p-4 text-muted-foreground" />
                           )}
                         </div>
                         <p className="text-sm font-medium truncate">{voice.name}</p>
@@ -209,7 +209,7 @@ export default function TextToSpeech() {
                           {voice.avatar ? (
                             <img src={voice.avatar} alt={voice.name} className="w-full h-full object-cover" />
                           ) : (
-                            <User className="w-full h-full p-4 text-muted-foreground" />
+                            <UserIcon className="w-full h-full p-4 text-muted-foreground" />
                           )}
                         </div>
                         <p className="text-sm font-medium truncate">{voice.name}</p>
@@ -242,7 +242,7 @@ export default function TextToSpeech() {
                   className="w-12 h-12 text-primary"
                   onClick={togglePlayback}
                 >
-                  <PlayCircle size={32} />
+                  <PlayIcon className="h-8 w-8" />
                 </Button>
                 <div className="ml-2">
                   <h3 className="font-medium">
@@ -254,13 +254,13 @@ export default function TextToSpeech() {
                 </div>
               </div>
               <Button variant="outline" size="icon">
-                <Download size={18} />
+                <ArrowDownTrayIcon className="h-5 w-5" />
                 <span className="sr-only">{downloadText}</span>
               </Button>
             </div>
             
             <div className="w-full h-16 bg-muted rounded flex items-center justify-center">
-              <Volume2 className="text-muted-foreground" />
+              <SpeakerWaveIcon className="h-5 w-5 text-muted-foreground" />
               <span className="text-sm text-muted-foreground ml-2">
                 {isPlaying 
                   ? (language === "zh" ? "播放中..." : "Playing...") 

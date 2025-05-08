@@ -114,8 +114,8 @@ export default function AudioTranscription() {
       transition={{ duration: 0.5 }}
     >
       <div className="text-center mb-8">
-        <div className="mx-auto mb-4 bg-muted rounded-xl p-6 inline-block">
-          <MicrophoneIcon className="h-12 w-12 text-foreground/70" />
+        <div className="mx-auto mb-4 bg-muted rounded-xl p-4 inline-block">
+          <LottieAnimation type="microphone" width={100} height={100} />
         </div>
         <h1 className="text-2xl font-bold mb-2">{title}</h1>
         <p className="text-muted-foreground max-w-lg mx-auto">

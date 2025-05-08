@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from 'react';
-import Lottie from 'lottie-react';
+import Lottie, { LottieRefCurrentProps } from 'lottie-react';
 import { cn } from '@/lib/utils';
 
 // Common animation URLs for our app features
@@ -37,7 +37,7 @@ export default function LottieAnimation({
   onComplete,
 }: LottieAnimationProps) {
   const [animationData, setAnimationData] = useState<object | null>(null);
-  const lottieRef = useRef<any>(null);
+  const lottieRef = useRef<LottieRefCurrentProps | null>(null);
 
   useEffect(() => {
     // Dynamically fetch the animation JSON
@@ -60,7 +60,7 @@ export default function LottieAnimation({
     if (lottieRef.current && speed !== 1) {
       lottieRef.current.setSpeed(speed);
     }
-  }, [lottieRef, speed]);
+  }, [speed]);
 
   if (!animationData) {
     return <div className={cn("animate-pulse bg-muted rounded-xl", className)} style={{ width, height }} />;
