@@ -4,7 +4,7 @@ import { QueryClientProvider } from "@tanstack/react-query";
 import { queryClient } from "./lib/queryClient";
 import { Toaster } from "@/components/ui/toaster";
 import Header from "@/components/header";
-import PageTransition from "@/components/page-transition";
+import PageTransition from "@/components/PageTransition";
 import { lazy, Suspense } from "react";
 import { LanguageProvider } from "@/hooks/use-language";
 import { AuthProvider } from "@/hooks/use-auth";
