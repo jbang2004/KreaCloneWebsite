@@ -9,7 +9,7 @@ import {
   FolderOpenIcon,
   MusicalNoteIcon
 } from "@heroicons/react/24/outline";
-import AudioParticles from "@/components/particle-animations/AudioParticles";
+import AudioAnimation from "@/components/animations/AudioAnimation";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
 import { Badge } from "@/components/ui/badge";
