@@ -84,7 +84,7 @@ export default function Header() {
 
         {/* Navigation - Floating center menu like Krea.ai */}
         <div 
-          className="hidden md:flex items-center bg-gray-100/70 dark:bg-gray-700/70 rounded-full px-1.5 py-1.5 absolute left-1/2 transform -translate-x-1/2 shadow-sm backdrop-blur-md"
+          className="hidden md:flex items-center bg-gray-100/80 dark:bg-gray-700/80 rounded-full px-1.5 py-1.5 absolute left-1/2 transform -translate-x-1/2 shadow-sm backdrop-blur-md"
         >
           {NavItems.map((item) => (
             <div key={item.path} className="relative group">
@@ -102,7 +102,7 @@ export default function Header() {
                 {item.icon}
               </Link>
               {/* Tooltip that appears on hover */}
-              <div className="absolute opacity-0 group-hover:opacity-100 transition-opacity duration-200 ease-in-out -bottom-8 left-1/2 transform -translate-x-1/2 px-2 py-1 bg-white/80 dark:bg-gray-800/80 text-xs font-medium rounded-md shadow-sm whitespace-nowrap backdrop-blur-md">
+              <div className="absolute opacity-0 group-hover:opacity-100 transition-all duration-200 ease-in-out -bottom-8 left-1/2 transform -translate-x-1/2 px-2.5 py-1.5 bg-white/80 dark:bg-gray-800/80 text-xs font-medium rounded-md shadow-sm whitespace-nowrap backdrop-blur-md scale-95 group-hover:scale-100">
                 {t(item.labelKey)}
               </div>
             </div>

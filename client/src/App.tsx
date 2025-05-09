@@ -5,7 +5,7 @@ import { queryClient } from "./lib/queryClient";
 import { Toaster } from "@/components/ui/toaster";
 import Header from "@/components/header";
 import PageTransition from "@/components/page-transition";
-import { lazy, Suspense } from "react";
+import { lazy, Suspense, useRef } from "react";
 import { LanguageProvider } from "@/hooks/use-language";
 import { AuthProvider } from "@/hooks/use-auth";
 import { ThemeProvider } from "@/hooks/use-theme";
@@ -25,17 +25,21 @@ function App() {
   const [location] = useLocation();
   const [previousLocation, setPreviousLocation] = useState("");
   
-  // Track previous location for transition direction
+  // Use refs to capture location changes for transition direction
+  const prevLocationRef = useRef(location);
+  
   useEffect(() => {
-    // When the location changes, store the previous one
-    if (previousLocation !== location) {
+    // Only update the previous location when the current location actually changes
+    if (location !== prevLocationRef.current) {
+      setPreviousLocation(prevLocationRef.current);
+      // Update the ref after animation completes
       const timeoutId = setTimeout(() => {
-        setPreviousLocation(location);
-      }, 600); // A little bit longer than the animation duration
+        prevLocationRef.current = location;
+      }, 400); // Slightly longer than animation duration
       
       return () => clearTimeout(timeoutId);
     }
-  }, [location, previousLocation]);
+  }, [location]);
 
   return (
     <QueryClientProvider client={queryClient}>
