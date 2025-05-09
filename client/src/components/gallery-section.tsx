@@ -41,7 +41,7 @@ export default function GallerySection({ items }: GallerySectionProps) {
           <Link 
             key={item.id} 
             href={item.link}
-            className="block"
+            className="block gallery-item"
             onMouseEnter={() => setHoveredIndex(index)}
             onMouseLeave={() => setHoveredIndex(null)}
           >

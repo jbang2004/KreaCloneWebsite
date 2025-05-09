@@ -40,38 +40,67 @@ export default function Home() {
     }
     
     if (generateRef.current) {
-      // Get all cards for staggered animation
-      const cards = generateRef.current.querySelectorAll('.generate-card');
-      
+      // Animate the section container first
       tl.fromTo(generateRef.current,
         { y: 20, opacity: 0 },
         { y: 0, opacity: 1, duration: 0.5 },
         "-=0.2"
       );
       
-      // iOS-style subtle card animations
-      tl.fromTo(cards,
-        { y: 15, opacity: 0, scale: 0.97 },
-        { y: 0, opacity: 1, scale: 1, duration: 0.4, stagger: 0.05 },
-        "-=0.3"
-      );
+      // Wait until the DOM is fully updated before querying elements
+      setTimeout(() => {
+        // Get all cards for staggered animation
+        const cards = generateRef.current?.querySelectorAll('.generate-card');
+        
+        // Only animate if we found cards
+        if (cards && cards.length > 0) {
+          // iOS-style subtle card animations
+          gsap.fromTo(cards,
+            { y: 15, opacity: 0, scale: 0.97 },
+            { 
+              y: 0, 
+              opacity: 1, 
+              scale: 1, 
+              duration: 0.4, 
+              stagger: 0.05,
+              ease: "power2.out",
+              clearProps: "all"
+            }
+          );
+        }
+      }, 100);
     }
     
     if (galleryRef.current) {
-      const galleryItems = galleryRef.current.querySelectorAll('.gallery-item');
-      
+      // Animate the gallery section container
       tl.fromTo(galleryRef.current,
         { y: 20, opacity: 0 },
         { y: 0, opacity: 1, duration: 0.5 },
         "-=0.2"
       );
       
-      // Subtle card animations similar to iOS app animations
-      tl.fromTo(galleryItems,
-        { y: 15, opacity: 0, scale: 0.97 },
-        { y: 0, opacity: 1, scale: 1, duration: 0.4, stagger: 0.05 },
-        "-=0.3"
-      );
+      // Wait until the DOM is fully updated
+      setTimeout(() => {
+        // Get all gallery items for staggered animation
+        const galleryItems = galleryRef.current?.querySelectorAll('.gallery-item');
+        
+        // Only animate if we found items
+        if (galleryItems && galleryItems.length > 0) {
+          // Subtle iOS-style animations
+          gsap.fromTo(galleryItems,
+            { y: 15, opacity: 0, scale: 0.97 },
+            { 
+              y: 0, 
+              opacity: 1, 
+              scale: 1, 
+              duration: 0.4, 
+              stagger: 0.05,
+              ease: "power2.out",
+              clearProps: "all"
+            }
+          );
+        }
+      }, 200);
     }
     
     return () => {
