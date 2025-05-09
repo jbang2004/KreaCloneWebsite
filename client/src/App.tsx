@@ -37,7 +37,7 @@ function App() {
             <div className="min-h-screen bg-background text-foreground">
               <Header />
               
-              <main className="max-w-7xl mx-auto px-4 py-6">
+              <main className="max-w-7xl mx-auto px-4 py-6 overflow-hidden">
                 <PageTransition location={location} previousLocation={previousLocation}>
                   <Switch>
                     <Route path="/" component={Home} />

@@ -12,23 +12,15 @@ export default function PageTransition({ children, location, previousLocation }:
     <AnimatePresence mode="wait">
       <motion.div
         key={location}
-        initial={{ 
-          opacity: 0, 
-          y: previousLocation === "/" ? 20 : -20 
-        }}
-        animate={{ 
-          opacity: 1, 
-          y: 0 
-        }}
-        exit={{ 
-          opacity: 0, 
-          y: location === "/" ? -20 : 20 
-        }}
+        initial={{ opacity: 0, y: 5 }}
+        animate={{ opacity: 1, y: 0 }}
+        exit={{ opacity: 0, y: 5 }}
         transition={{ 
-          type: "spring", 
-          stiffness: 300, 
-          damping: 30 
+          type: "tween", 
+          duration: 0.3,
+          ease: "easeInOut"
         }}
+        className="w-full"
       >
         {children}
       </motion.div>
