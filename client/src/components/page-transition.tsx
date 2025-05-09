@@ -45,23 +45,12 @@ export default function PageTransition({ children, location, previousLocation }:
       visibility: "visible"
     });
     
-    // New iOS-style zoom transition (quick backward exit, forward entrance)
-    tl.fromTo(
-      pageRef.current,
-      { 
-        opacity: 0,
-        scale: direction > 0 ? 0.9 : 1.1, // More pronounced scale based on direction
-        z: direction > 0 ? -70 : 70, // More pronounced Z depth for 3D effect
-        transformOrigin: "center center" // Ensures proper scaling from center
-      },
-      { 
-        opacity: 1,
-        scale: 1,
-        z: 0,
-        duration: 0.25, // Faster iOS-like transition
-        ease: "power1.out", // Smoother easing
-      }
-    );
+    // No page transition animation, just make the page visible immediately
+    tl.set(pageRef.current, { 
+      opacity: 1,
+      scale: 1,
+      clearProps: "all"
+    });
     
     // Wait for the DOM to fully update before animating children
     setTimeout(() => {
@@ -174,12 +163,10 @@ export default function PageTransition({ children, location, previousLocation }:
       ref={pageRef} 
       className="min-h-screen w-full overflow-x-hidden"
       style={{ 
-        opacity: isInitialRender ? 1 : shouldAnimate ? 0 : 1,
-        perspective: '1000px',
-        transformStyle: 'preserve-3d'
+        opacity: isInitialRender ? 1 : shouldAnimate ? 0 : 1
       }}
     >
-      <div ref={childrenRef} className="w-full" style={{ transformStyle: 'preserve-3d' }}>
+      <div ref={childrenRef} className="w-full">
         {children}
       </div>
     </div>
