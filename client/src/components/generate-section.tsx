@@ -17,7 +17,7 @@ function GenerateCard({ title, description, icon, link, isNew }: GenerateCardPro
   const { language } = useLanguage();
   
   return (
-    <div className="generate-card bg-card p-4 rounded-xl shadow-sm border border-border hover:shadow-md transition-shadow">
+    <div className="bg-card p-4 rounded-xl shadow-sm border border-border hover:shadow-md transition-shadow">
       <div className="flex items-start">
         <div className="w-10 h-10 rounded bg-blue-100 flex items-center justify-center text-blue-500 mr-3">
           {icon}

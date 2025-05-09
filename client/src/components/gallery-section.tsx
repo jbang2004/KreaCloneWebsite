@@ -41,7 +41,7 @@ export default function GallerySection({ items }: GallerySectionProps) {
           <Link 
             key={item.id} 
             href={item.link}
-            className="block gallery-item"
+            className="block"
             onMouseEnter={() => setHoveredIndex(index)}
             onMouseLeave={() => setHoveredIndex(null)}
           >
@@ -56,15 +56,14 @@ export default function GallerySection({ items }: GallerySectionProps) {
                 }}
               />
               
-              {/* Hover overlay with title - only shows on hover */}
+              {/* Hover overlay with title */}
               <motion.div 
-                className="absolute inset-0 bg-black/30 flex flex-col justify-end p-3"
+                className="absolute inset-0 bg-black/40 flex flex-col justify-end p-3"
                 initial={{ opacity: 0 }}
                 animate={{ 
                   opacity: hoveredIndex === index ? 1 : 0,
                   transition: { duration: 0.3 }
                 }}
-                style={{ pointerEvents: hoveredIndex === index ? 'auto' : 'none' }}
               >
                 <h3 className="text-white font-medium text-sm">{item.title}</h3>
                 

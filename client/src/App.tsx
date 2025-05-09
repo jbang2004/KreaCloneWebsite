@@ -5,7 +5,7 @@ import { queryClient } from "./lib/queryClient";
 import { Toaster } from "@/components/ui/toaster";
 import Header from "@/components/header";
 import PageTransition from "@/components/page-transition";
-import { lazy, Suspense, useRef } from "react";
+import { lazy, Suspense } from "react";
 import { LanguageProvider } from "@/hooks/use-language";
 import { AuthProvider } from "@/hooks/use-auth";
 import { ThemeProvider } from "@/hooks/use-theme";
@@ -23,22 +23,10 @@ const VideoTranslation = lazy(() => import("./pages/video-translation"));
 
 function App() {
   const [location] = useLocation();
-  const [previousLocation, setPreviousLocation] = useState("");
-  
-  // Use refs to capture location changes for transition direction
-  const prevLocationRef = useRef(location);
-  
+  const [previousLocation, setPreviousLocation] = useState(location);
+
   useEffect(() => {
-    // Only update the previous location when the current location actually changes
-    if (location !== prevLocationRef.current) {
-      setPreviousLocation(prevLocationRef.current);
-      // Update the ref after animation completes
-      const timeoutId = setTimeout(() => {
-        prevLocationRef.current = location;
-      }, 400); // Slightly longer than animation duration
-      
-      return () => clearTimeout(timeoutId);
-    }
+    setPreviousLocation(location);
   }, [location]);
 
   return (
