@@ -23,11 +23,19 @@ const VideoTranslation = lazy(() => import("./pages/video-translation"));
 
 function App() {
   const [location] = useLocation();
-  const [previousLocation, setPreviousLocation] = useState(location);
-
+  const [previousLocation, setPreviousLocation] = useState("");
+  
+  // Track previous location for transition direction
   useEffect(() => {
-    setPreviousLocation(location);
-  }, [location]);
+    // When the location changes, store the previous one
+    if (previousLocation !== location) {
+      const timeoutId = setTimeout(() => {
+        setPreviousLocation(location);
+      }, 600); // A little bit longer than the animation duration
+      
+      return () => clearTimeout(timeoutId);
+    }
+  }, [location, previousLocation]);
 
   return (
     <QueryClientProvider client={queryClient}>
