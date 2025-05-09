@@ -8,6 +8,7 @@ import {
   ArrowDownTrayIcon
 } from "@heroicons/react/24/outline";
 import LottieAnimation from "@/components/lottie-animation";
+import StaggeredAnimation from "@/components/staggered-animation";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Slider } from "@/components/ui/slider";
@@ -109,12 +110,7 @@ export default function TextToSpeech() {
   const selectVoiceText = language === "zh" ? "请选择一个语音" : "Please select a voice";
 
   return (
-    <motion.div 
-      className="flex flex-col items-center justify-center py-10"
-      initial={{ opacity: 0, y: 10 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.5 }}
-    >
+    <div className="flex flex-col items-center justify-center py-10">
       <div className="text-center mb-8">
         <div className="mx-auto mb-4 bg-muted rounded-xl p-4 inline-block">
           <LottieAnimation type="speech" width={100} height={100} />
@@ -126,187 +122,189 @@ export default function TextToSpeech() {
       </div>
 
       <div className="max-w-3xl w-full mx-auto px-4">
-        <div className="w-full bg-muted p-6 rounded-xl mb-8">
-          <Textarea 
-            value={text}
-            onChange={handleTextChange}
-            placeholder={textPlaceholder}
-            className="w-full p-4 h-28 bg-card rounded-lg border border-border focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent resize-none"
-          />
-          
-          <div className="flex justify-between mt-4 items-center">
-            <div className="text-xs text-muted-foreground">
-              {characterCountText}: {text.length}
-            </div>
+        <StaggeredAnimation staggerDelay={0.1} initialY={15}>
+          <div className="w-full bg-muted p-6 rounded-xl mb-8">
+            <Textarea 
+              value={text}
+              onChange={handleTextChange}
+              placeholder={textPlaceholder}
+              className="w-full p-4 h-28 bg-card rounded-lg border border-border focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent resize-none"
+            />
             
-            <Button 
-              onClick={generateSpeech}
-              disabled={text.trim() === "" || isGenerating || !selectedVoice}
-              className="px-6 py-2 bg-primary text-primary-foreground rounded-lg hover:bg-primary/90 transition-colors"
-            >
-              {isGenerating ? processingText : generateButtonText}
-            </Button>
-          </div>
-        </div>
-
-        <div className="mb-8">
-          <h3 className="text-lg font-medium mb-4">{language === "zh" ? "选择声音" : "Select Voice"}</h3>
-          
-          {/* 分类：男声 */}
-          <div className="mb-6">
-            <h4 className="text-sm font-medium text-muted-foreground mb-3">{maleCategoryText}</h4>
-            <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
-              {voices.filter(voice => voice.gender === "male").map(voice => (
-                <TooltipProvider key={voice.id}>
-                  <Tooltip>
-                    <TooltipTrigger asChild>
-                      <div
-                        className={`cursor-pointer rounded-lg p-2 text-center transition-all ${
-                          selectedVoice === voice.id 
-                            ? "bg-primary/10 ring-2 ring-primary" 
-                            : "bg-card hover:bg-muted"
-                        }`}
-                        onClick={() => selectVoice(voice.id)}
-                      >
-                        <div className="w-16 h-16 mx-auto mb-2 rounded-full overflow-hidden bg-background">
-                          {voice.avatar ? (
-                            <img src={voice.avatar} alt={voice.name} className="w-full h-full object-cover" />
-                          ) : (
-                            <UserIcon className="w-full h-full p-4 text-muted-foreground" />
-                          )}
-                        </div>
-                        <p className="text-sm font-medium truncate">{voice.name}</p>
-                        <p className="text-xs text-muted-foreground">{voice.language}</p>
-                      </div>
-                    </TooltipTrigger>
-                    <TooltipContent>
-                      <p>{voice.name} - {voice.language}</p>
-                      <p className="text-xs text-muted-foreground">{language === "zh" ? "点击选择" : "Click to select"}</p>
-                    </TooltipContent>
-                  </Tooltip>
-                </TooltipProvider>
-              ))}
-            </div>
-          </div>
-          
-          {/* 分类：女声 */}
-          <div className="mb-6">
-            <h4 className="text-sm font-medium text-muted-foreground mb-3">{femaleCategoryText}</h4>
-            <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
-              {voices.filter(voice => voice.gender === "female").map(voice => (
-                <TooltipProvider key={voice.id}>
-                  <Tooltip>
-                    <TooltipTrigger asChild>
-                      <div
-                        className={`cursor-pointer rounded-lg p-2 text-center transition-all ${
-                          selectedVoice === voice.id 
-                            ? "bg-primary/10 ring-2 ring-primary" 
-                            : "bg-card hover:bg-muted"
-                        }`}
-                        onClick={() => selectVoice(voice.id)}
-                      >
-                        <div className="w-16 h-16 mx-auto mb-2 rounded-full overflow-hidden bg-background">
-                          {voice.avatar ? (
-                            <img src={voice.avatar} alt={voice.name} className="w-full h-full object-cover" />
-                          ) : (
-                            <UserIcon className="w-full h-full p-4 text-muted-foreground" />
-                          )}
-                        </div>
-                        <p className="text-sm font-medium truncate">{voice.name}</p>
-                        <p className="text-xs text-muted-foreground">{voice.language}</p>
-                      </div>
-                    </TooltipTrigger>
-                    <TooltipContent>
-                      <p>{voice.name} - {voice.language}</p>
-                      <p className="text-xs text-muted-foreground">{language === "zh" ? "点击选择" : "Click to select"}</p>
-                    </TooltipContent>
-                  </Tooltip>
-                </TooltipProvider>
-              ))}
-            </div>
-          </div>
-        </div>
-
-        {generatedAudioUrl && (
-          <motion.div 
-            className="bg-card p-4 rounded-lg border border-border mb-8"
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.3 }}
-          >
-            <div className="flex items-center justify-between mb-4">
-              <div className="flex items-center">
-                <Button 
-                  variant="ghost" 
-                  size="icon" 
-                  className="w-12 h-12 text-primary"
-                  onClick={togglePlayback}
-                >
-                  <PlayIcon className="h-8 w-8" />
-                </Button>
-                <div className="ml-2">
-                  <h3 className="font-medium">
-                    {voices.find(v => v.id === selectedVoice)?.name || "Audio"}
-                  </h3>
-                  <p className="text-sm text-muted-foreground">
-                    {new Date().toLocaleTimeString()}
-                  </p>
-                </div>
+            <div className="flex justify-between mt-4 items-center">
+              <div className="text-xs text-muted-foreground">
+                {characterCountText}: {text.length}
               </div>
-              <Button variant="outline" size="icon">
-                <ArrowDownTrayIcon className="h-5 w-5" />
-                <span className="sr-only">{downloadText}</span>
+              
+              <Button 
+                onClick={generateSpeech}
+                disabled={text.trim() === "" || isGenerating || !selectedVoice}
+                className="px-6 py-2 bg-primary text-primary-foreground rounded-lg hover:bg-primary/90 transition-colors"
+              >
+                {isGenerating ? processingText : generateButtonText}
               </Button>
             </div>
+          </div>
+
+          <div className="mb-8">
+            <h3 className="text-lg font-medium mb-4">{language === "zh" ? "选择声音" : "Select Voice"}</h3>
             
-            <div className="w-full h-16 bg-muted rounded flex items-center justify-center">
-              <SpeakerWaveIcon className="h-5 w-5 text-muted-foreground" />
-              <span className="text-sm text-muted-foreground ml-2">
-                {isPlaying 
-                  ? (language === "zh" ? "播放中..." : "Playing...") 
-                  : (language === "zh" ? "音频已生成" : "Audio generated")}
-              </span>
-            </div>
-          </motion.div>
-        )}
-
-        <div className="bg-card p-4 rounded-lg border border-border">
-          <h3 className="text-sm font-medium mb-3">{language === "zh" ? "语音设置" : "Voice Settings"}</h3>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <div>
-              <div className="flex justify-between items-center mb-2">
-                <label className="text-sm">{language === "zh" ? "速度" : "Speed"}</label>
-                <span className="text-xs bg-muted px-2 py-1 rounded">
-                  {speed[0].toFixed(1)}x
-                </span>
+            {/* 分类：男声 */}
+            <div className="mb-6">
+              <h4 className="text-sm font-medium text-muted-foreground mb-3">{maleCategoryText}</h4>
+              <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
+                {voices.filter(voice => voice.gender === "male").map(voice => (
+                  <TooltipProvider key={voice.id}>
+                    <Tooltip>
+                      <TooltipTrigger asChild>
+                        <div
+                          className={`cursor-pointer rounded-lg p-2 text-center transition-all ${
+                            selectedVoice === voice.id 
+                              ? "bg-primary/10 ring-2 ring-primary" 
+                              : "bg-card hover:bg-muted"
+                          }`}
+                          onClick={() => selectVoice(voice.id)}
+                        >
+                          <div className="w-16 h-16 mx-auto mb-2 rounded-full overflow-hidden bg-background">
+                            {voice.avatar ? (
+                              <img src={voice.avatar} alt={voice.name} className="w-full h-full object-cover" />
+                            ) : (
+                              <UserIcon className="w-full h-full p-4 text-muted-foreground" />
+                            )}
+                          </div>
+                          <p className="text-sm font-medium truncate">{voice.name}</p>
+                          <p className="text-xs text-muted-foreground">{voice.language}</p>
+                        </div>
+                      </TooltipTrigger>
+                      <TooltipContent>
+                        <p>{voice.name} - {voice.language}</p>
+                        <p className="text-xs text-muted-foreground">{language === "zh" ? "点击选择" : "Click to select"}</p>
+                      </TooltipContent>
+                    </Tooltip>
+                  </TooltipProvider>
+                ))}
               </div>
-              <Slider
-                value={speed}
-                min={0.5}
-                max={2}
-                step={0.1}
-                onValueChange={setSpeed}
-              />
             </div>
-
-            <div>
-              <div className="flex justify-between items-center mb-2">
-                <label className="text-sm">{language === "zh" ? "音高" : "Pitch"}</label>
-                <span className="text-xs bg-muted px-2 py-1 rounded">
-                  {pitch[0].toFixed(1)}
-                </span>
+            
+            {/* 分类：女声 */}
+            <div className="mb-6">
+              <h4 className="text-sm font-medium text-muted-foreground mb-3">{femaleCategoryText}</h4>
+              <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
+                {voices.filter(voice => voice.gender === "female").map(voice => (
+                  <TooltipProvider key={voice.id}>
+                    <Tooltip>
+                      <TooltipTrigger asChild>
+                        <div
+                          className={`cursor-pointer rounded-lg p-2 text-center transition-all ${
+                            selectedVoice === voice.id 
+                              ? "bg-primary/10 ring-2 ring-primary" 
+                              : "bg-card hover:bg-muted"
+                          }`}
+                          onClick={() => selectVoice(voice.id)}
+                        >
+                          <div className="w-16 h-16 mx-auto mb-2 rounded-full overflow-hidden bg-background">
+                            {voice.avatar ? (
+                              <img src={voice.avatar} alt={voice.name} className="w-full h-full object-cover" />
+                            ) : (
+                              <UserIcon className="w-full h-full p-4 text-muted-foreground" />
+                            )}
+                          </div>
+                          <p className="text-sm font-medium truncate">{voice.name}</p>
+                          <p className="text-xs text-muted-foreground">{voice.language}</p>
+                        </div>
+                      </TooltipTrigger>
+                      <TooltipContent>
+                        <p>{voice.name} - {voice.language}</p>
+                        <p className="text-xs text-muted-foreground">{language === "zh" ? "点击选择" : "Click to select"}</p>
+                      </TooltipContent>
+                    </Tooltip>
+                  </TooltipProvider>
+                ))}
               </div>
-              <Slider
-                value={pitch}
-                min={0.5}
-                max={2}
-                step={0.1}
-                onValueChange={setPitch}
-              />
             </div>
           </div>
-        </div>
+
+          {generatedAudioUrl && (
+            <motion.div 
+              className="bg-card p-4 rounded-lg border border-border mb-8"
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.3 }}
+            >
+              <div className="flex items-center justify-between mb-4">
+                <div className="flex items-center">
+                  <Button 
+                    variant="ghost" 
+                    size="icon" 
+                    className="w-12 h-12 text-primary"
+                    onClick={togglePlayback}
+                  >
+                    <PlayIcon className="h-8 w-8" />
+                  </Button>
+                  <div className="ml-2">
+                    <h3 className="font-medium">
+                      {voices.find(v => v.id === selectedVoice)?.name || "Audio"}
+                    </h3>
+                    <p className="text-sm text-muted-foreground">
+                      {new Date().toLocaleTimeString()}
+                    </p>
+                  </div>
+                </div>
+                <Button variant="outline" size="icon">
+                  <ArrowDownTrayIcon className="h-5 w-5" />
+                  <span className="sr-only">{downloadText}</span>
+                </Button>
+              </div>
+              
+              <div className="w-full h-16 bg-muted rounded flex items-center justify-center">
+                <SpeakerWaveIcon className="h-5 w-5 text-muted-foreground" />
+                <span className="text-sm text-muted-foreground ml-2">
+                  {isPlaying 
+                    ? (language === "zh" ? "播放中..." : "Playing...") 
+                    : (language === "zh" ? "音频已生成" : "Audio generated")}
+                </span>
+              </div>
+            </motion.div>
+          )}
+
+          <div className="bg-card p-4 rounded-lg border border-border">
+            <h3 className="text-sm font-medium mb-3">{language === "zh" ? "语音设置" : "Voice Settings"}</h3>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div>
+                <div className="flex justify-between items-center mb-2">
+                  <label className="text-sm">{language === "zh" ? "速度" : "Speed"}</label>
+                  <span className="text-xs bg-muted px-2 py-1 rounded">
+                    {speed[0].toFixed(1)}x
+                  </span>
+                </div>
+                <Slider
+                  value={speed}
+                  min={0.5}
+                  max={2}
+                  step={0.1}
+                  onValueChange={setSpeed}
+                />
+              </div>
+
+              <div>
+                <div className="flex justify-between items-center mb-2">
+                  <label className="text-sm">{language === "zh" ? "音高" : "Pitch"}</label>
+                  <span className="text-xs bg-muted px-2 py-1 rounded">
+                    {pitch[0].toFixed(1)}
+                  </span>
+                </div>
+                <Slider
+                  value={pitch}
+                  min={0.5}
+                  max={2}
+                  step={0.1}
+                  onValueChange={setPitch}
+                />
+              </div>
+            </div>
+          </div>
+        </StaggeredAnimation>
       </div>
-    </motion.div>
+    </div>
   );
 }

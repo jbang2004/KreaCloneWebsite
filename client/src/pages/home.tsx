@@ -3,6 +3,7 @@ import Carousel from "@/components/carousel";
 import GenerateSection from "@/components/generate-section";
 import GallerySection from "@/components/gallery-section";
 import { useCarouselData, useGalleryData } from "@/data/home-data";
+import StaggeredAnimation from "@/components/staggered-animation";
 
 export default function Home() {
   const { t } = useLanguage();
@@ -11,9 +12,17 @@ export default function Home() {
 
   return (
     <section>
-      <Carousel items={carouselItems} />
-      <GenerateSection />
-      <GallerySection items={galleryItems} />
+      <StaggeredAnimation staggerDelay={0.15} initialY={20}>
+        <div>
+          <Carousel items={carouselItems} />
+        </div>
+        <div className="mt-12">
+          <GenerateSection />
+        </div>
+        <div className="mt-12">
+          <GallerySection items={galleryItems} />
+        </div>
+      </StaggeredAnimation>
     </section>
   );
 }
