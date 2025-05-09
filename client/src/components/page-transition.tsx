@@ -34,8 +34,8 @@ export default function PageTransition({ children, location, previousLocation }:
     // Create a timeline for smoother animation sequencing
     const tl = gsap.timeline({
       defaults: { 
-        ease: "power2.out", 
-        duration: 0.35
+        ease: "power1.out", 
+        duration: 0.25 // Faster for iOS-like quick transitions
       }
     });
     
@@ -45,20 +45,21 @@ export default function PageTransition({ children, location, previousLocation }:
       visibility: "visible"
     });
     
-    // Run the iOS-style slide animation
+    // New iOS-style zoom transition (quick backward exit, forward entrance)
     tl.fromTo(
       pageRef.current,
       { 
-        x: direction * window.innerWidth * 0.15, // Subtler slide
         opacity: 0,
-        scale: 0.98 // Slight scaling effect
+        scale: direction > 0 ? 0.9 : 1.1, // More pronounced scale based on direction
+        z: direction > 0 ? -70 : 70, // More pronounced Z depth for 3D effect
+        transformOrigin: "center center" // Ensures proper scaling from center
       },
       { 
-        x: 0, 
         opacity: 1,
         scale: 1,
-        duration: 0.35, // Faster, iOS-like
-        ease: "power2.out", // More iOS-like easing
+        z: 0,
+        duration: 0.25, // Faster iOS-like transition
+        ease: "power1.out", // Smoother easing
       }
     );
     
@@ -75,86 +76,87 @@ export default function PageTransition({ children, location, previousLocation }:
         const containerElements = childrenRef.current.querySelectorAll('.generate-card, .gallery-item');
         const buttonElements = childrenRef.current.querySelectorAll('button, a');
         
-        // iOS-style entrance animation for headings
+        // Create a timeline for child elements with quicker animations
+        const childTl = gsap.timeline({
+          defaults: {
+            ease: "power1.out",
+            duration: 0.2, // Faster animations
+            clearProps: "all" // Clean up properties when done
+          }
+        });
+        
+        // iOS-style entrance animation for headings - quick fade in with slight scaling
         if (headingElements.length > 0) {
-          gsap.fromTo(
+          childTl.fromTo(
             headingElements,
             { 
-              y: 15, 
-              opacity: 0
+              opacity: 0,
+              scale: 0.98
             },
             { 
-              y: 0, 
-              opacity: 1, 
-              duration: 0.3, 
-              stagger: 0.03,
-              ease: "power2.out"
-            }
+              opacity: 1,
+              scale: 1,
+              stagger: 0.02
+            },
+            0
           );
         }
         
-        // Animation for paragraphs and text elements
+        // Animation for paragraphs and text elements - slightly delayed
         if (paragraphElements.length > 0) {
-          gsap.fromTo(
+          childTl.fromTo(
             paragraphElements,
             { 
-              y: 10, 
-              opacity: 0
+              opacity: 0,
+              scale: 0.98
             },
             { 
-              y: 0, 
-              opacity: 1, 
-              duration: 0.3, 
-              stagger: 0.02,
-              delay: 0.05,
-              ease: "power2.out"
-            }
+              opacity: 1,
+              scale: 1,
+              stagger: 0.015,
+              delay: 0.03
+            },
+            0.05
           );
         }
         
         // Animation for containers and cards
         if (containerElements.length > 0) {
-          gsap.fromTo(
+          childTl.fromTo(
             containerElements,
             { 
-              y: 15, 
               opacity: 0,
-              scale: 0.97
+              scale: 0.95
             },
             { 
-              y: 0, 
               opacity: 1,
-              scale: 1, 
-              duration: 0.4, 
-              stagger: 0.05,
-              delay: 0.1,
-              ease: "power2.out"
-            }
+              scale: 1,
+              stagger: 0.02,
+              delay: 0.05
+            },
+            0.1
           );
         }
         
         // Animation for buttons and links
         if (buttonElements.length > 0) {
-          gsap.fromTo(
+          childTl.fromTo(
             buttonElements,
             {
               opacity: 0,
-              y: 5,
               scale: 0.97
             },
             {
               opacity: 1,
-              y: 0,
               scale: 1,
-              duration: 0.25,
-              stagger: 0.02,
-              delay: 0.2,
-              ease: "power3.out"
-            }
+              stagger: 0.01,
+              delay: 0.05
+            },
+            0.15
           );
         }
       }
-    }, 100);
+    }, 50); // Faster start of animations
     
     // Return cleanup function
     return () => {
@@ -171,9 +173,13 @@ export default function PageTransition({ children, location, previousLocation }:
     <div 
       ref={pageRef} 
       className="min-h-screen w-full overflow-x-hidden"
-      style={{ opacity: isInitialRender ? 1 : shouldAnimate ? 0 : 1 }}
+      style={{ 
+        opacity: isInitialRender ? 1 : shouldAnimate ? 0 : 1,
+        perspective: '1000px',
+        transformStyle: 'preserve-3d'
+      }}
     >
-      <div ref={childrenRef} className="w-full">
+      <div ref={childrenRef} className="w-full" style={{ transformStyle: 'preserve-3d' }}>
         {children}
       </div>
     </div>

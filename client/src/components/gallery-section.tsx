@@ -56,14 +56,15 @@ export default function GallerySection({ items }: GallerySectionProps) {
                 }}
               />
               
-              {/* Hover overlay with title */}
+              {/* Hover overlay with title - only shows on hover */}
               <motion.div 
-                className="absolute inset-0 bg-black/40 flex flex-col justify-end p-3"
+                className="absolute inset-0 bg-black/30 flex flex-col justify-end p-3"
                 initial={{ opacity: 0 }}
                 animate={{ 
                   opacity: hoveredIndex === index ? 1 : 0,
                   transition: { duration: 0.3 }
                 }}
+                style={{ pointerEvents: hoveredIndex === index ? 'auto' : 'none' }}
               >
                 <h3 className="text-white font-medium text-sm">{item.title}</h3>
                 
