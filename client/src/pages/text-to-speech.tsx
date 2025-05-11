@@ -121,7 +121,7 @@ export default function TextToSpeech() {
         </p>
       </div>
 
-      <div className="max-w-3xl w-full mx-auto px-4">
+      <div className="w-full mx-auto px-2 sm:px-4 md:px-6 xl:container xl:mx-auto">
         <StaggeredAnimation staggerDelay={0.1} initialY={15}>
           <div className="w-full bg-muted p-6 rounded-xl mb-8">
             <Textarea 
@@ -152,7 +152,7 @@ export default function TextToSpeech() {
             {/* 分类：男声 */}
             <div className="mb-6">
               <h4 className="text-sm font-medium text-muted-foreground mb-3">{maleCategoryText}</h4>
-              <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
+              <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 xl:grid-cols-8 gap-4">
                 {voices.filter(voice => voice.gender === "male").map(voice => (
                   <TooltipProvider key={voice.id}>
                     <Tooltip>
@@ -189,7 +189,7 @@ export default function TextToSpeech() {
             {/* 分类：女声 */}
             <div className="mb-6">
               <h4 className="text-sm font-medium text-muted-foreground mb-3">{femaleCategoryText}</h4>
-              <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
+              <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 xl:grid-cols-8 gap-4">
                 {voices.filter(voice => voice.gender === "female").map(voice => (
                   <TooltipProvider key={voice.id}>
                     <Tooltip>
