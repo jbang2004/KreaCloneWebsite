@@ -5,6 +5,7 @@ import { queryClient } from "./lib/queryClient";
 import { Toaster } from "@/components/ui/toaster";
 import Header from "@/components/header";
 import PageTransition from "@/components/page-transition";
+import GlassmorphicLoader from "@/components/glassmorphic-loader";
 import { lazy, Suspense } from "react";
 import { LanguageProvider } from "@/hooks/use-language";
 import { AuthProvider } from "@/hooks/use-auth";
@@ -46,21 +47,21 @@ function App() {
                     <Route path="/login" component={AuthPage} />
                     <Route path="/audio-transcription">
                       <Suspense fallback={<div className="flex items-center justify-center h-[60vh]">
-                        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-primary"></div>
+                        <GlassmorphicLoader size="md" />
                       </div>}>
                         <AudioTranscription />
                       </Suspense>
                     </Route>
                     <Route path="/text-to-speech">
                       <Suspense fallback={<div className="flex items-center justify-center h-[60vh]">
-                        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-primary"></div>
+                        <GlassmorphicLoader size="md" />
                       </div>}>
                         <TextToSpeech />
                       </Suspense>
                     </Route>
                     <Route path="/video-translation">
                       <Suspense fallback={<div className="flex items-center justify-center h-[60vh]">
-                        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-primary"></div>
+                        <GlassmorphicLoader size="md" />
                       </div>}>
                         <VideoTranslation />
                       </Suspense>

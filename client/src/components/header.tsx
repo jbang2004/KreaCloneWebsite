@@ -103,7 +103,13 @@ export default function Header() {
                 {item.icon}
               </Link>
               {/* 悬浮时显示的标题 */}
-              <div className="absolute -bottom-8 left-1/2 transform -translate-x-1/2 opacity-0 group-hover:opacity-100 transition-opacity px-2 py-1 bg-white/80 dark:bg-gray-700/80 text-xs font-medium rounded-full backdrop-blur-sm shadow-sm whitespace-nowrap">
+              <div 
+                className="absolute -bottom-8 left-1/2 transform -translate-x-1/2 scale-90 opacity-0 
+                  group-hover:opacity-100 group-hover:scale-100 transition-all duration-200 
+                  px-3 py-1.5 bg-white/70 dark:bg-gray-800/70 text-xs font-medium 
+                  rounded-full backdrop-blur-md shadow-lg whitespace-nowrap pointer-events-none
+                  border border-white/20 dark:border-gray-700/30"
+              >
                 {t(item.labelKey)}
               </div>
             </div>
