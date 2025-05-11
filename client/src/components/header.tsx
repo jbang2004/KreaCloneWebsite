@@ -38,22 +38,22 @@ const NavItems: NavItem[] = [
   {
     path: "/",
     labelKey: "home",
-    icon: <HomeIcon className="h-5 w-5" />,
+    icon: <GlassmorphicIcon icon="home" size={22} />,
   },
   {
     path: "/audio-transcription",
     labelKey: "audioTranscription",
-    icon: <MicrophoneIcon className="h-5 w-5" />,
+    icon: <GlassmorphicIcon icon="microphone" size={22} />,
   },
   {
     path: "/text-to-speech",
     labelKey: "textToSpeech",
-    icon: <SpeakerWaveIcon className="h-5 w-5" />,
+    icon: <GlassmorphicIcon icon="speech" size={22} />,
   },
   {
     path: "/video-translation",
     labelKey: "videoTranslation",
-    icon: <FilmIcon className="h-5 w-5" />,
+    icon: <GlassmorphicIcon icon="video" size={22} />,
   },
 ];
 
@@ -128,7 +128,7 @@ export default function Header() {
             className="hidden md:flex h-9 w-9 items-center justify-center rounded-full bg-white/60 dark:bg-gray-800/60 hover:bg-white/70 dark:hover:bg-gray-700/70 transition-colors shadow-sm backdrop-blur-md"
             aria-label={theme === "dark" ? t("lightMode") : t("darkMode")}
           >
-            {theme === "dark" ? <SunIcon className="h-5 w-5" /> : <MoonIcon className="h-5 w-5" />}
+            {theme === "dark" ? <GlassmorphicIcon icon="sun" size={22} /> : <GlassmorphicIcon icon="moon" size={22} />}
           </button>
 
           <DropdownMenu>
@@ -137,7 +137,7 @@ export default function Header() {
                 className="hidden md:flex h-9 w-9 items-center justify-center rounded-full bg-white/60 dark:bg-gray-800/60 hover:bg-white/70 dark:hover:bg-gray-700/70 transition-colors shadow-sm backdrop-blur-md"
                 aria-label={t("switchLanguage")}
               >
-                <GlobeAltIcon className="h-5 w-5" />
+                <GlassmorphicIcon icon="globe" size={22} />
               </button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end">

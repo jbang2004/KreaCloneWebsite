@@ -1,7 +1,7 @@
 import React from 'react';
 
 interface GlassmorphicIconProps {
-  icon: 'home' | 'microphone' | 'speech' | 'video';
+  icon: 'home' | 'microphone' | 'speech' | 'video' | 'sun' | 'moon' | 'globe';
   className?: string;
   size?: number;
 }
