@@ -4,6 +4,7 @@ import { cn } from "@/lib/utils";
 import { useMobile } from "@/hooks/use-mobile";
 import { useLanguage, TranslationKey } from "@/hooks/use-language";
 import { useTheme } from "@/hooks/use-theme";
+import GlassmorphicIcon from "@/components/glassmorphic-icon";
 import {
   HomeIcon,
   MicrophoneIcon,
