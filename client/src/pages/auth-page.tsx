@@ -83,13 +83,14 @@ export default function AuthPage() {
   };
 
   return (
-    <div className="flex flex-col items-center justify-center min-h-[80vh] px-4">
+    <div className="flex min-h-[80vh] flex-col md:flex-row md:items-stretch">
       <motion.div 
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5 }}
-        className="w-full max-w-md"
+        className="w-full md:w-1/2 flex items-center justify-center p-4 md:p-8"
       >
+        <div className="w-full max-w-md">
         <div className="flex flex-col items-center mb-8">
           <div className="mb-6">
             <svg width="56" height="56" viewBox="0 0 56 56" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -206,6 +207,44 @@ export default function AuthPage() {
             {t("bySigningUp")} <a href="#" className="text-primary hover:underline">{t("termsOfService")}</a> &{" "}
             <a href="#" className="text-primary hover:underline">{t("privacyPolicy")}</a>.
           </p>
+        </div>
+        </div>
+      </motion.div>
+      
+      {/* Hero section */}
+      <motion.div
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ duration: 0.5, delay: 0.3 }}
+        className="hidden md:flex md:w-1/2 bg-blue-600 text-white items-center justify-center p-8"
+      >
+        <div className="max-w-md">
+          <h2 className="text-3xl font-bold mb-4">{language === "zh" ? "创意无限，AI助力" : "Unlimited Creativity with AI"}</h2>
+          <p className="text-lg opacity-90 mb-6">
+            {language === "zh" 
+              ? "使用我们强大的AI工具，轻松实现音频转录、文本转语音和视频翻译。" 
+              : "Transform your content with our powerful AI tools for audio transcription, text-to-speech, and video translation."}
+          </p>
+          <ul className="space-y-3">
+            <li className="flex items-center">
+              <svg className="h-5 w-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+              </svg>
+              {language === "zh" ? "专业音频转文字" : "Professional Audio Transcription"}
+            </li>
+            <li className="flex items-center">
+              <svg className="h-5 w-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+              </svg>
+              {language === "zh" ? "逼真的AI语音合成" : "Realistic AI Voice Synthesis"}
+            </li>
+            <li className="flex items-center">
+              <svg className="h-5 w-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+              </svg>
+              {language === "zh" ? "视频字幕翻译" : "Video Subtitle Translation"}
+            </li>
+          </ul>
         </div>
       </motion.div>
     </div>
