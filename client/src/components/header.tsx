@@ -4,7 +4,6 @@ import { cn } from "@/lib/utils";
 import { useMobile } from "@/hooks/use-mobile";
 import { useLanguage, TranslationKey } from "@/hooks/use-language";
 import { useTheme } from "@/hooks/use-theme";
-import GlassmorphicIcon from "@/components/glassmorphic-icon";
 import {
   HomeIcon,
   MicrophoneIcon,
@@ -38,22 +37,22 @@ const NavItems: NavItem[] = [
   {
     path: "/",
     labelKey: "home",
-    icon: <GlassmorphicIcon icon="home" size={22} />,
+    icon: <HomeIcon className="h-5 w-5" />,
   },
   {
     path: "/audio-transcription",
     labelKey: "audioTranscription",
-    icon: <GlassmorphicIcon icon="microphone" size={22} />,
+    icon: <MicrophoneIcon className="h-5 w-5" />,
   },
   {
     path: "/text-to-speech",
     labelKey: "textToSpeech",
-    icon: <GlassmorphicIcon icon="speech" size={22} />,
+    icon: <SpeakerWaveIcon className="h-5 w-5" />,
   },
   {
     path: "/video-translation",
     labelKey: "videoTranslation",
-    icon: <GlassmorphicIcon icon="video" size={22} />,
+    icon: <FilmIcon className="h-5 w-5" />,
   },
 ];
 
@@ -103,13 +102,7 @@ export default function Header() {
                 {item.icon}
               </Link>
               {/* 悬浮时显示的标题 */}
-              <div 
-                className="absolute -bottom-8 left-1/2 transform -translate-x-1/2 scale-90 opacity-0 
-                  group-hover:opacity-100 group-hover:scale-100 transition-all duration-200 
-                  px-3 py-1.5 bg-white/70 dark:bg-gray-800/70 text-xs font-medium 
-                  rounded-full backdrop-blur-md shadow-lg whitespace-nowrap pointer-events-none
-                  border border-white/20 dark:border-gray-700/30"
-              >
+              <div className="absolute -bottom-8 left-1/2 transform -translate-x-1/2 opacity-0 group-hover:opacity-100 transition-opacity px-2 py-1 bg-white/80 dark:bg-gray-700/80 text-xs font-medium rounded-full backdrop-blur-sm shadow-sm whitespace-nowrap">
                 {t(item.labelKey)}
               </div>
             </div>
@@ -134,7 +127,7 @@ export default function Header() {
             className="hidden md:flex h-9 w-9 items-center justify-center rounded-full bg-white/60 dark:bg-gray-800/60 hover:bg-white/70 dark:hover:bg-gray-700/70 transition-colors shadow-sm backdrop-blur-md"
             aria-label={theme === "dark" ? t("lightMode") : t("darkMode")}
           >
-            {theme === "dark" ? <GlassmorphicIcon icon="sun" size={22} /> : <GlassmorphicIcon icon="moon" size={22} />}
+            {theme === "dark" ? <SunIcon className="h-5 w-5" /> : <MoonIcon className="h-5 w-5" />}
           </button>
 
           <DropdownMenu>
@@ -143,7 +136,7 @@ export default function Header() {
                 className="hidden md:flex h-9 w-9 items-center justify-center rounded-full bg-white/60 dark:bg-gray-800/60 hover:bg-white/70 dark:hover:bg-gray-700/70 transition-colors shadow-sm backdrop-blur-md"
                 aria-label={t("switchLanguage")}
               >
-                <GlassmorphicIcon icon="globe" size={22} />
+                <GlobeAltIcon className="h-5 w-5" />
               </button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end">
