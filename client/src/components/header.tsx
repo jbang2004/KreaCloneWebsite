@@ -67,8 +67,8 @@ export default function Header() {
   const closeMenu = () => setIsOpen(false);
 
   return (
-    <header className="sticky top-0 z-50 bg-transparent px-6 py-3">
-      <div className="max-w-7xl mx-auto flex items-center justify-between h-10">
+    <header className="sticky top-0 z-50 bg-transparent px-2 sm:px-4 md:px-6 py-3">
+      <div className="w-full max-w-7xl mx-auto flex items-center justify-between h-10">
         {/* Logo */}
         <div className="flex items-center">
           <Link 
@@ -102,7 +102,7 @@ export default function Header() {
                 {item.icon}
               </Link>
               {/* 悬浮时显示的标题 */}
-              <div className="absolute -bottom-8 left-1/2 transform -translate-x-1/2 opacity-0 group-hover:opacity-100 transition-opacity px-2 py-1 bg-white/80 dark:bg-gray-700/80 text-xs font-medium rounded-full backdrop-blur-sm shadow-sm whitespace-nowrap">
+              <div className="absolute -bottom-8 left-1/2 transform -translate-x-1/2 opacity-0 group-hover:opacity-100 transition-opacity px-3 py-1 bg-white/90 dark:bg-gray-700/90 text-xs font-medium rounded-full backdrop-blur-md shadow-sm whitespace-nowrap z-10">
                 {t(item.labelKey)}
               </div>
             </div>
@@ -164,7 +164,7 @@ export default function Header() {
           {/* Floating button for Sign Up */}
           <Link 
             href="/auth" 
-            className="py-2 px-6 rounded-full bg-blue-600/90 hover:bg-blue-700/90 text-white text-sm font-medium transition-colors shadow-sm backdrop-blur-md"
+            className="py-2 px-3 sm:px-4 md:px-6 rounded-full bg-blue-600/90 hover:bg-blue-700/90 text-white text-xs sm:text-sm font-medium transition-colors shadow-sm backdrop-blur-md"
           >
             {t("signUp")}
           </Link>
@@ -173,7 +173,7 @@ export default function Header() {
       
       {/* Mobile Menu */}
       {isMobile && isOpen && (
-        <div className="md:hidden absolute top-16 left-4 right-4 bg-white/70 dark:bg-gray-800/70 backdrop-blur-xl rounded-xl shadow-lg p-4 space-y-2 z-50">
+        <div className="md:hidden absolute top-16 left-2 right-2 sm:left-4 sm:right-4 bg-white/70 dark:bg-gray-800/70 backdrop-blur-xl rounded-xl shadow-lg p-3 sm:p-4 space-y-2 z-50">
           {NavItems.map((item) => (
             <Link 
               key={item.path} 

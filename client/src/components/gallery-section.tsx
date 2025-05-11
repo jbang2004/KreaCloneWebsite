@@ -36,7 +36,7 @@ export default function GallerySection({ items }: GallerySectionProps) {
         </Link>
       </div>
       
-      <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+      <div className="grid grid-cols-1 xs:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6 gap-3 sm:gap-4">
         {items.map((item, index) => (
           <Link 
             key={item.id} 
@@ -45,7 +45,7 @@ export default function GallerySection({ items }: GallerySectionProps) {
             onMouseEnter={() => setHoveredIndex(index)}
             onMouseLeave={() => setHoveredIndex(null)}
           >
-            <div className="aspect-w-1 aspect-h-1 rounded-xl overflow-hidden relative">
+            <div className="relative rounded-xl overflow-hidden" style={{ aspectRatio: '1/1' }}>
               <motion.img 
                 src={item.image} 
                 alt={item.title} 
