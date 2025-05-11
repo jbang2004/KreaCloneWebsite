@@ -4,22 +4,23 @@ import { cn } from "@/lib/utils";
 import { useMobile } from "@/hooks/use-mobile";
 import { useLanguage, TranslationKey } from "@/hooks/use-language";
 import { useTheme } from "@/hooks/use-theme";
-import {
-  HomeIcon,
-  MicrophoneIcon,
-  SpeakerWaveIcon,
-  FilmIcon,
-  PhotoIcon,
-  AdjustmentsHorizontalIcon,
-  PaintBrushIcon,
-  SunIcon,
-  MoonIcon,
-  GlobeAltIcon,
-  Bars3Icon,
-  XMarkIcon,
-  UserIcon,
-  CurrencyDollarIcon
-} from "@heroicons/react/24/outline";
+import { 
+  IoHomeOutline, 
+  IoMicOutline, 
+  IoVolumeHighOutline,
+  IoFilmOutline,
+  IoImagesOutline,
+  IoColorPaletteOutline,
+  IoSettingsOutline, 
+  IoSunnyOutline,
+  IoMoonOutline,
+  IoLanguageOutline,
+  IoMenuOutline,
+  IoCloseOutline,
+  IoPersonOutline,
+  IoCashOutline,
+  IoGlobeOutline
+} from "react-icons/io5";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -37,22 +38,22 @@ const NavItems: NavItem[] = [
   {
     path: "/",
     labelKey: "home",
-    icon: <HomeIcon className="h-5 w-5" />,
+    icon: <IoHomeOutline className="h-5 w-5" />,
   },
   {
     path: "/audio-transcription",
     labelKey: "audioTranscription",
-    icon: <MicrophoneIcon className="h-5 w-5" />,
+    icon: <IoMicOutline className="h-5 w-5" />,
   },
   {
     path: "/text-to-speech",
     labelKey: "textToSpeech",
-    icon: <SpeakerWaveIcon className="h-5 w-5" />,
+    icon: <IoVolumeHighOutline className="h-5 w-5" />,
   },
   {
     path: "/video-translation",
     labelKey: "videoTranslation",
-    icon: <FilmIcon className="h-5 w-5" />,
+    icon: <IoFilmOutline className="h-5 w-5" />,
   },
 ];
 
@@ -116,7 +117,7 @@ export default function Header() {
             onClick={toggleMenu}
             aria-label="Toggle menu"
           >
-            {isOpen ? <XMarkIcon className="h-5 w-5" /> : <Bars3Icon className="h-5 w-5" />}
+            {isOpen ? <IoCloseOutline className="h-5 w-5" /> : <IoMenuOutline className="h-5 w-5" />}
           </button>
         )}
 
@@ -127,7 +128,7 @@ export default function Header() {
             className="hidden md:flex h-9 w-9 items-center justify-center rounded-full bg-white/60 dark:bg-gray-800/60 hover:bg-white/70 dark:hover:bg-gray-700/70 transition-colors shadow-sm backdrop-blur-md"
             aria-label={theme === "dark" ? t("lightMode") : t("darkMode")}
           >
-            {theme === "dark" ? <SunIcon className="h-5 w-5" /> : <MoonIcon className="h-5 w-5" />}
+            {theme === "dark" ? <IoSunnyOutline className="h-5 w-5" /> : <IoMoonOutline className="h-5 w-5" />}
           </button>
 
           <DropdownMenu>
@@ -136,7 +137,7 @@ export default function Header() {
                 className="hidden md:flex h-9 w-9 items-center justify-center rounded-full bg-white/60 dark:bg-gray-800/60 hover:bg-white/70 dark:hover:bg-gray-700/70 transition-colors shadow-sm backdrop-blur-md"
                 aria-label={t("switchLanguage")}
               >
-                <GlobeAltIcon className="h-5 w-5" />
+                <IoLanguageOutline className="h-5 w-5" />
               </button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end">
@@ -197,7 +198,7 @@ export default function Header() {
               className="flex items-center p-2 rounded-lg hover:bg-white/50 dark:hover:bg-gray-700/50 transition-colors"
             >
               <span className="w-6 h-6 flex items-center justify-center">
-                <CurrencyDollarIcon className="h-5 w-5" />
+                <IoCashOutline className="h-5 w-5" />
               </span>
               <span className="font-medium">{t("pricing")}</span>
             </Link>
@@ -207,7 +208,7 @@ export default function Header() {
               className="flex items-center p-2 rounded-lg hover:bg-white/50 dark:hover:bg-gray-700/50 transition-colors"
             >
               <span className="w-6 h-6 flex items-center justify-center">
-                <UserIcon className="h-5 w-5" />
+                <IoPersonOutline className="h-5 w-5" />
               </span>
               <span className="font-medium">{t("logIn")}</span>
             </Link>
@@ -216,7 +217,7 @@ export default function Header() {
               onClick={() => setLanguage(language === "en" ? "zh" : "en")}
             >
               <span className="w-6 h-6 flex items-center justify-center">
-                <GlobeAltIcon className="h-5 w-5" />
+                <IoLanguageOutline className="h-5 w-5" />
               </span>
               <span className="font-medium">{t("switchLanguage")}</span>
             </div>
@@ -225,7 +226,7 @@ export default function Header() {
               onClick={toggleTheme}
             >
               <span className="w-6 h-6 flex items-center justify-center">
-                {theme === "dark" ? <SunIcon className="h-5 w-5" /> : <MoonIcon className="h-5 w-5" />}
+                {theme === "dark" ? <IoSunnyOutline className="h-5 w-5" /> : <IoMoonOutline className="h-5 w-5" />}
               </span>
               <span className="font-medium">{theme === "dark" ? t("lightMode") : t("darkMode")}</span>
             </div>
