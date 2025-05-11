@@ -1,14 +1,7 @@
 import { useState, useRef } from "react";
 import { motion } from "framer-motion";
-import { 
-  ArrowUpTrayIcon, 
-  MicrophoneIcon,
-  DocumentTextIcon, 
-  TrashIcon, 
-  DocumentArrowDownIcon, 
-  FolderOpenIcon,
-  MusicalNoteIcon
-} from "@heroicons/react/24/outline";
+import StaggeredAnimation from "@/components/staggered-animation";
+import AudioIcon from "@/components/audio-icon";
 import LottieAnimation from "@/components/lottie-animation";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
@@ -160,7 +153,7 @@ export default function AudioTranscription() {
             size="lg"
             onClick={handleFileClick}
           >
-            <ArrowUpTrayIcon className="h-5 w-5 mr-2" />
+            <AudioIcon icon="upload" size={20} className="mr-2" />
             {uploadLabel}
           </Button>
           
@@ -169,7 +162,7 @@ export default function AudioTranscription() {
             className="w-full py-3 px-4 rounded-lg transition-colors flex items-center justify-center"
             size="lg"
           >
-            <FolderOpenIcon className="h-5 w-5 mr-2" />
+            <AudioIcon icon="folder" size={20} className="mr-2" />
             {selectFromAssetsLabel}
           </Button>
           
@@ -178,7 +171,7 @@ export default function AudioTranscription() {
             className="w-full py-3 px-4 rounded-lg transition-colors flex items-center justify-center"
             size="lg"
           >
-            <MicrophoneIcon className="h-5 w-5 mr-2" />
+            <AudioIcon icon="microphone" size={20} className="mr-2" />
             {recordLabel}
           </Button>
         </div>
@@ -193,7 +186,7 @@ export default function AudioTranscription() {
         >
           <div className="flex items-center gap-3 mb-4">
             <div className="bg-muted rounded-lg h-16 w-16 flex items-center justify-center">
-              <MusicalNoteIcon className="h-6 w-6 text-foreground/70" />
+              <AudioIcon icon="music-note" size={24} className="text-foreground/70" />
             </div>
             <div className="flex-1">
               <h3 className="font-medium text-sm">{file.name}</h3>
@@ -210,7 +203,7 @@ export default function AudioTranscription() {
               onClick={clearFile}
               className="self-start"
             >
-              <TrashIcon className="h-5 w-5 text-muted-foreground" />
+              <AudioIcon icon="trash" size={20} className="text-muted-foreground" />
             </Button>
           </div>
 
