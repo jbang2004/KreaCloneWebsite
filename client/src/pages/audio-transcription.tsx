@@ -102,90 +102,92 @@ export default function AudioTranscription() {
   return (
     <motion.div 
       className="flex flex-col items-center justify-center py-10"
-      initial={{ opacity: 0, y: 10 }}
-      animate={{ opacity: 1, y: 0 }}
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
       transition={{ duration: 0.5 }}
     >
-      <div className="text-center mb-8">
-        <div className="mx-auto mb-4 bg-muted rounded-xl p-4 inline-block">
-          <LottieAnimation type="microphone" width={100} height={100} />
+      <StaggeredAnimation staggerDelay={0.1} initialY={20}>
+        <div className="text-center mb-8">
+          <div className="mx-auto mb-4 bg-muted/60 backdrop-blur-md rounded-xl p-6 inline-block shadow-md border border-white/10 dark:border-gray-800/50">
+            <LottieAnimation type="microphone" width={100} height={100} />
+          </div>
+          <h1 className="text-2xl font-bold mb-2">{title}</h1>
+          <p className="text-muted-foreground max-w-lg mx-auto">
+            {description}
+          </p>
         </div>
-        <h1 className="text-2xl font-bold mb-2">{title}</h1>
-        <p className="text-muted-foreground max-w-lg mx-auto">
-          {description}
-        </p>
-      </div>
-      
-      <div className="w-full max-w-md mb-8">
-        <div className="bg-card p-4 rounded-xl border border-border mb-6">
-          <div className="flex items-center justify-between mb-4">
-            <div className="text-sm font-medium">{languageSelectorLabel}</div>
+        
+        <div className="w-full max-w-md mb-8">
+          <div className="bg-card/70 backdrop-blur-md p-5 rounded-xl border border-white/20 dark:border-gray-800/30 shadow-lg mb-6">
+            <div className="flex items-center justify-between mb-4">
+              <div className="text-sm font-medium">{languageSelectorLabel}</div>
+            </div>
+            
+            <Select
+              value={selectedLanguage}
+              onValueChange={setSelectedLanguage}
+            >
+              <SelectTrigger className="w-full bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm border-white/30 dark:border-gray-700/30">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent className="bg-white/90 dark:bg-gray-800/90 backdrop-blur-md border-white/20 dark:border-gray-700/20">
+                {languageOptions.map(lang => (
+                  <SelectItem key={`lang-${lang.value}`} value={lang.value}>
+                    {lang.label}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
           </div>
           
-          <Select
-            value={selectedLanguage}
-            onValueChange={setSelectedLanguage}
-          >
-            <SelectTrigger className="w-full">
-              <SelectValue />
-            </SelectTrigger>
-            <SelectContent>
-              {languageOptions.map(lang => (
-                <SelectItem key={`lang-${lang.value}`} value={lang.value}>
-                  {lang.label}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-        </div>
-        
-        <input
-          ref={fileInputRef}
-          type="file"
-          accept=".mp3,.wav,.m4a,.flac"
-          className="hidden"
-          onChange={handleFileChange}
-        />
-        
-        <div className="flex flex-col items-center gap-4 w-full">
-          <Button
-            className="w-full py-3 px-4 bg-primary hover:bg-primary/90 text-primary-foreground rounded-lg transition-colors flex items-center justify-center"
-            size="lg"
-            onClick={handleFileClick}
-          >
-            <AudioIcon icon="upload" size={20} className="mr-2" />
-            {uploadLabel}
-          </Button>
+          <input
+            ref={fileInputRef}
+            type="file"
+            accept=".mp3,.wav,.m4a,.flac"
+            className="hidden"
+            onChange={handleFileChange}
+          />
           
-          <Button
-            variant="outline"
-            className="w-full py-3 px-4 rounded-lg transition-colors flex items-center justify-center"
-            size="lg"
-          >
-            <AudioIcon icon="folder" size={20} className="mr-2" />
-            {selectFromAssetsLabel}
-          </Button>
-          
-          <Button
-            variant="outline"
-            className="w-full py-3 px-4 rounded-lg transition-colors flex items-center justify-center"
-            size="lg"
-          >
-            <AudioIcon icon="microphone" size={20} className="mr-2" />
-            {recordLabel}
-          </Button>
+          <div className="flex flex-col items-center gap-4 w-full">
+            <Button
+              className="w-full py-3 px-4 bg-primary hover:bg-primary/90 text-primary-foreground rounded-lg transition-colors flex items-center justify-center backdrop-blur-sm shadow-md"
+              size="lg"
+              onClick={handleFileClick}
+            >
+              <AudioIcon icon="upload" size={20} className="mr-2" />
+              {uploadLabel}
+            </Button>
+            
+            <Button
+              variant="outline"
+              className="w-full py-3 px-4 rounded-lg transition-colors flex items-center justify-center bg-white/50 dark:bg-gray-800/50 backdrop-blur-sm border-white/30 dark:border-gray-700/30 shadow-md"
+              size="lg"
+            >
+              <AudioIcon icon="folder" size={20} className="mr-2" />
+              {selectFromAssetsLabel}
+            </Button>
+            
+            <Button
+              variant="outline"
+              className="w-full py-3 px-4 rounded-lg transition-colors flex items-center justify-center bg-white/50 dark:bg-gray-800/50 backdrop-blur-sm border-white/30 dark:border-gray-700/30 shadow-md"
+              size="lg"
+            >
+              <AudioIcon icon="microphone" size={20} className="mr-2" />
+              {recordLabel}
+            </Button>
+          </div>
         </div>
-      </div>
+      </StaggeredAnimation>
 
       {file && (
         <motion.div 
-          className="w-full max-w-md bg-card rounded-xl border border-border p-4 mt-4"
+          className="w-full max-w-md bg-card/70 backdrop-blur-md rounded-xl border border-white/20 dark:border-gray-800/30 shadow-lg p-5 mt-4"
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.3 }}
+          transition={{ duration: 0.4, ease: "easeOut" }}
         >
-          <div className="flex items-center gap-3 mb-4">
-            <div className="bg-muted rounded-lg h-16 w-16 flex items-center justify-center">
+          <div className="flex items-center gap-4 mb-5">
+            <div className="bg-white/40 dark:bg-gray-800/40 backdrop-blur-md rounded-lg h-16 w-16 flex items-center justify-center shadow-md border border-white/30 dark:border-gray-700/30">
               <AudioIcon icon="music-note" size={24} className="text-foreground/70" />
             </div>
             <div className="flex-1">
@@ -193,7 +195,10 @@ export default function AudioTranscription() {
               <p className="text-xs text-muted-foreground">
                 {(file.size / (1024 * 1024)).toFixed(2)} MB
               </p>
-              <Badge variant="outline" className="mt-1 text-xs">
+              <Badge 
+                variant="outline" 
+                className="mt-1.5 text-xs bg-white/60 dark:bg-gray-800/60 backdrop-blur-sm border-white/30 dark:border-gray-700/30"
+              >
                 {languageOptions.find(l => l.value === selectedLanguage)?.label}
               </Badge>
             </div>
@@ -201,7 +206,7 @@ export default function AudioTranscription() {
               variant="ghost"
               size="icon"
               onClick={clearFile}
-              className="self-start"
+              className="self-start hover:bg-white/20 dark:hover:bg-gray-800/20"
             >
               <AudioIcon icon="trash" size={20} className="text-muted-foreground" />
             </Button>
@@ -209,42 +214,51 @@ export default function AudioTranscription() {
 
           {!transcriptionStarted ? (
             <Button 
-              className="w-full bg-primary hover:bg-primary/90 text-primary-foreground rounded"
+              className="w-full bg-primary hover:bg-primary/90 text-primary-foreground rounded-lg backdrop-blur-sm shadow-md py-3"
               onClick={startTranscription}
             >
+              <AudioIcon icon="microphone" size={20} className="mr-2" />
               {transcribeText}
             </Button>
           ) : progress < 100 ? (
-            <div className="space-y-2">
-              <Progress value={progress} className="h-2" />
+            <div className="space-y-3">
+              <Progress value={progress} className="h-2.5 rounded-full bg-white/30 dark:bg-gray-700/30" />
               <p className="text-sm text-center text-muted-foreground">{processingText} {progress}%</p>
             </div>
           ) : (
             <motion.div 
-              className="mt-6"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ duration: 0.5 }}
+              className="mt-7"
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5, ease: "easeOut" }}
             >
-              <div className="flex justify-between items-center mb-3">
+              <div className="flex justify-between items-center mb-4">
                 <h3 className="font-medium">{transcriptionResultText}</h3>
                 <div className="flex gap-2">
-                  <Button variant="outline" size="sm">
+                  <Button 
+                    variant="outline" 
+                    size="sm"
+                    className="bg-white/50 dark:bg-gray-800/50 backdrop-blur-sm border-white/30 dark:border-gray-700/30"
+                  >
                     {copyAllText}
                   </Button>
-                  <Button variant="outline" size="sm">
+                  <Button 
+                    variant="outline" 
+                    size="sm"
+                    className="bg-white/50 dark:bg-gray-800/50 backdrop-blur-sm border-white/30 dark:border-gray-700/30"
+                  >
                     {exportText}
                   </Button>
                 </div>
               </div>
-              <div className="bg-muted p-4 rounded-lg space-y-4">
+              <div className="bg-white/30 dark:bg-gray-800/30 backdrop-blur-md p-5 rounded-lg shadow-inner border border-white/20 dark:border-gray-700/20 space-y-4">
                 {transcriptionResult.map((line, index) => (
                   <div key={index} className="flex gap-4">
-                    <div className="flex-shrink-0 text-muted-foreground text-sm">
+                    <div className="flex-shrink-0 text-muted-foreground text-sm opacity-70">
                       {String(index + 1).padStart(2, '0')}
                     </div>
                     <div className="flex-grow">
-                      <div className="p-2 bg-card rounded border border-border">
+                      <div className="p-3 bg-white/60 dark:bg-gray-800/60 rounded-md border border-white/30 dark:border-gray-700/30 shadow-sm backdrop-blur-sm">
                         {line}
                       </div>
                     </div>
@@ -257,10 +271,10 @@ export default function AudioTranscription() {
       )}
 
       <motion.div 
-        className="mt-12 text-center text-muted-foreground max-w-md"
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ delay: 0.3, duration: 0.5 }}
+        className="mt-12 text-center text-muted-foreground max-w-md px-5 py-4 rounded-xl bg-white/30 dark:bg-gray-800/30 backdrop-blur-sm border border-white/20 dark:border-gray-700/20 shadow-md"
+        initial={{ opacity: 0, y: 10 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.3, duration: 0.5, ease: "easeOut" }}
       >
         <p className="text-sm">
           {supportText}
