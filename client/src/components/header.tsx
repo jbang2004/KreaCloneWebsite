@@ -74,7 +74,7 @@ export default function Header() {
           <Link 
             href="/" 
             onClick={closeMenu} 
-            className="flex items-center justify-center h-9 w-9 bg-white/60 dark:bg-gray-800/60 rounded-full shadow-sm hover:bg-white/70 dark:hover:bg-gray-700/70 transition-colors backdrop-blur-md"
+            className="flex items-center justify-center h-9 w-9 bg-white/60 dark:bg-gray-800/60 rounded-xl shadow-sm hover:bg-white/70 dark:hover:bg-gray-700/70 transition-colors backdrop-blur-md"
           >
             <svg className="w-6 h-6" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
               <rect width="24" height="24" rx="4" fill={theme === 'dark' ? '#FFFFFF' : '#000000'} />
@@ -124,7 +124,7 @@ export default function Header() {
         <div className="flex items-center space-x-3">
           <button
             onClick={toggleTheme}
-            className="hidden md:flex h-9 w-9 items-center justify-center rounded-full bg-white/60 dark:bg-gray-800/60 hover:bg-white/70 dark:hover:bg-gray-700/70 transition-colors shadow-sm backdrop-blur-md"
+            className="hidden md:flex h-9 w-9 items-center justify-center rounded-xl bg-white/60 dark:bg-gray-800/60 hover:bg-white/70 dark:hover:bg-gray-700/70 transition-colors shadow-sm backdrop-blur-md"
             aria-label={theme === "dark" ? t("lightMode") : t("darkMode")}
           >
             {theme === "dark" ? <SunIcon className="h-5 w-5" /> : <MoonIcon className="h-5 w-5" />}
@@ -156,7 +156,7 @@ export default function Header() {
           {/* Floating button for Pricing */}
           <Link 
             href="/pricing" 
-            className="hidden md:block py-2 px-6 rounded-full bg-gray-200/60 dark:bg-gray-700/60 text-sm font-medium hover:bg-gray-300/70 dark:hover:bg-gray-600/70 transition-colors shadow-sm backdrop-blur-md"
+            className="hidden md:block py-2 px-6 rounded-xl bg-gray-200/60 dark:bg-gray-700/60 text-sm font-medium hover:bg-gray-300/70 dark:hover:bg-gray-600/70 transition-colors shadow-sm backdrop-blur-md"
           >
             {t("pricing")}
           </Link>
@@ -164,7 +164,7 @@ export default function Header() {
           {/* Floating button for Sign Up */}
           <Link 
             href="/auth" 
-            className="py-2 px-3 sm:px-4 md:px-6 rounded-full bg-blue-600/90 hover:bg-blue-700/90 text-white text-xs sm:text-sm font-medium transition-colors shadow-sm backdrop-blur-md"
+            className="py-2 px-3 sm:px-4 md:px-6 rounded-xl bg-blue-600/90 hover:bg-blue-700/90 text-white text-xs sm:text-sm font-medium transition-colors shadow-sm backdrop-blur-md"
           >
             {t("signUp")}
           </Link>

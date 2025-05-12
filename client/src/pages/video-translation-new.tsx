@@ -109,7 +109,7 @@ export default function VideoTranslation() {
                     theme === "dark" ? "bg-zinc-800 border-zinc-700" : "bg-blue-50 border-blue-100 text-blue-700"
                   )}
                 >
-                  <TranslateIcon className="h-5 w-5 mr-2" />
+                  <LanguageIcon className="h-5 w-5 mr-2" />
                   <span>{selectLanguageLabel}</span>
                   <ChevronDownIcon className="h-4 w-4 ml-2" />
                 </Button>
