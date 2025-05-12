@@ -2,8 +2,8 @@ import { useState, useRef } from "react";
 import { motion } from "framer-motion";
 import { 
   LanguageIcon, 
-  ArrowUpTrayIcon, 
-  FolderOpenIcon,
+  PlusIcon, 
+  FolderIcon,
   ChevronDownIcon,
   FilmIcon,
   ArrowRightIcon
@@ -69,81 +69,51 @@ export default function VideoTranslation() {
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.5 }}
     >
-      <div className="w-full max-w-3xl mx-auto">
+      <div className="w-full max-w-md mx-auto">
         <div className={cn(
-          "p-8 md:p-12 rounded-2xl", 
+          "p-8 rounded-3xl", 
           theme === "dark" ? "bg-zinc-900" : "bg-gray-100"
         )}>
-          <div className="flex flex-col items-center text-center mb-10">
+          <div className="flex flex-col items-center text-center mb-8">
             <div className={cn(
-              "w-20 h-20 rounded-2xl flex items-center justify-center mb-6",
-              theme === "dark" ? "bg-zinc-800" : "bg-white"
+              "w-14 h-14 rounded-xl flex items-center justify-center mb-4",
+              theme === "dark" ? "bg-zinc-800" : "bg-gray-200"
             )}>
-              <FilmIcon className="h-10 w-10" />
+              <FilmIcon className="h-7 w-7" />
             </div>
             
-            <h1 className="text-3xl font-bold mb-3">{title}</h1>
-            <p className="text-muted-foreground max-w-lg">
+            <h1 className="text-2xl font-bold mb-2">{title}</h1>
+            <p className="text-muted-foreground text-sm max-w-xs">
               {description}
             </p>
           </div>
           
-          <div className="flex flex-col md:flex-row gap-4 w-full">
+          <div className="flex gap-3 w-full">
             <Button
               className={cn(
-                "flex-1 py-6 px-4 text-white rounded-xl transition-colors flex items-center justify-center",
+                "flex-1 h-12 text-white rounded-xl transition-colors flex items-center justify-center",
                 "bg-blue-600 hover:bg-blue-700"
               )}
               onClick={handleUploadClick}
             >
-              <ArrowUpTrayIcon className="h-5 w-5 mr-2" />
-              <span>{uploadVideoLabel}</span>
+              <PlusIcon className="h-5 w-5 mr-2" />
+              <span>Upload</span>
             </Button>
             
-            <Popover>
-              <PopoverTrigger asChild>
-                <Button
-                  variant="outline"
-                  className={cn(
-                    "flex-1 py-6 px-4 rounded-xl transition-colors flex items-center justify-center",
-                    theme === "dark" ? "bg-zinc-800 border-zinc-700" : "bg-blue-50 border-blue-100 text-blue-700"
-                  )}
-                >
-                  <LanguageIcon className="h-5 w-5 mr-2" />
-                  <span>{selectLanguageLabel}</span>
-                  <ChevronDownIcon className="h-4 w-4 ml-2" />
-                </Button>
-              </PopoverTrigger>
-              <PopoverContent 
-                className="w-52 p-2 rounded-xl"
-                align="end"
-              >
-                <div className="space-y-1">
-                  {languageOptions.map(lang => (
-                    <Button
-                      key={lang.value}
-                      variant="ghost"
-                      className={cn(
-                        "w-full justify-start text-left font-normal",
-                        targetLanguage === lang.value && "bg-blue-50 text-blue-700 dark:bg-blue-900/20 dark:text-blue-500"
-                      )}
-                      onClick={() => setTargetLanguage(lang.value)}
-                    >
-                      {lang.label}
-                      {targetLanguage === lang.value && (
-                        <svg className="h-4 w-4 ml-auto" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-                        </svg>
-                      )}
-                    </Button>
-                  ))}
-                </div>
-              </PopoverContent>
-            </Popover>
+            <Button
+              variant="outline"
+              className={cn(
+                "flex-1 h-12 rounded-xl transition-colors flex items-center justify-center",
+                theme === "dark" ? "bg-zinc-800 border-zinc-700" : "bg-blue-50 border-blue-100 text-blue-700"
+              )}
+            >
+              <FolderIcon className="h-5 w-5 mr-2" />
+              <span>Select asset</span>
+            </Button>
           </div>
           
-          <div className="text-center mt-4 text-sm text-muted-foreground">
-            {maxSizeLabel} 75MB / 15 {language === "zh" ? "秒" : "seconds"}
+          <div className="text-center mt-3 text-xs text-muted-foreground">
+            Max 75MB / 15 seconds
           </div>
         </div>
       </div>
