@@ -84,7 +84,7 @@ export default function Header() {
 
         {/* Navigation - Floating center menu like Krea.ai */}
         <div 
-          className="hidden md:flex items-center bg-gray-100/90 dark:bg-gray-800/80 rounded-full px-1.5 py-1.5 absolute left-1/2 transform -translate-x-1/2 shadow-sm backdrop-blur-md"
+          className="hidden md:flex items-center bg-gray-100/90 dark:bg-gray-800/80 rounded-xl px-1.5 py-1.5 absolute left-1/2 transform -translate-x-1/2 shadow-sm backdrop-blur-md"
         >
           {NavItems.map((item) => (
             <div key={item.path} className="relative group">
@@ -92,7 +92,7 @@ export default function Header() {
                 href={item.path}
                 onClick={closeMenu}
                 className={cn(
-                  "h-9 w-9 flex items-center justify-center rounded-full transition-colors mx-0.5",
+                  "h-9 w-9 flex items-center justify-center rounded-xl transition-colors mx-0.5",
                   location === item.path 
                     ? "bg-white dark:bg-gray-700 shadow-sm" 
                     : "hover:bg-white/70 dark:hover:bg-gray-700/70"
@@ -102,7 +102,7 @@ export default function Header() {
                 {item.icon}
               </Link>
               {/* 悬浮时显示的标题 */}
-              <div className="absolute -bottom-8 left-1/2 transform -translate-x-1/2 opacity-0 group-hover:opacity-100 transition-opacity px-3 py-1 bg-white/90 dark:bg-gray-700/90 text-xs font-medium rounded-full backdrop-blur-md shadow-sm whitespace-nowrap z-10">
+              <div className="absolute -bottom-8 left-1/2 transform -translate-x-1/2 opacity-0 group-hover:opacity-100 transition-opacity px-3 py-1 bg-white/90 dark:bg-gray-700/90 text-xs font-medium rounded-lg backdrop-blur-md shadow-sm whitespace-nowrap z-10">
                 {t(item.labelKey)}
               </div>
             </div>

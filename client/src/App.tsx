@@ -20,7 +20,7 @@ import NotFound from "@/pages/not-found";
 // 懒加载新添加的页面以提高性能
 const AudioTranscription = lazy(() => import("./pages/audio-transcription"));
 const TextToSpeech = lazy(() => import("./pages/text-to-speech"));
-const VideoTranslation = lazy(() => import("./pages/video-translation"));
+const VideoTranslation = lazy(() => import("./pages/video-translation-new"));
 
 function App() {
   const [location] = useLocation();
