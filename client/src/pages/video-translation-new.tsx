@@ -38,6 +38,7 @@ interface Subtitle {
   text: string;
   translation: string;
   isEditing?: boolean;
+  isPanelClosed?: boolean;
 }
 
 // 生成模拟字幕数据
@@ -73,11 +74,13 @@ export default function VideoTranslation() {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const videoRef = useRef<HTMLVideoElement>(null);
   const subtitlesContainerRef = useRef<HTMLDivElement>(null);
+  const panelClosedRef = useRef<boolean>(false);
   
   // 使用useEffect来加载模拟字幕数据
   useEffect(() => {
     // 只有当上传完成且还没有字幕数据时才加载字幕
-    if (uploadComplete && !showSubtitles && subtitles.length === 0) {
+    // 并检查面板是否被用户主动关闭
+    if (uploadComplete && !showSubtitles && subtitles.length === 0 && !panelClosedRef.current) {
       // 延迟一秒后显示字幕，模拟加载过程
       const timer = setTimeout(() => {
         setSubtitles(generateMockSubtitles());
@@ -204,11 +207,14 @@ export default function VideoTranslation() {
     setIsPlaying(false);
     setShowSubtitles(false);
     setSubtitles([]);
+    panelClosedRef.current = false; // 重置面板关闭标记
   };
   
   // 关闭字幕面板
   const closeSubtitlesPanel = () => {
     setShowSubtitles(false);
+    // 设置引用标记，防止自动重新显示字幕面板
+    panelClosedRef.current = true;
   };
 
   // 模拟翻译完成后的操作
