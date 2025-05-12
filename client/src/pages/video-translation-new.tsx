@@ -76,7 +76,8 @@ export default function VideoTranslation() {
   
   // 使用useEffect来加载模拟字幕数据
   useEffect(() => {
-    if (uploadComplete && !showSubtitles) {
+    // 只有当上传完成且还没有字幕数据时才加载字幕
+    if (uploadComplete && !showSubtitles && subtitles.length === 0) {
       // 延迟一秒后显示字幕，模拟加载过程
       const timer = setTimeout(() => {
         setSubtitles(generateMockSubtitles());
@@ -85,7 +86,7 @@ export default function VideoTranslation() {
       
       return () => clearTimeout(timer);
     }
-  }, [uploadComplete, showSubtitles]);
+  }, [uploadComplete, showSubtitles, subtitles.length]);
   
   // 格式化时间函数
   const formatTime = (timeString: string): string => {
@@ -123,9 +124,9 @@ export default function VideoTranslation() {
     }
   };
   
-  // 批量保存所有翻译
-  const saveAllTranslations = () => {
-    alert(currentLanguage === 'zh' ? '所有翻译已保存！' : 'All translations saved!');
+  // 开始生成视频
+  const startGenerating = () => {
+    alert(currentLanguage === 'zh' ? '开始生成翻译后的视频！' : 'Starting to generate translated video!');
   };
   
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -251,7 +252,7 @@ export default function VideoTranslation() {
   const pauseLabel = currentLanguage === "zh" ? "暂停" : "Pause";
   const editLabel = currentLanguage === "zh" ? "编辑" : "Edit";
   const saveLabel = currentLanguage === "zh" ? "保存" : "Save";
-  const saveAllLabel = currentLanguage === "zh" ? "保存所有翻译" : "Save All Translations";
+  const generateLabel = currentLanguage === "zh" ? "开始生成" : "Start Generating";
   const originalSubtitleLabel = currentLanguage === "zh" ? "原始字幕" : "Original Subtitle";
   const translatedSubtitleLabel = currentLanguage === "zh" ? "翻译字幕" : "Translated Subtitle";
   const startTimeLabel = currentLanguage === "zh" ? "开始时间" : "Start Time";
@@ -268,11 +269,16 @@ export default function VideoTranslation() {
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.5 }}
     >
-      <div className="flex flex-wrap -mx-4">
+      <div className="flex flex-wrap justify-center md:justify-start -mx-4">
         {/* 左侧视频区域 - 预处理完成后整体向左移动，但保持固定尺寸 */}
         <AnimatePresence>
           <motion.div
-            className="px-4 w-full max-w-sm transition-all duration-500 ease-in-out"
+            className={cn(
+              "px-4",
+              showSubtitles 
+                ? "w-full max-w-sm md:max-w-xs lg:max-w-sm transition-all duration-500 ease-in-out" 
+                : "w-full max-w-sm transition-all duration-500 ease-in-out mx-auto"
+            )}
             initial={false}
             animate={{ 
               x: showSubtitles ? "-5%" : "0%",
@@ -427,12 +433,12 @@ export default function VideoTranslation() {
                     <Button
                       className={cn(
                         "flex-1 h-12 rounded-xl transition-colors flex items-center justify-center",
-                        "bg-green-600 hover:bg-green-700 text-white"
+                        "bg-purple-600 hover:bg-purple-700 text-white"
                       )}
-                      onClick={saveAllTranslations}
+                      onClick={startGenerating}
                     >
                       <IonIcon icon={save} className="w-5 h-5 mr-2" />
-                      <span>{saveAllLabel}</span>
+                      <span>{generateLabel}</span>
                     </Button>
                   ) : (
                     <Button
@@ -501,7 +507,7 @@ export default function VideoTranslation() {
         <AnimatePresence>
           {showSubtitles && (
             <motion.div 
-              className="w-full md:w-1/2 lg:w-3/5 px-4 mt-8 md:mt-0"
+              className="w-full max-w-sm md:max-w-none md:w-1/2 lg:w-3/5 px-4 mt-8 md:mt-0 mx-auto md:mx-0"
               initial={{ opacity: 0, x: 50 }}
               animate={{ opacity: 1, x: 0 }}
               exit={{ opacity: 0, x: 50 }}
