@@ -5,7 +5,10 @@ import {
   videocam,
   language,
   chevronDown,
-  document
+  document,
+  close,
+  play,
+  pauseCircle
 } from "ionicons/icons";
 import { IonIcon } from "@ionic/react";
 import { Button } from "@/components/ui/button";
@@ -28,7 +31,9 @@ export default function VideoTranslation() {
   const [isUploading, setIsUploading] = useState<boolean>(false);
   const [uploadComplete, setUploadComplete] = useState<boolean>(false);
   const [translationStarted, setTranslationStarted] = useState<boolean>(false);
+  const [isPlaying, setIsPlaying] = useState<boolean>(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const videoRef = useRef<HTMLVideoElement>(null);
   
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -42,7 +47,29 @@ export default function VideoTranslation() {
   };
 
   const handleUploadClick = () => {
-    fileInputRef.current?.click();
+    if (uploadComplete && videoRef.current) {
+      togglePlayback();
+    } else {
+      fileInputRef.current?.click();
+    }
+  };
+  
+  // 切换视频播放状态
+  const togglePlayback = () => {
+    if (videoRef.current) {
+      if (isPlaying) {
+        videoRef.current.pause();
+        setIsPlaying(false);
+      } else {
+        videoRef.current.play()
+          .then(() => {
+            setIsPlaying(true);
+          })
+          .catch(error => {
+            console.error("播放视频时出错:", error);
+          });
+      }
+    }
   };
 
   // 开始翻译处理
@@ -69,11 +96,15 @@ export default function VideoTranslation() {
 
   // 重置和重新上传
   const resetUpload = () => {
+    if (videoRef.current) {
+      videoRef.current.pause();
+    }
     setSelectedFile(null);
     setUploadProgress(0);
     setIsUploading(false);
     setUploadComplete(false);
     setTranslationStarted(false);
+    setIsPlaying(false);
   };
 
   // 模拟翻译完成后的操作
@@ -100,6 +131,7 @@ export default function VideoTranslation() {
     : "Upload videos, automatically extract subtitles and translate into multiple languages. Support batch export and editing.";
   const uploadVideoLabel = currentLanguage === "zh" ? "上传视频" : "Upload";
   const selectLanguageLabel = currentLanguage === "zh" ? "选择语言" : "Select language";
+  const startPreprocessingLabel = currentLanguage === "zh" ? "开始预处理" : "Start Preprocessing";
   const startTranslationLabel = currentLanguage === "zh" ? "开始翻译" : "Translate";
   const uploadingLabel = currentLanguage === "zh" ? "上传中..." : "Uploading...";
   const translatingLabel = currentLanguage === "zh" ? "翻译中..." : "Translating...";
@@ -125,18 +157,61 @@ export default function VideoTranslation() {
         )}>
           {/* 内容上部区域 - 保持同样高度 */}
           <div className="h-[290px] mb-6 flex items-center justify-center">
-            {/* 默认静态图片区域 - 填充整个空间 */}
-            <div className="relative w-full h-full overflow-hidden rounded-xl bg-gradient-to-br from-blue-100 to-blue-300 flex items-center justify-center">
-              {/* 视频相关图像 */}
-              <div className="relative flex justify-center scale-110">
-                <div className="absolute w-24 h-36 bg-blue-500 rounded-lg transform -rotate-6 translate-x-6"></div>
-                <div className="absolute w-24 h-36 bg-blue-600 rounded-lg transform rotate-3 -translate-x-6"></div>
-                <div className="absolute w-24 h-36 bg-blue-400 rounded-lg transform rotate-0 z-10"></div>
-                <div className="absolute inset-0 flex items-center justify-center z-20">
-                  <IonIcon icon={videocam} className="w-12 h-12 text-white" />
+            {uploadComplete ? (
+              <div className="w-full h-full rounded-xl overflow-hidden bg-black relative">
+                {/* 使用公共测试视频文件 */}
+                <video 
+                  ref={videoRef}
+                  className="w-full h-full object-contain"
+                  poster="https://i.ytimg.com/vi/Qw8Pvk2PeMk/maxresdefault.jpg"
+                  playsInline
+                  preload="auto"
+                >
+                  <source src="https://interactive-examples.mdn.mozilla.net/media/cc0-videos/flower.mp4" type="video/mp4" />
+                  您的浏览器不支持视频标签。
+                </video>
+                
+                {/* 播放按钮覆盖层 */}
+                {!isPlaying && (
+                  <div 
+                    className="absolute inset-0 flex items-center justify-center cursor-pointer"
+                    onClick={togglePlayback}
+                  >
+                    <div className="bg-white/20 backdrop-blur-sm h-16 w-16 rounded-full flex items-center justify-center">
+                      <IonIcon icon={play} className="h-10 w-10 text-white" />
+                    </div>
+                  </div>
+                )}
+                
+                {/* 关闭按钮 - 右上角 */}
+                <Button 
+                  variant="ghost" 
+                  size="icon" 
+                  className="absolute top-2 right-2 h-8 w-8 bg-black/60 backdrop-blur-sm text-white rounded-full z-10" 
+                  onClick={resetUpload}
+                >
+                  <IonIcon icon={close} className="h-4 w-4" />
+                </Button>
+                
+                {/* 视频名称 - 左下角 */}
+                <div className="absolute bottom-2 left-2 bg-black/60 backdrop-blur-sm rounded-lg px-2 py-1 text-white text-xs max-w-[70%] truncate z-10">
+                  {selectedFile?.name || "sample-video.mp4"}
                 </div>
               </div>
-            </div>
+            ) : (
+              // 默认静态图片区域 - 填充整个空间
+              <div className="relative w-full h-full overflow-hidden rounded-xl bg-gradient-to-br from-blue-100 to-blue-300 flex items-center justify-center">
+                {/* 视频相关图像 */}
+                <div className="relative flex justify-center scale-110">
+                  <div className="absolute w-24 h-36 bg-blue-500 rounded-lg transform -rotate-6 translate-x-6"></div>
+                  <div className="absolute w-24 h-36 bg-blue-600 rounded-lg transform rotate-3 -translate-x-6"></div>
+                  <div className="absolute w-24 h-36 bg-blue-400 rounded-lg transform rotate-0 z-10"></div>
+                  <div className="absolute inset-0 flex items-center justify-center z-20">
+                    <IonIcon icon={videocam} className="w-12 h-12 text-white" />
+                  </div>
+                </div>
+              </div>
+            )}
           </div>
           
           {/* 标题和图标并排 */}
@@ -172,7 +247,7 @@ export default function VideoTranslation() {
                   className="bg-blue-600 hover:bg-blue-700 text-white rounded-lg px-3 py-1 text-xs"
                   onClick={startTranslation}
                 >
-                  {startTranslationLabel}
+                  {startPreprocessingLabel}
                 </Button>
               </div>
             </div>
@@ -203,12 +278,18 @@ export default function VideoTranslation() {
             <Button
               className={cn(
                 "flex-1 h-12 text-white rounded-xl transition-colors flex items-center justify-center",
-                "bg-blue-600 hover:bg-blue-700"
+                uploadComplete 
+                  ? (isPlaying ? "bg-red-600 hover:bg-red-700" : "bg-green-600 hover:bg-green-700") 
+                  : "bg-blue-600 hover:bg-blue-700"
               )}
               onClick={handleUploadClick}
             >
-              <IonIcon icon={addCircle} className="w-5 h-5 mr-2" />
-              <span>{uploadVideoLabel}</span>
+              <IonIcon icon={uploadComplete ? (isPlaying ? pauseCircle : play) : addCircle} className="w-5 h-5 mr-2" />
+              <span>
+                {uploadComplete 
+                  ? (isPlaying ? (currentLanguage === "zh" ? "暂停" : "Pause") : (currentLanguage === "zh" ? "播放" : "Play")) 
+                  : uploadVideoLabel}
+              </span>
             </Button>
             
             {uploadComplete ? (
