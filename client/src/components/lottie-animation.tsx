@@ -7,6 +7,7 @@ const ANIMATION_URLS = {
   microphone: 'https://assets9.lottiefiles.com/packages/lf20_mf5j5kua.json',
   speech: 'https://assets3.lottiefiles.com/packages/lf20_ed9hgzcr.json',
   video: 'https://assets2.lottiefiles.com/packages/lf20_vvvie0sh.json',
+  videoTranslation: 'https://assets5.lottiefiles.com/packages/lf20_p1qiuawe.json',
   image: 'https://assets3.lottiefiles.com/packages/lf20_tedgenft.json',
   enhance: 'https://assets3.lottiefiles.com/packages/lf20_q0tn33qu.json',
   loading: 'https://assets10.lottiefiles.com/packages/lf20_usmfx6bp.json',

@@ -1,13 +1,13 @@
 import { useState, useRef } from "react";
 import { motion } from "framer-motion";
+import { ChevronDownIcon } from "@heroicons/react/24/outline";
 import { 
-  LanguageIcon, 
-  PlusIcon, 
-  FolderIcon,
-  ChevronDownIcon,
-  FilmIcon,
-  ArrowRightIcon
-} from "@heroicons/react/24/outline";
+  addCircleOutline, 
+  folderOpenOutline,
+  videocamOutline,
+  languageOutline
+} from "ionicons/icons";
+import { IonIcon } from "@ionic/react";
 import LottieAnimation from "@/components/lottie-animation";
 import { Button } from "@/components/ui/button";
 import { useLanguage } from "@/hooks/use-language";
@@ -69,45 +69,58 @@ export default function VideoTranslation() {
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.5 }}
     >
-      <div className="w-full max-w-md mx-auto">
+      <div className="w-full max-w-sm mx-auto">
         <div className={cn(
           "p-8 rounded-3xl", 
           theme === "dark" ? "bg-zinc-900" : "bg-gray-100"
         )}>
-          <div className="flex flex-col items-center text-center mb-8">
-            <div className={cn(
-              "w-14 h-14 rounded-xl flex items-center justify-center mb-4",
-              theme === "dark" ? "bg-zinc-800" : "bg-gray-200"
-            )}>
-              <FilmIcon className="h-7 w-7" />
+          {/* 动态图片区域 */}
+          <div className="flex justify-center mb-6">
+            <div className="relative w-48 h-36 overflow-hidden">
+              <LottieAnimation 
+                type="videoTranslation" 
+                className="w-full h-full" 
+              />
             </div>
-            
-            <h1 className="text-2xl font-bold mb-2">{title}</h1>
-            <p className="text-muted-foreground text-sm max-w-xs">
-              {description}
-            </p>
           </div>
           
-          <div className="flex gap-3 w-full">
+          {/* 标题和图标并排 */}
+          <div className="flex items-center justify-center mb-3">
+            <div className={cn(
+              "w-8 h-8 rounded-lg flex items-center justify-center mr-2",
+              theme === "dark" ? "bg-zinc-800" : "bg-blue-100"
+            )}>
+              <IonIcon icon={videocamOutline} className="w-5 h-5" />
+            </div>
+            <h1 className="text-2xl font-bold">{title}</h1>
+          </div>
+          
+          {/* 描述文字 */}
+          <p className="text-muted-foreground text-sm text-center mb-6">
+            {description}
+          </p>
+          
+          {/* 按钮区域 - 竖直排列 */}
+          <div className="flex flex-col gap-3 w-full">
             <Button
               className={cn(
-                "flex-1 h-12 text-white rounded-xl transition-colors flex items-center justify-center",
+                "w-full h-12 text-white rounded-xl transition-colors flex items-center justify-center",
                 "bg-blue-600 hover:bg-blue-700"
               )}
               onClick={handleUploadClick}
             >
-              <PlusIcon className="h-5 w-5 mr-2" />
+              <IonIcon icon={addCircleOutline} className="w-5 h-5 mr-2" />
               <span>Upload</span>
             </Button>
             
             <Button
               variant="outline"
               className={cn(
-                "flex-1 h-12 rounded-xl transition-colors flex items-center justify-center",
+                "w-full h-12 rounded-xl transition-colors flex items-center justify-center",
                 theme === "dark" ? "bg-zinc-800 border-zinc-700" : "bg-blue-50 border-blue-100 text-blue-700"
               )}
             >
-              <FolderIcon className="h-5 w-5 mr-2" />
+              <IonIcon icon={folderOpenOutline} className="w-5 h-5 mr-2" />
               <span>Select asset</span>
             </Button>
           </div>
