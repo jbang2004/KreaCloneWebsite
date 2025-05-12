@@ -68,47 +68,47 @@ export default function VideoTranslation() {
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.5 }}
     >
-      <div className="w-full max-w-md mx-auto">
+      <div className="w-full max-w-sm mx-auto">
         <div className={cn(
-          "px-8 py-10 rounded-3xl", 
+          "px-6 py-8 rounded-3xl", 
           theme === "dark" ? "bg-zinc-900" : "bg-gray-100"
         )}>
           {/* 静态图片区域 - 苹果风格 */}
-          <div className="flex justify-center mb-10">
-            <div className="relative w-64 h-64 overflow-hidden rounded-xl bg-gradient-to-br from-blue-100 to-blue-300 flex items-center justify-center">
+          <div className="flex justify-center mb-8">
+            <div className="relative w-56 h-56 overflow-hidden rounded-xl bg-gradient-to-br from-blue-100 to-blue-300 flex items-center justify-center">
               {/* 视频相关图像 */}
               <div className="relative flex justify-center">
-                <div className="absolute w-28 h-40 bg-blue-500 rounded-lg transform -rotate-6 translate-x-7"></div>
-                <div className="absolute w-28 h-40 bg-blue-600 rounded-lg transform rotate-3 -translate-x-7"></div>
-                <div className="absolute w-28 h-40 bg-blue-400 rounded-lg transform rotate-0 z-10"></div>
+                <div className="absolute w-24 h-36 bg-blue-500 rounded-lg transform -rotate-6 translate-x-6"></div>
+                <div className="absolute w-24 h-36 bg-blue-600 rounded-lg transform rotate-3 -translate-x-6"></div>
+                <div className="absolute w-24 h-36 bg-blue-400 rounded-lg transform rotate-0 z-10"></div>
                 <div className="absolute inset-0 flex items-center justify-center z-20">
-                  <IonIcon icon={videocam} className="w-14 h-14 text-white" />
+                  <IonIcon icon={videocam} className="w-12 h-12 text-white" />
                 </div>
               </div>
             </div>
           </div>
           
           {/* 标题和图标并排 */}
-          <div className="flex items-center justify-center mb-3">
+          <div className="flex items-center justify-center mb-2">
             <div className={cn(
-              "w-8 h-8 rounded-lg flex items-center justify-center mr-2",
+              "w-7 h-7 rounded-lg flex items-center justify-center mr-2",
               theme === "dark" ? "bg-zinc-800" : "bg-blue-100"
             )}>
-              <IonIcon icon={videocam} className="w-5 h-5" />
+              <IonIcon icon={videocam} className="w-4 h-4" />
             </div>
-            <h1 className="text-2xl font-bold">{title}</h1>
+            <h1 className="text-xl font-bold">{title}</h1>
           </div>
           
           {/* 描述文字 */}
-          <p className="text-muted-foreground text-sm text-center mb-6">
+          <p className="text-muted-foreground text-xs text-center mb-5">
             {description}
           </p>
           
           {/* 按钮区域 - 左右排列 */}
-          <div className="flex gap-4 w-full mt-6">
+          <div className="flex gap-3 w-full mt-5">
             <Button
               className={cn(
-                "flex-1 h-14 text-white rounded-xl transition-colors flex items-center justify-center text-base",
+                "flex-1 h-12 text-white rounded-xl transition-colors flex items-center justify-center",
                 "bg-blue-600 hover:bg-blue-700"
               )}
               onClick={handleUploadClick}
@@ -122,7 +122,7 @@ export default function VideoTranslation() {
                 <Button
                   variant="outline"
                   className={cn(
-                    "flex-1 h-14 rounded-xl transition-colors flex items-center justify-center text-base",
+                    "flex-1 h-12 rounded-xl transition-colors flex items-center justify-center",
                     theme === "dark" ? "bg-zinc-800 border-zinc-700" : "bg-blue-50 border-blue-100 text-blue-700"
                   )}
                 >
@@ -159,7 +159,7 @@ export default function VideoTranslation() {
             </Popover>
           </div>
           
-          <div className="text-center mt-5 text-xs text-muted-foreground">
+          <div className="text-center mt-4 text-xs text-muted-foreground">
             Max 75MB / 15 seconds
           </div>
         </div>
