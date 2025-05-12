@@ -107,14 +107,15 @@ export default function TextToSpeech() {
     >
       <div className="w-full max-w-sm mx-auto">
         <div className={cn(
-          "px-6 py-8 rounded-3xl", 
+          "p-4 rounded-3xl", 
           theme === "dark" ? "bg-zinc-900" : "bg-gray-100"
         )}>
-          {/* 静态图片区域 - 苹果风格 */}
-          <div className="flex justify-center mb-8">
-            <div className="relative w-56 h-56 overflow-hidden rounded-xl bg-gradient-to-br from-purple-100 to-purple-300 flex items-center justify-center">
+          {/* 内容上部区域 - 保持同样高度 */}
+          <div className="h-[290px] mb-6 flex items-center justify-center">
+            {/* 静态图片区域 - 苹果风格 */}
+            <div className="relative w-full h-full overflow-hidden rounded-xl bg-gradient-to-br from-purple-100 to-purple-300 flex items-center justify-center">
               {/* 语音相关图像 */}
-              <div className="relative flex justify-center">
+              <div className="relative flex justify-center scale-110">
                 <div className="absolute w-24 h-36 bg-purple-500 rounded-lg transform -rotate-6 translate-x-6"></div>
                 <div className="absolute w-24 h-36 bg-purple-600 rounded-lg transform rotate-3 -translate-x-6"></div>
                 <div className="absolute w-24 h-36 bg-purple-400 rounded-lg transform rotate-0 z-10"></div>

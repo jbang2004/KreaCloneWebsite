@@ -198,7 +198,7 @@ export default function VideoTranslation() {
     >
       <div className="w-full max-w-sm mx-auto">
         <div className={cn(
-          "px-4 py-6 rounded-3xl", 
+          "p-4 rounded-3xl", 
           theme === "dark" ? "bg-zinc-900" : "bg-gray-100"
         )}>
           {/* 内容上部区域 - 保持同样高度 */}
