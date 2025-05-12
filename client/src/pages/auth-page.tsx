@@ -85,13 +85,13 @@ export default function AuthPage() {
   };
 
   return (
-    <div className="flex min-h-[90vh] flex-col md:flex-row md:items-stretch md:overflow-hidden">
+    <div className="flex min-h-[100vh] flex-col md:flex-row md:items-stretch md:overflow-hidden px-6 md:px-10 lg:px-16">
       {/* Auth Form Section */}
       <motion.div 
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5 }}
-        className="w-full md:w-1/2 flex items-center justify-center p-4 md:px-4 md:py-6 lg:px-8"
+        className="w-full md:w-[45%] flex items-center justify-center py-8"
       >
         <div className="w-full max-w-md">
           <div className={`p-4 rounded-3xl ${theme === "dark" ? "bg-zinc-900" : "bg-gray-100"}`}>
@@ -222,9 +222,9 @@ export default function AuthPage() {
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ duration: 0.5, delay: 0.3 }}
-        className="hidden md:flex md:w-1/2 items-stretch p-0"
+        className="hidden md:flex md:w-[55%] items-center py-8 pl-2 md:pl-4"
       >
-        <div className="bg-blue-600 rounded-3xl text-white p-8 lg:p-10 min-h-[80vh] w-full flex flex-col justify-center">
+        <div className="bg-blue-600 rounded-3xl text-white p-8 h-full w-full flex flex-col justify-center">
           <h2 className="text-3xl font-bold mb-4">{language === "zh" ? "创意无限，AI助力" : "Unlimited Creativity with AI"}</h2>
           <p className="text-lg opacity-90 mb-6">
             {language === "zh" 
