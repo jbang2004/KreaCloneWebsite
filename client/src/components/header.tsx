@@ -4,22 +4,24 @@ import { cn } from "@/lib/utils";
 import { useMobile } from "@/hooks/use-mobile";
 import { useLanguage, TranslationKey } from "@/hooks/use-language";
 import { useTheme } from "@/hooks/use-theme";
-import {
-  HomeIcon,
-  MicrophoneIcon,
-  SpeakerWaveIcon,
-  FilmIcon,
-  PhotoIcon,
-  AdjustmentsHorizontalIcon,
-  PaintBrushIcon,
-  SunIcon,
-  MoonIcon,
-  GlobeAltIcon,
-  Bars3Icon,
-  XMarkIcon,
-  UserIcon,
-  CurrencyDollarIcon
-} from "@heroicons/react/24/outline";
+import { useAuth } from "@/hooks/use-auth";
+import { 
+  home, 
+  mic, 
+  volumeHigh, 
+  videocam, 
+  image, 
+  colorWand, 
+  sunny, 
+  moon, 
+  globe, 
+  menu, 
+  close, 
+  person, 
+  cash,
+  logOut
+} from "ionicons/icons";
+import { IonIcon } from "@ionic/react";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -30,29 +32,29 @@ import {
 type NavItem = {
   path: string;
   labelKey: TranslationKey;
-  icon: React.ReactNode;
+  icon: string;
 };
 
 const NavItems: NavItem[] = [
   {
     path: "/",
     labelKey: "home",
-    icon: <HomeIcon className="h-5 w-5" />,
+    icon: home,
   },
   {
     path: "/audio-transcription",
     labelKey: "audioTranscription",
-    icon: <MicrophoneIcon className="h-5 w-5" />,
+    icon: mic,
   },
   {
     path: "/text-to-speech",
     labelKey: "textToSpeech",
-    icon: <SpeakerWaveIcon className="h-5 w-5" />,
+    icon: volumeHigh,
   },
   {
     path: "/video-translation",
     labelKey: "videoTranslation",
-    icon: <FilmIcon className="h-5 w-5" />,
+    icon: videocam,
   },
 ];
 
@@ -62,9 +64,14 @@ export default function Header() {
   const isMobile = useMobile();
   const { t, language, setLanguage } = useLanguage();
   const { theme, toggleTheme } = useTheme();
+  const { user, logoutMutation } = useAuth();
 
   const toggleMenu = () => setIsOpen(!isOpen);
   const closeMenu = () => setIsOpen(false);
+  
+  const handleLogout = () => {
+    logoutMutation.mutate();
+  };
 
   return (
     <header className="sticky top-0 z-50 bg-transparent px-2 sm:px-4 md:px-6 py-3">
@@ -99,7 +106,7 @@ export default function Header() {
                 )}
                 aria-label={t(item.labelKey)}
               >
-                {item.icon}
+                <IonIcon icon={item.icon} className="h-5 w-5" />
               </Link>
               {/* 悬浮时显示的标题 */}
               <div className="absolute -bottom-8 left-1/2 transform -translate-x-1/2 opacity-0 group-hover:opacity-100 transition-opacity px-3 py-1 bg-white/90 dark:bg-gray-700/90 text-xs font-medium rounded-lg backdrop-blur-md shadow-sm whitespace-nowrap z-10">
@@ -116,7 +123,7 @@ export default function Header() {
             onClick={toggleMenu}
             aria-label="Toggle menu"
           >
-            {isOpen ? <XMarkIcon className="h-5 w-5" /> : <Bars3Icon className="h-5 w-5" />}
+            <IonIcon icon={isOpen ? close : menu} className="h-5 w-5" />
           </button>
         )}
 
@@ -127,7 +134,7 @@ export default function Header() {
             className="hidden md:flex h-9 w-9 items-center justify-center rounded-xl bg-white/60 dark:bg-gray-800/60 hover:bg-white/70 dark:hover:bg-gray-700/70 transition-colors shadow-sm backdrop-blur-md"
             aria-label={theme === "dark" ? t("lightMode") : t("darkMode")}
           >
-            {theme === "dark" ? <SunIcon className="h-5 w-5" /> : <MoonIcon className="h-5 w-5" />}
+            <IonIcon icon={theme === "dark" ? sunny : moon} className="h-5 w-5" />
           </button>
 
           <DropdownMenu>
@@ -136,7 +143,7 @@ export default function Header() {
                 className="hidden md:flex h-9 w-9 items-center justify-center rounded-xl bg-white/60 dark:bg-gray-800/60 hover:bg-white/70 dark:hover:bg-gray-700/70 transition-colors shadow-sm backdrop-blur-md"
                 aria-label={t("switchLanguage")}
               >
-                <GlobeAltIcon className="h-5 w-5" />
+                <IonIcon icon={globe} className="h-5 w-5" />
               </button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end">
@@ -161,13 +168,23 @@ export default function Header() {
             {t("pricing")}
           </Link>
           
-          {/* Floating button for Sign Up */}
-          <Link 
-            href="/auth" 
-            className="py-2 px-3 sm:px-4 md:px-6 rounded-xl bg-blue-600/90 hover:bg-blue-700/90 text-white text-xs sm:text-sm font-medium transition-colors shadow-sm backdrop-blur-md"
-          >
-            {t("signUp")}
-          </Link>
+          {/* 用户未登录时显示登录/注册按钮，已登录时显示退出按钮 */}
+          {user ? (
+            <button
+              onClick={handleLogout}
+              className="py-2 px-3 sm:px-4 md:px-6 rounded-xl bg-red-600/90 hover:bg-red-700/90 text-white text-xs sm:text-sm font-medium transition-colors shadow-sm backdrop-blur-md flex items-center"
+            >
+              <IonIcon icon={logOut} className="h-4 w-4 mr-1" />
+              <span>{t("logIn")}</span>
+            </button>
+          ) : (
+            <Link 
+              href="/auth" 
+              className="py-2 px-3 sm:px-4 md:px-6 rounded-xl bg-blue-600/90 hover:bg-blue-700/90 text-white text-xs sm:text-sm font-medium transition-colors shadow-sm backdrop-blur-md"
+            >
+              {t("signUp")}
+            </Link>
+          )}
         </div>
       </div>
       
@@ -186,7 +203,9 @@ export default function Header() {
                   : "hover:bg-white/50 dark:hover:bg-gray-700/50"
               )}
             >
-              <span className="w-6 h-6 flex items-center justify-center">{item.icon}</span>
+              <span className="w-6 h-6 flex items-center justify-center">
+                <IonIcon icon={item.icon} className="h-5 w-5" />
+              </span>
               <span className="font-medium">{t(item.labelKey)}</span>
             </Link>
           ))}
@@ -197,26 +216,43 @@ export default function Header() {
               className="flex items-center p-2 rounded-lg hover:bg-white/50 dark:hover:bg-gray-700/50 transition-colors"
             >
               <span className="w-6 h-6 flex items-center justify-center">
-                <CurrencyDollarIcon className="h-5 w-5" />
+                <IonIcon icon={cash} className="h-5 w-5" />
               </span>
               <span className="font-medium">{t("pricing")}</span>
             </Link>
-            <Link 
-              href="/auth" 
-              onClick={closeMenu} 
-              className="flex items-center p-2 rounded-lg hover:bg-white/50 dark:hover:bg-gray-700/50 transition-colors"
-            >
-              <span className="w-6 h-6 flex items-center justify-center">
-                <UserIcon className="h-5 w-5" />
-              </span>
-              <span className="font-medium">{t("logIn")}</span>
-            </Link>
+            
+            {user ? (
+              <button
+                onClick={() => {
+                  handleLogout();
+                  closeMenu();
+                }}
+                className="flex items-center p-2 rounded-lg hover:bg-white/50 dark:hover:bg-gray-700/50 transition-colors text-red-600"
+              >
+                <span className="w-6 h-6 flex items-center justify-center">
+                  <IonIcon icon={logOut} className="h-5 w-5" />
+                </span>
+                <span className="font-medium">{t("logIn")}</span>
+              </button>
+            ) : (
+              <Link 
+                href="/auth" 
+                onClick={closeMenu} 
+                className="flex items-center p-2 rounded-lg hover:bg-white/50 dark:hover:bg-gray-700/50 transition-colors"
+              >
+                <span className="w-6 h-6 flex items-center justify-center">
+                  <IonIcon icon={person} className="h-5 w-5" />
+                </span>
+                <span className="font-medium">{t("logIn")}</span>
+              </Link>
+            )}
+            
             <div 
               className="flex items-center p-2 rounded-lg hover:bg-white/50 dark:hover:bg-gray-700/50 transition-colors"
               onClick={() => setLanguage(language === "en" ? "zh" : "en")}
             >
               <span className="w-6 h-6 flex items-center justify-center">
-                <GlobeAltIcon className="h-5 w-5" />
+                <IonIcon icon={globe} className="h-5 w-5" />
               </span>
               <span className="font-medium">{t("switchLanguage")}</span>
             </div>
@@ -225,7 +261,7 @@ export default function Header() {
               onClick={toggleTheme}
             >
               <span className="w-6 h-6 flex items-center justify-center">
-                {theme === "dark" ? <SunIcon className="h-5 w-5" /> : <MoonIcon className="h-5 w-5" />}
+                <IonIcon icon={theme === "dark" ? sunny : moon} className="h-5 w-5" />
               </span>
               <span className="font-medium">{theme === "dark" ? t("lightMode") : t("darkMode")}</span>
             </div>

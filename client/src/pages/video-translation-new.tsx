@@ -74,15 +74,15 @@ export default function VideoTranslation() {
           theme === "dark" ? "bg-zinc-900" : "bg-gray-100"
         )}>
           {/* 静态图片区域 - 苹果风格 */}
-          <div className="flex justify-center mb-6">
-            <div className="relative w-48 h-36 overflow-hidden rounded-xl bg-gradient-to-br from-blue-100 to-blue-300 flex items-center justify-center">
+          <div className="flex justify-center mb-8">
+            <div className="relative w-64 h-48 overflow-hidden rounded-xl bg-gradient-to-br from-blue-100 to-blue-300 flex items-center justify-center">
               {/* 视频相关图像 */}
               <div className="relative flex justify-center">
-                <div className="absolute w-20 h-28 bg-blue-500 rounded-lg transform -rotate-6 translate-x-5"></div>
-                <div className="absolute w-20 h-28 bg-blue-600 rounded-lg transform rotate-3 -translate-x-5"></div>
-                <div className="absolute w-20 h-28 bg-blue-400 rounded-lg transform rotate-0 z-10"></div>
+                <div className="absolute w-24 h-36 bg-blue-500 rounded-lg transform -rotate-6 translate-x-6"></div>
+                <div className="absolute w-24 h-36 bg-blue-600 rounded-lg transform rotate-3 -translate-x-6"></div>
+                <div className="absolute w-24 h-36 bg-blue-400 rounded-lg transform rotate-0 z-10"></div>
                 <div className="absolute inset-0 flex items-center justify-center z-20">
-                  <IonIcon icon={videocam} className="w-10 h-10 text-white" />
+                  <IonIcon icon={videocam} className="w-12 h-12 text-white" />
                 </div>
               </div>
             </div>
