@@ -68,7 +68,7 @@ export default function VideoTranslation() {
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.5 }}
     >
-      <div className="w-full max-w-sm mx-auto">
+      <div className="w-full max-w-md mx-auto">
         <div className={cn(
           "p-8 rounded-3xl", 
           theme === "dark" ? "bg-zinc-900" : "bg-gray-100"
