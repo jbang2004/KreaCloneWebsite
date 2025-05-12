@@ -21,6 +21,7 @@ import NotFound from "@/pages/not-found";
 const AudioTranscription = lazy(() => import("./pages/audio-transcription"));
 const TextToSpeech = lazy(() => import("./pages/text-to-speech"));
 const VideoTranslation = lazy(() => import("./pages/video-translation-new"));
+const Video = lazy(() => import("./pages/video"));
 
 function App() {
   const [location] = useLocation();
@@ -67,6 +68,16 @@ function App() {
                     />
                     <ProtectedRoute 
                       path="/video-translation" 
+                      component={() => (
+                        <Suspense fallback={<div className="flex items-center justify-center h-[60vh]">
+                          <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-primary"></div>
+                        </div>}>
+                          <VideoTranslation />
+                        </Suspense>
+                      )} 
+                    />
+                    <ProtectedRoute 
+                      path="/video" 
                       component={() => (
                         <Suspense fallback={<div className="flex items-center justify-center h-[60vh]">
                           <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-primary"></div>
