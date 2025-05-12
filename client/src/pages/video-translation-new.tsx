@@ -8,7 +8,8 @@ import {
   chevronDown,
   play,
   pauseCircle,
-  close
+  close,
+  arrowForward
 } from "ionicons/icons";
 import { IonIcon } from "@ionic/react";
 import { Button } from "@/components/ui/button";
@@ -43,7 +44,11 @@ export default function VideoTranslation() {
   };
 
   const handleUploadClick = () => {
-    fileInputRef.current?.click();
+    if (uploadComplete && videoRef.current) {
+      togglePlayback();
+    } else {
+      fileInputRef.current?.click();
+    }
   };
 
   // 模拟上传过程
@@ -86,6 +91,12 @@ export default function VideoTranslation() {
     setIsPlaying(false);
   };
 
+  // 模拟翻译过程
+  const startTranslation = () => {
+    // 这里可以添加翻译逻辑
+    alert(currentLanguage === "zh" ? "开始将字幕翻译为" + getLanguageLabel(targetLanguage) : "Starting translation to " + getLanguageLabel(targetLanguage));
+  };
+
   // 语言选项
   const languageOptions = [
     { value: "zh", label: currentLanguage === "zh" ? "中文" : "Chinese" },
@@ -104,10 +115,12 @@ export default function VideoTranslation() {
     : "Upload videos, automatically extract subtitles and translate into multiple languages. Support batch export and editing.";
   const uploadVideoLabel = currentLanguage === "zh" ? "上传视频" : "Upload";
   const selectLanguageLabel = currentLanguage === "zh" ? "选择语言" : "Select language";
-  const maxSizeLabel = currentLanguage === "zh" ? "最大" : "Max";
-  const uploadingLabel = currentLanguage === "zh" ? "上传中" : "Uploading";
-  const translatingLabel = currentLanguage === "zh" ? "翻译中" : "Translating";
-  const processingLabel = currentLanguage === "zh" ? "处理中" : "Processing";
+  const startTranslationLabel = currentLanguage === "zh" ? "开始翻译" : "Translate";
+  const playVideoLabel = currentLanguage === "zh" ? "播放视频" : "Play Video";
+  const pauseVideoLabel = currentLanguage === "zh" ? "暂停" : "Pause";
+  const uploadingLabel = currentLanguage === "zh" ? "上传中..." : "Uploading...";
+  const translatingLabel = currentLanguage === "zh" ? "翻译中..." : "Translating...";
+  const processingLabel = currentLanguage === "zh" ? "处理中..." : "Processing...";
 
   // 获取目标语言显示名称
   const getLanguageLabel = (value: string) => {
@@ -123,12 +136,55 @@ export default function VideoTranslation() {
       transition={{ duration: 0.5 }}
     >
       <div className="w-full max-w-sm mx-auto">
-        {!uploadComplete ? (
-          <div className={cn(
-            "px-6 py-8 rounded-3xl", 
-            theme === "dark" ? "bg-zinc-900" : "bg-gray-100"
-          )}>
-            {/* 静态图片区域 - 苹果风格 */}
+        <div className={cn(
+          "px-6 py-8 rounded-3xl", 
+          theme === "dark" ? "bg-zinc-900" : "bg-gray-100"
+        )}>
+          {/* 视频播放区域 - 上传成功后显示 */}
+          {uploadComplete && (
+            <div className="mb-8">
+              <div className="rounded-xl overflow-hidden bg-black aspect-video relative">
+                {/* 测试使用固定的视频URL，实际情况应该使用上传后得到的视频URL */}
+                <video 
+                  ref={videoRef}
+                  className="w-full h-full object-contain"
+                  poster="https://i.ytimg.com/vi/Qw8Pvk2PeMk/maxresdefault.jpg"
+                  src="https://sample-videos.com/video123/mp4/720/big_buck_bunny_720p_1mb.mp4"
+                />
+                
+                {/* 播放按钮覆盖层 */}
+                {!isPlaying && (
+                  <div 
+                    className="absolute inset-0 flex items-center justify-center cursor-pointer"
+                    onClick={togglePlayback}
+                  >
+                    <div className="bg-white/20 backdrop-blur-sm h-16 w-16 rounded-full flex items-center justify-center">
+                      <IonIcon icon={play} className="h-10 w-10 text-white" />
+                    </div>
+                  </div>
+                )}
+                
+                {/* 视频信息叠加层 */}
+                <div className="absolute bottom-2 left-2 right-2 flex justify-between items-center">
+                  <div className="bg-black/60 backdrop-blur-sm rounded-lg px-2 py-1 text-white text-xs">
+                    {selectedFile?.name || "video.mp4"}
+                  </div>
+                  
+                  <Button 
+                    variant="ghost" 
+                    size="icon" 
+                    className="h-8 w-8 bg-black/60 backdrop-blur-sm text-white rounded-full" 
+                    onClick={resetUpload}
+                  >
+                    <IonIcon icon={close} className="h-4 w-4" />
+                  </Button>
+                </div>
+              </div>
+            </div>
+          )}
+          
+          {/* 静态图片区域 - 仅在未上传时显示 */}
+          {!uploadComplete && !isUploading && (
             <div className="flex justify-center mb-8">
               <div className="relative w-56 h-56 overflow-hidden rounded-xl bg-gradient-to-br from-blue-100 to-blue-300 flex items-center justify-center">
                 {/* 视频相关图像 */}
@@ -142,53 +198,78 @@ export default function VideoTranslation() {
                 </div>
               </div>
             </div>
-            
-            {/* 标题和图标并排 */}
-            <div className="flex items-center justify-center mb-2">
-              <div className={cn(
-                "w-7 h-7 rounded-lg flex items-center justify-center mr-2",
-                theme === "dark" ? "bg-zinc-800" : "bg-blue-100"
-              )}>
-                <IonIcon icon={videocam} className="w-4 h-4" />
-              </div>
-              <h1 className="text-xl font-bold">{title}</h1>
-            </div>
-            
-            {/* 描述文字 */}
-            <p className="text-muted-foreground text-xs text-center mb-5">
-              {description}
-            </p>
-            
-            {/* 按钮区域或进度条 */}
-            {isUploading ? (
-              <div className="mt-5">
-                <div className="mb-2 flex items-center justify-between">
-                  <span className="text-xs font-medium">
-                    {uploadProgress < 50 ? uploadingLabel : 
-                     uploadProgress < 90 ? processingLabel : translatingLabel}
-                  </span>
-                  <span className="text-xs text-muted-foreground">
-                    {uploadProgress}%
-                  </span>
+          )}
+          
+          {/* 上传进度显示 - 仅在上传时显示 */}
+          {isUploading && (
+            <div className="flex justify-center mb-8">
+              <div className="relative w-56 h-56 overflow-hidden rounded-xl bg-gradient-to-br from-blue-100 to-blue-300 flex items-center justify-center">
+                <div className="absolute inset-0 flex items-center justify-center">
+                  <div className="w-40 h-40 rounded-full bg-white/20 backdrop-blur-md flex items-center justify-center">
+                    <div className="text-center">
+                      <div className="text-3xl font-bold text-white mb-2">{uploadProgress}%</div>
+                      <div className="text-sm text-white/80">
+                        {uploadProgress < 50 ? uploadingLabel : 
+                         uploadProgress < 90 ? processingLabel : translatingLabel}
+                      </div>
+                    </div>
+                  </div>
                 </div>
-                <Progress 
-                  value={uploadProgress} 
-                  className="h-12 rounded-xl bg-background"
-                />
               </div>
-            ) : (
-              <div className="flex gap-3 w-full mt-5">
-                <Button
-                  className={cn(
-                    "flex-1 h-12 text-white rounded-xl transition-colors flex items-center justify-center",
-                    "bg-blue-600 hover:bg-blue-700"
-                  )}
-                  onClick={handleUploadClick}
-                >
-                  <IonIcon icon={addCircle} className="w-5 h-5 mr-2" />
-                  <span>{uploadVideoLabel}</span>
-                </Button>
-                
+            </div>
+          )}
+          
+          {/* 标题和图标并排 */}
+          <div className="flex items-center justify-center mb-2">
+            <div className={cn(
+              "w-7 h-7 rounded-lg flex items-center justify-center mr-2",
+              theme === "dark" ? "bg-zinc-800" : "bg-blue-100"
+            )}>
+              <IonIcon icon={videocam} className="w-4 h-4" />
+            </div>
+            <h1 className="text-xl font-bold">{title}</h1>
+          </div>
+          
+          {/* 描述文字 */}
+          <p className="text-muted-foreground text-xs text-center mb-5">
+            {description}
+          </p>
+          
+          {/* 按钮区域或进度条 */}
+          {isUploading ? (
+            <div className="mt-5 relative">
+              <Progress 
+                value={uploadProgress} 
+                className="h-12 rounded-xl bg-background"
+                indicatorClassName="bg-green-500"
+              />
+              <div className="absolute inset-0 flex items-center justify-center">
+                <span className="text-sm font-medium text-white">
+                  {uploadProgress < 50 ? uploadingLabel : 
+                   uploadProgress < 90 ? processingLabel : translatingLabel} {uploadProgress}%
+                </span>
+              </div>
+            </div>
+          ) : (
+            <div className="flex gap-3 w-full mt-5">
+              <Button
+                className={cn(
+                  "flex-1 h-12 text-white rounded-xl transition-colors flex items-center justify-center",
+                  uploadComplete 
+                    ? (isPlaying ? "bg-red-600 hover:bg-red-700" : "bg-green-600 hover:bg-green-700") 
+                    : "bg-blue-600 hover:bg-blue-700"
+                )}
+                onClick={handleUploadClick}
+              >
+                <IonIcon icon={uploadComplete ? (isPlaying ? pauseCircle : play) : addCircle} className="w-5 h-5 mr-2" />
+                <span>
+                  {uploadComplete 
+                    ? (isPlaying ? pauseVideoLabel : playVideoLabel) 
+                    : uploadVideoLabel}
+                </span>
+              </Button>
+              
+              {!uploadComplete ? (
                 <Popover>
                   <PopoverTrigger asChild>
                     <Button
@@ -229,94 +310,25 @@ export default function VideoTranslation() {
                     </div>
                   </PopoverContent>
                 </Popover>
-              </div>
-            )}
-            
-            <div className="text-center mt-4 text-xs text-muted-foreground">
-              Max 75MB / 15 seconds
+              ) : (
+                <Button
+                  className={cn(
+                    "flex-1 h-12 rounded-xl transition-colors flex items-center justify-center",
+                    "bg-blue-600 hover:bg-blue-700 text-white"
+                  )}
+                  onClick={startTranslation}
+                >
+                  <IonIcon icon={language} className="w-5 h-5 mr-2" />
+                  <span>{startTranslationLabel}</span>
+                </Button>
+              )}
             </div>
+          )}
+          
+          <div className="text-center mt-4 text-xs text-muted-foreground">
+            Max 75MB / 15 seconds
           </div>
-        ) : (
-          // 视频播放器预览
-          <motion.div 
-            className={cn(
-              "px-6 pt-5 pb-6 rounded-3xl overflow-hidden", 
-              theme === "dark" ? "bg-zinc-900" : "bg-gray-100"
-            )}
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ duration: 0.3 }}
-          >
-            <div className="flex justify-between items-center mb-3">
-              <div className="flex items-center">
-                <div className={cn(
-                  "w-7 h-7 rounded-lg flex items-center justify-center mr-2",
-                  theme === "dark" ? "bg-zinc-800" : "bg-blue-100"
-                )}>
-                  <IonIcon icon={videocam} className="w-4 h-4" />
-                </div>
-                <h1 className="text-md font-bold">{selectedFile?.name}</h1>
-              </div>
-              <Button 
-                variant="ghost" 
-                size="icon" 
-                className="h-8 w-8" 
-                onClick={resetUpload}
-              >
-                <IonIcon icon={close} className="h-5 w-5" />
-              </Button>
-            </div>
-            
-            <div className="rounded-xl overflow-hidden bg-black aspect-video mb-4 relative">
-              {/* 测试使用固定的视频URL，实际情况应该使用上传后得到的视频URL */}
-              <video 
-                ref={videoRef}
-                className="w-full h-full object-contain"
-                poster="https://i.ytimg.com/vi/Qw8Pvk2PeMk/maxresdefault.jpg"
-                src="https://sample-videos.com/video123/mp4/720/big_buck_bunny_720p_1mb.mp4"
-              />
-              
-              {/* 播放按钮覆盖层 */}
-              <div 
-                className="absolute inset-0 flex items-center justify-center cursor-pointer"
-                onClick={togglePlayback}
-              >
-                {!isPlaying && (
-                  <div className="bg-white/20 backdrop-blur-sm h-16 w-16 rounded-full flex items-center justify-center">
-                    <IonIcon icon={play} className="h-10 w-10 text-white" />
-                  </div>
-                )}
-              </div>
-            </div>
-            
-            <div className="flex justify-between items-center">
-              <Button 
-                variant="outline" 
-                className={cn(
-                  "flex-1 h-12 rounded-xl transition-colors flex items-center justify-center mr-3",
-                  theme === "dark" ? "bg-zinc-800 border-zinc-700" : "bg-white border-gray-200"
-                )}
-                onClick={togglePlayback}
-              >
-                <IonIcon icon={isPlaying ? pauseCircle : play} className="w-5 h-5 mr-2" />
-                <span>{isPlaying ? 
-                  (currentLanguage === "zh" ? "暂停" : "Pause") : 
-                  (currentLanguage === "zh" ? "播放" : "Play")
-                }</span>
-              </Button>
-              
-              <Button 
-                className={cn(
-                  "flex-1 h-12 text-white rounded-xl transition-colors flex items-center justify-center",
-                  "bg-blue-600 hover:bg-blue-700"
-                )}
-              >
-                <IonIcon icon={language} className="w-5 h-5 mr-2" />
-                <span>{currentLanguage === "zh" ? "翻译" : "Translate"}</span>
-              </Button>
-            </div>
-          </motion.div>
-        )}
+        </div>
       </div>
       
       <input
