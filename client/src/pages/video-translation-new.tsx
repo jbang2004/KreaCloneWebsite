@@ -201,6 +201,13 @@ export default function VideoTranslation() {
     setUploadComplete(false);
     setTranslationStarted(false);
     setIsPlaying(false);
+    setShowSubtitles(false);
+    setSubtitles([]);
+  };
+  
+  // 关闭字幕面板
+  const closeSubtitlesPanel = () => {
+    setShowSubtitles(false);
   };
 
   // 模拟翻译完成后的操作
@@ -252,6 +259,7 @@ export default function VideoTranslation() {
   const jumpToLabel = currentLanguage === "zh" ? "跳转" : "Jump to";
   const noSubtitlesLabel = currentLanguage === "zh" ? "视频处理完成后，字幕将显示在这里" : "Subtitles will appear here after video processing";
   const processingSubtitlesLabel = currentLanguage === "zh" ? "正在提取字幕..." : "Extracting subtitles...";
+  const closeLabel = currentLanguage === "zh" ? "关闭" : "Close";
 
   return (
     <motion.div
@@ -261,14 +269,16 @@ export default function VideoTranslation() {
       transition={{ duration: 0.5 }}
     >
       <div className="flex flex-wrap -mx-4">
-        {/* 左侧视频区域 - 预处理完成后向左移动 */}
+        {/* 左侧视频区域 - 预处理完成后整体向左移动，但保持固定尺寸 */}
         <AnimatePresence>
           <motion.div
-            className={cn(
-              "px-4 transition-all duration-500 ease-in-out",
-              showSubtitles ? "w-full md:w-1/2 lg:w-2/5" : "w-full"
-            )}
-            layout
+            className="px-4 w-full max-w-sm transition-all duration-500 ease-in-out"
+            initial={false}
+            animate={{ 
+              x: showSubtitles ? "-5%" : "0%",
+              marginLeft: showSubtitles ? "0" : "auto",
+              marginRight: showSubtitles ? "0" : "auto"
+            }}
             transition={{ duration: 0.5, type: "spring", stiffness: 100 }}
           >
             <div className={cn(
@@ -494,13 +504,25 @@ export default function VideoTranslation() {
               className="w-full md:w-1/2 lg:w-3/5 px-4 mt-8 md:mt-0"
               initial={{ opacity: 0, x: 50 }}
               animate={{ opacity: 1, x: 0 }}
-              transition={{ duration: 0.5, delay: 0.2 }}
+              exit={{ opacity: 0, x: 50 }}
+              transition={{ duration: 0.5 }}
             >
               <div className={cn(
-                "p-4 rounded-3xl h-full", 
+                "p-4 rounded-3xl h-full relative", 
                 theme === "dark" ? "bg-zinc-900" : "bg-gray-100"
               )}>
-                <div className="flex items-center justify-between mb-4">
+                {/* 关闭按钮 */}
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  className="absolute top-3 right-3 h-8 w-8 rounded-full p-0 z-10"
+                  onClick={closeSubtitlesPanel}
+                >
+                  <IonIcon icon={close} className="h-4 w-4" />
+                  <span className="sr-only">{closeLabel}</span>
+                </Button>
+                
+                <div className="flex items-center justify-between mb-4 pr-10">
                   <h2 className="text-xl font-bold">{translatedSubtitleLabel}</h2>
                   <div className="flex items-center space-x-2">
                     <span className="text-sm text-muted-foreground">
