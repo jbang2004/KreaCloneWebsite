@@ -14,7 +14,7 @@ import {
   colorWand, 
   sunny, 
   moon, 
-  language, 
+  globeOutline, 
   menu, 
   close, 
   person, 
@@ -143,7 +143,7 @@ export default function Header() {
                 className="hidden md:flex h-9 w-9 items-center justify-center rounded-xl bg-white/60 dark:bg-gray-800/60 hover:bg-white/70 dark:hover:bg-gray-700/70 transition-colors shadow-sm backdrop-blur-md"
                 aria-label={t("switchLanguage")}
               >
-                <IonIcon icon={language} className="h-5 w-5" />
+                <IonIcon icon={globeOutline} className="h-5 w-5" />
               </button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end">
@@ -252,7 +252,7 @@ export default function Header() {
               onClick={() => setLanguage(currentLanguage === "en" ? "zh" : "en")}
             >
               <span className="w-6 h-6 flex items-center justify-center">
-                <IonIcon icon={language} className="h-5 w-5" />
+                <IonIcon icon={globeOutline} className="h-5 w-5" />
               </span>
               <span className="font-medium">{t("switchLanguage")}</span>
             </div>
