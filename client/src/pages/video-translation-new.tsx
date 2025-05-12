@@ -23,6 +23,9 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover";
 
+// 一个占位视频的 Base64 数据：1x1 像素的透明视频
+const PLACEHOLDER_VIDEO = "data:video/mp4;base64,AAAAIGZ0eXBpc29tAAACAGlzb21pc28yYXZjMW1wNDEAAAAIZnJlZQAAAu1tZGF0AAACrQYF//+13EXpvebZSLeWLNgg2SPu73gyNjQgLSBjb3JlIDE0MiByMjQ4OSBmYWU5NzEzMCAtIEguMjY0L01QRUctNCBBVkMgY29kZWMgLSBDb3B5bGVmdCAyMDAzLTIwMTQgLSBodHRwOi8vd3d3LnZpZGVvbGFuLm9yZy94MjY0Lmh0bWwgLSBvcHRpb25zOiBjYWJhYz0xIHJlZj0zIGRlYmxvY2s9MTowOjAgYW5hbHlzZT0weDM6MHgxMTMgbWU9aGV4IHN1Ym1lPTcgcHN5PTEgcHN5X3JkPTEuMDA6MC4wMCBtaXhlZF9yZWY9MSBtZV9yYW5nZT0xNiBjaHJvbWFfbWU9MSB0cmVsbGlzPTEgOHg4ZGN0PTEgY3FtPTAgZGVhZHpvbmU9MjEsMTEgZmFzdF9wc2tpcD0xIGNocm9tYV9xcF9vZmZzZXQ9LTIgdGhyZWFkcz0xIGxvb2thaGVhZF90aHJlYWRzPTEgc2xpY2VkX3RocmVhZHM9MCBucj0wIGRlY2ltYXRlPTEgaW50ZXJsYWNlZD0wIGJsdXJheV9jb21wYXQ9MCBjb25zdHJhaW5lZF9pbnRyYT0wIGJmcmFtZXM9MyBiX3B5cmFtaWQ9MiBiX2FkYXB0PTEgYl9iaWFzPTAgZGlyZWN0PTEgd2VpZ2h0Yj0xIG9wZW5fZ29wPTAgd2VpZ2h0cD0yIGtleWludD0yNTAga2V5aW50X21pbj0yNSBzY2VuZWN1dD00MCBpbnRyYV9yZWZyZXNoPTAgcmNfbG9va2FoZWFkPTQwIHJjPWNyZiBtYnRyZWU9MSBjcmY9MjMuMCBxY29tcD0wLjYwIHFwbWluPTAgcXBtYXg9NjkgcXBzdGVwPTQgaXBfcmF0aW89MS40MCBhcT0xOjEuMDAAgAAAAA9liIQAW//9nyv9+oSMjdVAAQK4AEcNuh5FS6RGuQSGGSVAgxrdNv3vMAAAAwAcz4AA8pAB3NbSqwG/eTafAP+e4rqIAB+zOE5AYHrqHVgAK8AAAAQAAAWDAAA7TgAAAAgADcAAAi5tZGF0AAACrgYF///etrIyVF9qvmZ/wGdUZHV9f3BpZj6Bg8A6z4AA8pAB3NbSqwG/eTafAP+e4rqIAB+zOE5MWNcAAk4AAAQAAAWDAAA7TgAAAAgADcAAAi4=";
+
 export default function VideoTranslation() {
   const { language: currentLanguage } = useLanguage();
   const { theme } = useTheme();
@@ -76,7 +79,9 @@ export default function VideoTranslation() {
       if (isPlaying) {
         videoRef.current.pause();
       } else {
-        videoRef.current.play();
+        videoRef.current.play().catch(err => {
+          console.error("视频播放失败:", err);
+        });
       }
       setIsPlaying(!isPlaying);
     }
@@ -140,17 +145,22 @@ export default function VideoTranslation() {
           "px-6 py-8 rounded-3xl", 
           theme === "dark" ? "bg-zinc-900" : "bg-gray-100"
         )}>
-          {/* 视频播放区域 - 上传成功后显示 */}
-          {uploadComplete && (
-            <div className="mb-8">
-              <div className="rounded-xl overflow-hidden bg-black aspect-video relative">
-                {/* 测试使用固定的视频URL，实际情况应该使用上传后得到的视频URL */}
+          {/* 内容上部区域 - 保持同样高度 */}
+          <div className="h-[280px] mb-8 flex items-center justify-center">
+            {/* 视频播放区域 - 上传成功后显示 */}
+            {uploadComplete ? (
+              <div className="w-56 h-56 rounded-xl overflow-hidden bg-black relative">
+                {/* 使用本地测试视频文件 */}
                 <video 
                   ref={videoRef}
                   className="w-full h-full object-contain"
                   poster="https://i.ytimg.com/vi/Qw8Pvk2PeMk/maxresdefault.jpg"
-                  src="https://sample-videos.com/video123/mp4/720/big_buck_bunny_720p_1mb.mp4"
-                />
+                  playsInline
+                  controls={false}
+                >
+                  <source src="https://assets.mixkit.co/videos/preview/mixkit-forest-stream-in-the-sunlight-529-large.mp4" type="video/mp4" />
+                  您的浏览器不支持视频标签。
+                </video>
                 
                 {/* 播放按钮覆盖层 */}
                 {!isPlaying && (
@@ -166,7 +176,7 @@ export default function VideoTranslation() {
                 
                 {/* 视频信息叠加层 */}
                 <div className="absolute bottom-2 left-2 right-2 flex justify-between items-center">
-                  <div className="bg-black/60 backdrop-blur-sm rounded-lg px-2 py-1 text-white text-xs">
+                  <div className="bg-black/60 backdrop-blur-sm rounded-lg px-2 py-1 text-white text-xs max-w-[70%] truncate">
                     {selectedFile?.name || "video.mp4"}
                   </div>
                   
@@ -180,29 +190,8 @@ export default function VideoTranslation() {
                   </Button>
                 </div>
               </div>
-            </div>
-          )}
-          
-          {/* 静态图片区域 - 仅在未上传时显示 */}
-          {!uploadComplete && !isUploading && (
-            <div className="flex justify-center mb-8">
-              <div className="relative w-56 h-56 overflow-hidden rounded-xl bg-gradient-to-br from-blue-100 to-blue-300 flex items-center justify-center">
-                {/* 视频相关图像 */}
-                <div className="relative flex justify-center">
-                  <div className="absolute w-24 h-36 bg-blue-500 rounded-lg transform -rotate-6 translate-x-6"></div>
-                  <div className="absolute w-24 h-36 bg-blue-600 rounded-lg transform rotate-3 -translate-x-6"></div>
-                  <div className="absolute w-24 h-36 bg-blue-400 rounded-lg transform rotate-0 z-10"></div>
-                  <div className="absolute inset-0 flex items-center justify-center z-20">
-                    <IonIcon icon={videocam} className="w-12 h-12 text-white" />
-                  </div>
-                </div>
-              </div>
-            </div>
-          )}
-          
-          {/* 上传进度显示 - 仅在上传时显示 */}
-          {isUploading && (
-            <div className="flex justify-center mb-8">
+            ) : isUploading ? (
+              // 上传进度显示
               <div className="relative w-56 h-56 overflow-hidden rounded-xl bg-gradient-to-br from-blue-100 to-blue-300 flex items-center justify-center">
                 <div className="absolute inset-0 flex items-center justify-center">
                   <div className="w-40 h-40 rounded-full bg-white/20 backdrop-blur-md flex items-center justify-center">
@@ -216,8 +205,21 @@ export default function VideoTranslation() {
                   </div>
                 </div>
               </div>
-            </div>
-          )}
+            ) : (
+              // 默认静态图片区域
+              <div className="relative w-56 h-56 overflow-hidden rounded-xl bg-gradient-to-br from-blue-100 to-blue-300 flex items-center justify-center">
+                {/* 视频相关图像 */}
+                <div className="relative flex justify-center">
+                  <div className="absolute w-24 h-36 bg-blue-500 rounded-lg transform -rotate-6 translate-x-6"></div>
+                  <div className="absolute w-24 h-36 bg-blue-600 rounded-lg transform rotate-3 -translate-x-6"></div>
+                  <div className="absolute w-24 h-36 bg-blue-400 rounded-lg transform rotate-0 z-10"></div>
+                  <div className="absolute inset-0 flex items-center justify-center z-20">
+                    <IonIcon icon={videocam} className="w-12 h-12 text-white" />
+                  </div>
+                </div>
+              </div>
+            )}
+          </div>
           
           {/* 标题和图标并排 */}
           <div className="flex items-center justify-center mb-2">
