@@ -85,7 +85,7 @@ export default function AuthPage() {
   };
 
   return (
-    <div className="flex min-h-[80vh] flex-col md:flex-row md:items-stretch">
+    <div className={`flex min-h-[80vh] flex-col md:flex-row md:items-stretch ${theme === "dark" ? "bg-zinc-950" : "bg-gray-100"}`}>
       {/* Auth Form Section */}
       <motion.div 
         initial={{ opacity: 0, y: 20 }}
@@ -94,9 +94,9 @@ export default function AuthPage() {
         className="w-full md:w-1/2 flex items-center justify-center p-4 md:p-8"
       >
         <div className="w-full max-w-md">
-          <div className={`p-4 rounded-3xl ${theme === "dark" ? "bg-zinc-900" : "bg-gray-100"}`}>
+          <div className={`p-8 rounded-3xl ${theme === "dark" ? "bg-zinc-900/90" : "bg-gray-50/90"} backdrop-blur-sm shadow-sm`}>
             {/* 内容上部区域 - Krea Logo 与欢迎文字 */}
-            <div className="h-[170px] mb-6 flex flex-col items-center justify-center">
+            <div className="mb-6 flex flex-col items-center justify-center">
               <div className="mb-4">
                 <svg width="56" height="56" viewBox="0 0 56 56" fill="none" xmlns="http://www.w3.org/2000/svg">
                   <rect width="56" height="56" rx="12" fill="black"/>
@@ -217,14 +217,14 @@ export default function AuthPage() {
         </div>
       </motion.div>
       
-      {/* Hero section - 改为圆角矩形样式 */}
+      {/* Hero section */}
       <motion.div
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ duration: 0.5, delay: 0.3 }}
-        className="hidden md:flex md:w-1/2 items-center justify-center p-8"
+        className="hidden md:flex md:w-1/2 items-center justify-center p-8 bg-blue-600 text-white rounded-none"
       >
-        <div className="bg-blue-600 rounded-3xl text-white p-10 max-w-md w-full h-full flex flex-col justify-center">
+        <div className="max-w-md p-8">
           <h2 className="text-3xl font-bold mb-4">{language === "zh" ? "创意无限，AI助力" : "Unlimited Creativity with AI"}</h2>
           <p className="text-lg opacity-90 mb-6">
             {language === "zh" 
