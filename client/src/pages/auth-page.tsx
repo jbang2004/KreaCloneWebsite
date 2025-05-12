@@ -109,7 +109,7 @@ export default function AuthPage() {
           <div className="space-y-4">
             <Button 
               variant="outline" 
-              className="w-full flex items-center justify-center gap-2 py-5 border-border"
+              className="w-full flex items-center justify-center gap-2 py-5 border-border rounded-xl"
               onClick={handleGoogleLogin}
             >
               <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -171,7 +171,7 @@ export default function AuthPage() {
                 
                 <Button 
                   type="submit" 
-                  className="w-full bg-primary hover:bg-primary/90 text-primary-foreground py-5"
+                  className="w-full bg-primary hover:bg-primary/90 text-primary-foreground py-5 rounded-xl"
                   disabled={loginMutation.isPending || registerMutation.isPending}
                 >
                   {isRegistering 

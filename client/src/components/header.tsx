@@ -112,7 +112,7 @@ export default function Header() {
         {/* Mobile menu button */}
         {isMobile && (
           <button 
-            className="h-9 w-9 ml-2 flex items-center justify-center rounded-full bg-white/60 dark:bg-gray-800/60 hover:bg-white/70 dark:hover:bg-gray-700/70 transition-colors md:hidden shadow-sm backdrop-blur-md"
+            className="h-9 w-9 ml-2 flex items-center justify-center rounded-xl bg-white/60 dark:bg-gray-800/60 hover:bg-white/70 dark:hover:bg-gray-700/70 transition-colors md:hidden shadow-sm backdrop-blur-md"
             onClick={toggleMenu}
             aria-label="Toggle menu"
           >
@@ -133,7 +133,7 @@ export default function Header() {
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <button 
-                className="hidden md:flex h-9 w-9 items-center justify-center rounded-full bg-white/60 dark:bg-gray-800/60 hover:bg-white/70 dark:hover:bg-gray-700/70 transition-colors shadow-sm backdrop-blur-md"
+                className="hidden md:flex h-9 w-9 items-center justify-center rounded-xl bg-white/60 dark:bg-gray-800/60 hover:bg-white/70 dark:hover:bg-gray-700/70 transition-colors shadow-sm backdrop-blur-md"
                 aria-label={t("switchLanguage")}
               >
                 <GlobeAltIcon className="h-5 w-5" />
