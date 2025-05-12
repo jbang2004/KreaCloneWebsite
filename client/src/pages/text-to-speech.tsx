@@ -1,32 +1,27 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
 import { 
-  PlayIcon, 
-  SpeakerWaveIcon, 
-  UserIcon, 
-  Cog6ToothIcon, 
-  ArrowDownTrayIcon
-} from "@heroicons/react/24/outline";
-import LottieAnimation from "@/components/lottie-animation";
-import StaggeredAnimation from "@/components/staggered-animation";
+  addCircle, 
+  volumeHigh,
+  person,
+  settings,
+  document,
+  play,
+  download,
+  chevronDown
+} from "ionicons/icons";
+import { IonIcon } from "@ionic/react";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Slider } from "@/components/ui/slider";
 import { useLanguage } from "@/hooks/use-language";
 import { useTheme } from "@/hooks/use-theme";
+import { cn } from "@/lib/utils";
 import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-} from "@/components/ui/tooltip";
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
 
 interface Voice {
   id: string;
@@ -37,7 +32,7 @@ interface Voice {
 }
 
 export default function TextToSpeech() {
-  const { language } = useLanguage();
+  const { language: currentLanguage } = useLanguage();
   const { theme } = useTheme();
   const [text, setText] = useState<string>("");
   const [selectedVoice, setSelectedVoice] = useState<string | null>(null);
@@ -46,6 +41,7 @@ export default function TextToSpeech() {
   const [isGenerating, setIsGenerating] = useState<boolean>(false);
   const [isPlaying, setIsPlaying] = useState<boolean>(false);
   const [generatedAudioUrl, setGeneratedAudioUrl] = useState<string | null>(null);
+  const [showSettings, setShowSettings] = useState<boolean>(false);
 
   // 示例的语音列表
   const voices: Voice[] = [
@@ -55,8 +51,6 @@ export default function TextToSpeech() {
     { id: "voice4", name: "Sarah", language: "en-US", gender: "female", avatar: "https://api.dicebear.com/7.x/thumbs/svg?seed=Sarah&eyesColor=0a0a0a" },
     { id: "voice5", name: "智能女声", language: "zh-CN", gender: "female", avatar: "https://api.dicebear.com/7.x/thumbs/svg?seed=AI1&eyesColor=0a0a0a" },
     { id: "voice6", name: "智能男声", language: "zh-CN", gender: "male", avatar: "https://api.dicebear.com/7.x/thumbs/svg?seed=AI2&eyesColor=0a0a0a" },
-    { id: "voice7", name: "田中", language: "ja-JP", gender: "male", avatar: "https://api.dicebear.com/7.x/thumbs/svg?seed=Tanaka&eyesColor=0a0a0a" },
-    { id: "voice8", name: "さくら", language: "ja-JP", gender: "female", avatar: "https://api.dicebear.com/7.x/thumbs/svg?seed=Sakura&eyesColor=0a0a0a" },
   ];
 
   const handleTextChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
@@ -66,10 +60,6 @@ export default function TextToSpeech() {
       setGeneratedAudioUrl(null);
       setIsPlaying(false);
     }
-  };
-
-  const selectVoice = (voiceId: string) => {
-    setSelectedVoice(voiceId);
   };
 
   const generateSpeech = () => {
@@ -93,218 +83,253 @@ export default function TextToSpeech() {
   };
 
   // 根据语言选择显示的文本
-  const title = language === "zh" ? "文本配音" : "Text to Speech";
-  const subTitle = language === "zh" 
+  const title = currentLanguage === "zh" ? "文本配音" : "Text to Speech";
+  const description = currentLanguage === "zh" 
     ? "将文本转换为逼真的语音，提供多种声音和风格选择" 
     : "Convert text to realistic speech with multiple voices and styles";
-  const textPlaceholder = language === "zh" 
+  const textPlaceholder = currentLanguage === "zh" 
     ? "在此输入您想要转换成语音的文字..." 
     : "Enter text you want to convert to speech here...";
-  const generateButtonText = language === "zh" ? "生成语音" : "Generate Speech";
-  const processingText = language === "zh" ? "处理中..." : "Processing...";
-  const maleCategoryText = language === "zh" ? "男声" : "Male";
-  const femaleCategoryText = language === "zh" ? "女声" : "Female";
-  const aiCategoryText = language === "zh" ? "AI声音" : "AI Voices";
-  const downloadText = language === "zh" ? "下载音频" : "Download Audio";
-  const characterCountText = language === "zh" ? "字符数" : "Character Count";
-  const selectVoiceText = language === "zh" ? "请选择一个语音" : "Please select a voice";
+  const generateButtonText = currentLanguage === "zh" ? "生成语音" : "Generate";
+  const processingText = currentLanguage === "zh" ? "处理中..." : "Processing...";
+  const selectVoiceText = currentLanguage === "zh" ? "选择声音" : "Select Voice";
+  const speedText = currentLanguage === "zh" ? "速度" : "Speed";
+  const pitchText = currentLanguage === "zh" ? "音高" : "Pitch";
+  const characterCountText = currentLanguage === "zh" ? "字符数" : "Characters";
+  const settingsText = currentLanguage === "zh" ? "设置" : "Settings";
 
   return (
-    <div className="flex flex-col items-center justify-center py-10">
-      <div className="text-center mb-8">
-        <div className="mx-auto mb-4 bg-muted rounded-xl p-4 inline-block">
-          <LottieAnimation type="speech" width={100} height={100} />
-        </div>
-        <h1 className="text-2xl font-bold mb-2">{title}</h1>
-        <p className="text-muted-foreground max-w-lg mx-auto">
-          {subTitle}
-        </p>
-      </div>
-
-      <div className="w-full mx-auto px-2 sm:px-4 md:px-6 xl:container xl:mx-auto">
-        <StaggeredAnimation staggerDelay={0.1} initialY={15}>
-          <div className="w-full bg-muted p-6 rounded-xl mb-8">
+    <motion.div 
+      className="flex flex-col items-center justify-center min-h-[70vh]"
+      initial={{ opacity: 0, y: 10 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.5 }}
+    >
+      <div className="w-full max-w-sm mx-auto">
+        <div className={cn(
+          "px-6 py-8 rounded-3xl", 
+          theme === "dark" ? "bg-zinc-900" : "bg-gray-100"
+        )}>
+          {/* 静态图片区域 - 苹果风格 */}
+          <div className="flex justify-center mb-8">
+            <div className="relative w-56 h-56 overflow-hidden rounded-xl bg-gradient-to-br from-purple-100 to-purple-300 flex items-center justify-center">
+              {/* 语音相关图像 */}
+              <div className="relative flex justify-center">
+                <div className="absolute w-24 h-36 bg-purple-500 rounded-lg transform -rotate-6 translate-x-6"></div>
+                <div className="absolute w-24 h-36 bg-purple-600 rounded-lg transform rotate-3 -translate-x-6"></div>
+                <div className="absolute w-24 h-36 bg-purple-400 rounded-lg transform rotate-0 z-10"></div>
+                <div className="absolute inset-0 flex items-center justify-center z-20">
+                  <IonIcon icon={volumeHigh} className="w-12 h-12 text-white" />
+                </div>
+              </div>
+            </div>
+          </div>
+          
+          {/* 标题和图标并排 */}
+          <div className="flex items-center justify-center mb-2">
+            <div className={cn(
+              "w-7 h-7 rounded-lg flex items-center justify-center mr-2",
+              theme === "dark" ? "bg-zinc-800" : "bg-purple-100"
+            )}>
+              <IonIcon icon={volumeHigh} className="w-4 h-4" />
+            </div>
+            <h1 className="text-xl font-bold">{title}</h1>
+          </div>
+          
+          {/* 描述文字 */}
+          <p className="text-muted-foreground text-xs text-center mb-5">
+            {description}
+          </p>
+          
+          {/* 文本输入区域 */}
+          <div className="mb-4">
             <Textarea 
               value={text}
               onChange={handleTextChange}
               placeholder={textPlaceholder}
-              className="w-full p-4 h-28 bg-card rounded-lg border border-border focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent resize-none"
+              className="w-full p-3 h-24 bg-background rounded-xl border border-border focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent resize-none text-sm"
             />
-            
-            <div className="flex justify-between mt-4 items-center">
+            <div className="flex justify-between mt-1 items-center">
               <div className="text-xs text-muted-foreground">
                 {characterCountText}: {text.length}
               </div>
-              
-              <Button 
-                onClick={generateSpeech}
-                disabled={text.trim() === "" || isGenerating || !selectedVoice}
-                className="px-6 py-2 bg-primary text-primary-foreground rounded-lg hover:bg-primary/90 transition-colors"
-              >
-                {isGenerating ? processingText : generateButtonText}
-              </Button>
             </div>
           </div>
-
-          <div className="mb-8">
-            <h3 className="text-lg font-medium mb-4">{language === "zh" ? "选择声音" : "Select Voice"}</h3>
-            
-            {/* 分类：男声 */}
-            <div className="mb-6">
-              <h4 className="text-sm font-medium text-muted-foreground mb-3">{maleCategoryText}</h4>
-              <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 xl:grid-cols-8 gap-4">
-                {voices.filter(voice => voice.gender === "male").map(voice => (
-                  <TooltipProvider key={voice.id}>
-                    <Tooltip>
-                      <TooltipTrigger asChild>
-                        <div
-                          className={`cursor-pointer rounded-lg p-2 text-center transition-all ${
-                            selectedVoice === voice.id 
-                              ? "bg-primary/10 ring-2 ring-primary" 
-                              : "bg-card hover:bg-muted"
-                          }`}
-                          onClick={() => selectVoice(voice.id)}
-                        >
-                          <div className="w-16 h-16 mx-auto mb-2 rounded-full overflow-hidden bg-background">
-                            {voice.avatar ? (
-                              <img src={voice.avatar} alt={voice.name} className="w-full h-full object-cover" />
-                            ) : (
-                              <UserIcon className="w-full h-full p-4 text-muted-foreground" />
-                            )}
-                          </div>
-                          <p className="text-sm font-medium truncate">{voice.name}</p>
-                          <p className="text-xs text-muted-foreground">{voice.language}</p>
-                        </div>
-                      </TooltipTrigger>
-                      <TooltipContent>
-                        <p>{voice.name} - {voice.language}</p>
-                        <p className="text-xs text-muted-foreground">{language === "zh" ? "点击选择" : "Click to select"}</p>
-                      </TooltipContent>
-                    </Tooltip>
-                  </TooltipProvider>
-                ))}
-              </div>
-            </div>
-            
-            {/* 分类：女声 */}
-            <div className="mb-6">
-              <h4 className="text-sm font-medium text-muted-foreground mb-3">{femaleCategoryText}</h4>
-              <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 xl:grid-cols-8 gap-4">
-                {voices.filter(voice => voice.gender === "female").map(voice => (
-                  <TooltipProvider key={voice.id}>
-                    <Tooltip>
-                      <TooltipTrigger asChild>
-                        <div
-                          className={`cursor-pointer rounded-lg p-2 text-center transition-all ${
-                            selectedVoice === voice.id 
-                              ? "bg-primary/10 ring-2 ring-primary" 
-                              : "bg-card hover:bg-muted"
-                          }`}
-                          onClick={() => selectVoice(voice.id)}
-                        >
-                          <div className="w-16 h-16 mx-auto mb-2 rounded-full overflow-hidden bg-background">
-                            {voice.avatar ? (
-                              <img src={voice.avatar} alt={voice.name} className="w-full h-full object-cover" />
-                            ) : (
-                              <UserIcon className="w-full h-full p-4 text-muted-foreground" />
-                            )}
-                          </div>
-                          <p className="text-sm font-medium truncate">{voice.name}</p>
-                          <p className="text-xs text-muted-foreground">{voice.language}</p>
-                        </div>
-                      </TooltipTrigger>
-                      <TooltipContent>
-                        <p>{voice.name} - {voice.language}</p>
-                        <p className="text-xs text-muted-foreground">{language === "zh" ? "点击选择" : "Click to select"}</p>
-                      </TooltipContent>
-                    </Tooltip>
-                  </TooltipProvider>
-                ))}
-              </div>
-            </div>
-          </div>
-
-          {generatedAudioUrl && (
-            <motion.div 
-              className="bg-card p-4 rounded-lg border border-border mb-8"
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.3 }}
-            >
-              <div className="flex items-center justify-between mb-4">
-                <div className="flex items-center">
-                  <Button 
-                    variant="ghost" 
-                    size="icon" 
-                    className="w-12 h-12 text-primary"
-                    onClick={togglePlayback}
-                  >
-                    <PlayIcon className="h-8 w-8" />
-                  </Button>
-                  <div className="ml-2">
-                    <h3 className="font-medium">
-                      {voices.find(v => v.id === selectedVoice)?.name || "Audio"}
+          
+          {/* 选择声音部分 */}
+          {selectedVoice && (
+            <div className="mb-4 p-3 bg-background rounded-xl border border-border">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-2">
+                  <div className="w-10 h-10 rounded-full overflow-hidden bg-muted">
+                    {voices.find(v => v.id === selectedVoice)?.avatar ? (
+                      <img 
+                        src={voices.find(v => v.id === selectedVoice)?.avatar} 
+                        alt={voices.find(v => v.id === selectedVoice)?.name} 
+                        className="w-full h-full object-cover" 
+                      />
+                    ) : (
+                      <IonIcon icon={person} className="w-full h-full p-2" />
+                    )}
+                  </div>
+                  <div>
+                    <h3 className="text-sm font-medium">
+                      {voices.find(v => v.id === selectedVoice)?.name}
                     </h3>
-                    <p className="text-sm text-muted-foreground">
-                      {new Date().toLocaleTimeString()}
+                    <p className="text-xs text-muted-foreground">
+                      {voices.find(v => v.id === selectedVoice)?.language}
                     </p>
                   </div>
                 </div>
-                <Button variant="outline" size="icon">
-                  <ArrowDownTrayIcon className="h-5 w-5" />
-                  <span className="sr-only">{downloadText}</span>
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  className="h-8 w-8"
+                  onClick={() => setShowSettings(!showSettings)}
+                >
+                  <IonIcon icon={settings} className="h-4 w-4" />
                 </Button>
               </div>
               
-              <div className="w-full h-16 bg-muted rounded flex items-center justify-center">
-                <SpeakerWaveIcon className="h-5 w-5 text-muted-foreground" />
-                <span className="text-sm text-muted-foreground ml-2">
-                  {isPlaying 
-                    ? (language === "zh" ? "播放中..." : "Playing...") 
-                    : (language === "zh" ? "音频已生成" : "Audio generated")}
-                </span>
-              </div>
-            </motion.div>
+              {/* 语音设置 */}
+              {showSettings && (
+                <div className="mt-3 pt-3 border-t border-border space-y-3">
+                  <div>
+                    <div className="flex justify-between items-center mb-1">
+                      <label className="text-xs">{speedText}</label>
+                      <span className="text-xs bg-muted px-1.5 py-0.5 rounded text-muted-foreground">
+                        {speed[0].toFixed(1)}x
+                      </span>
+                    </div>
+                    <Slider
+                      value={speed}
+                      min={0.5}
+                      max={2}
+                      step={0.1}
+                      onValueChange={setSpeed}
+                      className="h-4"
+                    />
+                  </div>
+                  <div>
+                    <div className="flex justify-between items-center mb-1">
+                      <label className="text-xs">{pitchText}</label>
+                      <span className="text-xs bg-muted px-1.5 py-0.5 rounded text-muted-foreground">
+                        {pitch[0].toFixed(1)}
+                      </span>
+                    </div>
+                    <Slider
+                      value={pitch}
+                      min={0.5}
+                      max={2}
+                      step={0.1}
+                      onValueChange={setPitch}
+                      className="h-4"
+                    />
+                  </div>
+                </div>
+              )}
+            </div>
           )}
-
-          <div className="bg-card p-4 rounded-lg border border-border">
-            <h3 className="text-sm font-medium mb-3">{language === "zh" ? "语音设置" : "Voice Settings"}</h3>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <div>
-                <div className="flex justify-between items-center mb-2">
-                  <label className="text-sm">{language === "zh" ? "速度" : "Speed"}</label>
-                  <span className="text-xs bg-muted px-2 py-1 rounded">
-                    {speed[0].toFixed(1)}x
-                  </span>
+          
+          {/* 生成的音频显示 */}
+          {generatedAudioUrl && (
+            <div className="mb-4 p-3 bg-background rounded-xl border border-border">
+              <div className="flex items-center justify-between">
+                <Button 
+                  variant="ghost" 
+                  size="icon" 
+                  className="h-10 w-10 text-primary"
+                  onClick={togglePlayback}
+                >
+                  <IonIcon icon={play} className="h-6 w-6" />
+                </Button>
+                <div className="flex-1 mx-2 h-2 bg-muted rounded-full">
+                  <div 
+                    className={`h-full bg-primary rounded-full transition-all duration-200 ${
+                      isPlaying ? "w-1/2" : "w-0"
+                    }`} 
+                  />
                 </div>
-                <Slider
-                  value={speed}
-                  min={0.5}
-                  max={2}
-                  step={0.1}
-                  onValueChange={setSpeed}
-                />
-              </div>
-
-              <div>
-                <div className="flex justify-between items-center mb-2">
-                  <label className="text-sm">{language === "zh" ? "音高" : "Pitch"}</label>
-                  <span className="text-xs bg-muted px-2 py-1 rounded">
-                    {pitch[0].toFixed(1)}
-                  </span>
-                </div>
-                <Slider
-                  value={pitch}
-                  min={0.5}
-                  max={2}
-                  step={0.1}
-                  onValueChange={setPitch}
-                />
+                <Button variant="ghost" size="icon" className="h-8 w-8">
+                  <IonIcon icon={download} className="h-4 w-4" />
+                </Button>
               </div>
             </div>
+          )}
+          
+          {/* 按钮区域 - 左右排列 */}
+          <div className="flex gap-3 w-full mt-5">
+            <Button
+              className={cn(
+                "flex-1 h-12 text-white rounded-xl transition-colors flex items-center justify-center",
+                "bg-purple-600 hover:bg-purple-700"
+              )}
+              onClick={generateSpeech}
+              disabled={text.trim() === "" || isGenerating || !selectedVoice}
+            >
+              <IonIcon icon={addCircle} className="w-5 h-5 mr-2" />
+              <span>{isGenerating ? processingText : generateButtonText}</span>
+            </Button>
+            
+            <Popover>
+              <PopoverTrigger asChild>
+                <Button
+                  variant="outline"
+                  className={cn(
+                    "flex-1 h-12 rounded-xl transition-colors flex items-center justify-center",
+                    theme === "dark" ? "bg-zinc-800 border-zinc-700" : "bg-purple-50 border-purple-100 text-purple-700"
+                  )}
+                >
+                  <IonIcon icon={person} className="w-5 h-5 mr-2" />
+                  <span>{selectVoiceText}</span>
+                  <IonIcon icon={chevronDown} className="w-4 h-4 ml-2" />
+                </Button>
+              </PopoverTrigger>
+              <PopoverContent 
+                className="w-64 p-2 rounded-xl"
+                align="end"
+              >
+                <div className="space-y-1 max-h-64 overflow-y-auto">
+                  {voices.map(voice => (
+                    <Button
+                      key={voice.id}
+                      variant="ghost"
+                      className={cn(
+                        "w-full justify-start text-left font-normal",
+                        selectedVoice === voice.id && "bg-purple-50 text-purple-700 dark:bg-purple-900/20 dark:text-purple-500"
+                      )}
+                      onClick={() => setSelectedVoice(voice.id)}
+                    >
+                      <div className="flex items-center w-full">
+                        <div className="w-8 h-8 rounded-full overflow-hidden bg-muted mr-2 flex-shrink-0">
+                          {voice.avatar ? (
+                            <img src={voice.avatar} alt={voice.name} className="w-full h-full object-cover" />
+                          ) : (
+                            <IonIcon icon={person} className="w-full h-full p-1.5" />
+                          )}
+                        </div>
+                        <div className="flex-1 min-w-0">
+                          <p className="text-sm truncate">{voice.name}</p>
+                          <p className="text-xs text-muted-foreground truncate">{voice.language}</p>
+                        </div>
+                        {selectedVoice === voice.id && (
+                          <svg className="h-4 w-4 ml-auto flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                          </svg>
+                        )}
+                      </div>
+                    </Button>
+                  ))}
+                </div>
+              </PopoverContent>
+            </Popover>
           </div>
-        </StaggeredAnimation>
+          
+          <div className="text-center mt-4 text-xs text-muted-foreground">
+            {currentLanguage === "zh" ? "支持40种语言，100+种声音" : "Supports 40 languages, 100+ voices"}
+          </div>
+        </div>
       </div>
-    </div>
+    </motion.div>
   );
 }
