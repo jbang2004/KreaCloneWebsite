@@ -85,16 +85,16 @@ export default function AuthPage() {
   };
 
   return (
-    <div className="flex min-h-[100vh] flex-col md:flex-row md:items-stretch md:overflow-hidden px-6 md:px-10 lg:px-16">
-      {/* Auth Form Section */}
-      <motion.div 
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.5 }}
-        className="w-full md:w-[45%] flex items-center justify-center py-8"
-      >
-        <div className="w-full max-w-md">
-          <div className={`p-4 rounded-3xl ${theme === "dark" ? "bg-zinc-900" : "bg-gray-100"}`}>
+    <div className="flex min-h-screen px-6 md:px-10 lg:px-16 py-8">
+      <div className="flex w-full flex-col md:flex-row md:items-stretch max-w-6xl mx-auto gap-2 md:gap-4 self-center"> 
+        {/* Auth Form Section */}
+        <motion.div 
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5 }}
+          className="w-full md:w-[45%]"
+        >
+          <div className={`p-4 h-full rounded-3xl ${theme === "dark" ? "bg-zinc-900" : "bg-gray-100"}`}>
             {/* 内容上部区域 - Krea Logo 与欢迎文字 */}
             <div className="h-[170px] mb-6 flex flex-col items-center justify-center">
               <div className="mb-4">
@@ -214,45 +214,45 @@ export default function AuthPage() {
               </p>
             </div>
           </div>
-        </div>
-      </motion.div>
-      
-      {/* Hero section - 伸缩式蓝色卡片 */}
-      <motion.div
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ duration: 0.5, delay: 0.3 }}
-        className="hidden md:flex md:w-[55%] items-center py-8 pl-2 md:pl-4"
-      >
-        <div className="bg-blue-600 rounded-3xl text-white p-8 h-full w-full flex flex-col justify-center">
-          <h2 className="text-3xl font-bold mb-4">{language === "zh" ? "创意无限，AI助力" : "Unlimited Creativity with AI"}</h2>
-          <p className="text-lg opacity-90 mb-6">
-            {language === "zh" 
-              ? "使用我们强大的AI工具，轻松实现音频转录、文本转语音和视频翻译。" 
-              : "Transform your content with our powerful AI tools for audio transcription, text-to-speech, and video translation."}
-          </p>
-          <ul className="space-y-4">
-            <li className="flex items-center">
-              <svg className="h-5 w-5 mr-3 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-              </svg>
-              {language === "zh" ? "专业音频转文字" : "Professional Audio Transcription"}
-            </li>
-            <li className="flex items-center">
-              <svg className="h-5 w-5 mr-3 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-              </svg>
-              {language === "zh" ? "逼真的AI语音合成" : "Realistic AI Voice Synthesis"}
-            </li>
-            <li className="flex items-center">
-              <svg className="h-5 w-5 mr-3 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-              </svg>
-              {language === "zh" ? "视频字幕翻译" : "Video Subtitle Translation"}
-            </li>
-          </ul>
-        </div>
-      </motion.div>
+        </motion.div>
+        
+        {/* Hero section - 蓝色卡片 */}
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 0.5, delay: 0.3 }}
+          className="hidden md:block md:w-[55%]"
+        >
+          <div className="bg-blue-600 rounded-3xl text-white p-8 w-full h-full flex flex-col justify-center">
+            <h2 className="text-3xl font-bold mb-4">{language === "zh" ? "创意无限，AI助力" : "Unlimited Creativity with AI"}</h2>
+            <p className="text-lg opacity-90 mb-6">
+              {language === "zh" 
+                ? "使用我们强大的AI工具，轻松实现音频转录、文本转语音和视频翻译。" 
+                : "Transform your content with our powerful AI tools for audio transcription, text-to-speech, and video translation."}
+            </p>
+            <ul className="space-y-4">
+              <li className="flex items-center">
+                <svg className="h-5 w-5 mr-3 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                </svg>
+                {language === "zh" ? "专业音频转文字" : "Professional Audio Transcription"}
+              </li>
+              <li className="flex items-center">
+                <svg className="h-5 w-5 mr-3 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                </svg>
+                {language === "zh" ? "逼真的AI语音合成" : "Realistic AI Voice Synthesis"}
+              </li>
+              <li className="flex items-center">
+                <svg className="h-5 w-5 mr-3 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                </svg>
+                {language === "zh" ? "视频字幕翻译" : "Video Subtitle Translation"}
+              </li>
+            </ul>
+          </div>
+        </motion.div>
+      </div>
     </div>
   );
 }
