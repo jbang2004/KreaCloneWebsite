@@ -9,7 +9,9 @@ import {
   play,
   pauseCircle,
   close,
-  arrowForward
+  arrowForward,
+  scanOutline,
+  expandOutline
 } from "ionicons/icons";
 import { IonIcon } from "@ionic/react";
 import { Button } from "@/components/ui/button";
@@ -23,9 +25,6 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover";
 
-// 一个占位视频的 Base64 数据：1x1 像素的透明视频
-const PLACEHOLDER_VIDEO = "data:video/mp4;base64,AAAAIGZ0eXBpc29tAAACAGlzb21pc28yYXZjMW1wNDEAAAAIZnJlZQAAAu1tZGF0AAACrQYF//+13EXpvebZSLeWLNgg2SPu73gyNjQgLSBjb3JlIDE0MiByMjQ4OSBmYWU5NzEzMCAtIEguMjY0L01QRUctNCBBVkMgY29kZWMgLSBDb3B5bGVmdCAyMDAzLTIwMTQgLSBodHRwOi8vd3d3LnZpZGVvbGFuLm9yZy94MjY0Lmh0bWwgLSBvcHRpb25zOiBjYWJhYz0xIHJlZj0zIGRlYmxvY2s9MTowOjAgYW5hbHlzZT0weDM6MHgxMTMgbWU9aGV4IHN1Ym1lPTcgcHN5PTEgcHN5X3JkPTEuMDA6MC4wMCBtaXhlZF9yZWY9MSBtZV9yYW5nZT0xNiBjaHJvbWFfbWU9MSB0cmVsbGlzPTEgOHg4ZGN0PTEgY3FtPTAgZGVhZHpvbmU9MjEsMTEgZmFzdF9wc2tpcD0xIGNocm9tYV9xcF9vZmZzZXQ9LTIgdGhyZWFkcz0xIGxvb2thaGVhZF90aHJlYWRzPTEgc2xpY2VkX3RocmVhZHM9MCBucj0wIGRlY2ltYXRlPTEgaW50ZXJsYWNlZD0wIGJsdXJheV9jb21wYXQ9MCBjb25zdHJhaW5lZF9pbnRyYT0wIGJmcmFtZXM9MyBiX3B5cmFtaWQ9MiBiX2FkYXB0PTEgYl9iaWFzPTAgZGlyZWN0PTEgd2VpZ2h0Yj0xIG9wZW5fZ29wPTAgd2VpZ2h0cD0yIGtleWludD0yNTAga2V5aW50X21pbj0yNSBzY2VuZWN1dD00MCBpbnRyYV9yZWZyZXNoPTAgcmNfbG9va2FoZWFkPTQwIHJjPWNyZiBtYnRyZWU9MSBjcmY9MjMuMCBxY29tcD0wLjYwIHFwbWluPTAgcXBtYXg9NjkgcXBzdGVwPTQgaXBfcmF0aW89MS40MCBhcT0xOjEuMDAAgAAAAA9liIQAW//9nyv9+oSMjdVAAQK4AEcNuh5FS6RGuQSGGSVAgxrdNv3vMAAAAwAcz4AA8pAB3NbSqwG/eTafAP+e4rqIAB+zOE5AYHrqHVgAK8AAAAQAAAWDAAA7TgAAAAgADcAAAi5tZGF0AAACrgYF///etrIyVF9qvmZ/wGdUZHV9f3BpZj6Bg8A6z4AA8pAB3NbSqwG/eTafAP+e4rqIAB+zOE5MWNcAAk4AAAQAAAWDAAA7TgAAAAgADcAAAi4=";
-
 export default function VideoTranslation() {
   const { language: currentLanguage } = useLanguage();
   const { theme } = useTheme();
@@ -35,8 +34,10 @@ export default function VideoTranslation() {
   const [isUploading, setIsUploading] = useState<boolean>(false);
   const [uploadComplete, setUploadComplete] = useState<boolean>(false);
   const [isPlaying, setIsPlaying] = useState<boolean>(false);
+  const [isFullScreen, setIsFullScreen] = useState<boolean>(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const videoRef = useRef<HTMLVideoElement>(null);
+  const videoContainerRef = useRef<HTMLDivElement>(null);
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -78,17 +79,72 @@ export default function VideoTranslation() {
     if (videoRef.current) {
       if (isPlaying) {
         videoRef.current.pause();
+        setIsPlaying(false);
       } else {
-        videoRef.current.play().catch(err => {
-          console.error("视频播放失败:", err);
-        });
+        // 使用更可靠的播放方法
+        const playPromise = videoRef.current.play();
+        
+        if (playPromise !== undefined) {
+          playPromise
+            .then(() => {
+              setIsPlaying(true);
+            })
+            .catch(error => {
+              console.error("视频播放失败:", error);
+              // 用户交互后再次尝试播放
+              const userInteractionPlay = () => {
+                if (videoRef.current) {
+                  videoRef.current.play()
+                    .then(() => {
+                      setIsPlaying(true);
+                      document.removeEventListener('click', userInteractionPlay);
+                    })
+                    .catch(err => console.error("再次尝试播放失败:", err));
+                }
+              };
+              document.addEventListener('click', userInteractionPlay, { once: true });
+            });
+        }
       }
-      setIsPlaying(!isPlaying);
     }
   };
 
+  // 切换全屏模式
+  const toggleFullScreen = () => {
+    if (!videoContainerRef.current) return;
+    
+    if (!isFullScreen) {
+      if (videoContainerRef.current.requestFullscreen) {
+        videoContainerRef.current.requestFullscreen()
+          .then(() => setIsFullScreen(true))
+          .catch(err => console.error("全屏请求失败:", err));
+      }
+    } else {
+      if (document.exitFullscreen) {
+        document.exitFullscreen()
+          .then(() => setIsFullScreen(false))
+          .catch(err => console.error("退出全屏失败:", err));
+      }
+    }
+  };
+
+  // 监听全屏变化
+  useEffect(() => {
+    const handleFullscreenChange = () => {
+      setIsFullScreen(!!document.fullscreenElement);
+    };
+
+    document.addEventListener('fullscreenchange', handleFullscreenChange);
+    return () => {
+      document.removeEventListener('fullscreenchange', handleFullscreenChange);
+    };
+  }, []);
+
   // 重置和重新上传
   const resetUpload = () => {
+    if (isPlaying && videoRef.current) {
+      videoRef.current.pause();
+    }
     setSelectedFile(null);
     setUploadProgress(0);
     setIsUploading(false);
@@ -142,23 +198,28 @@ export default function VideoTranslation() {
     >
       <div className="w-full max-w-sm mx-auto">
         <div className={cn(
-          "px-6 py-8 rounded-3xl", 
+          "px-4 py-6 rounded-3xl", 
           theme === "dark" ? "bg-zinc-900" : "bg-gray-100"
         )}>
           {/* 内容上部区域 - 保持同样高度 */}
-          <div className="h-[280px] mb-8 flex items-center justify-center">
+          <div className="h-[290px] mb-6 flex items-center justify-center">
             {/* 视频播放区域 - 上传成功后显示 */}
             {uploadComplete ? (
-              <div className="w-56 h-56 rounded-xl overflow-hidden bg-black relative">
-                {/* 使用本地测试视频文件 */}
+              <div 
+                ref={videoContainerRef}
+                className="w-full h-full rounded-xl overflow-hidden bg-black relative"
+              >
+                {/* 使用公共测试视频文件 */}
                 <video 
                   ref={videoRef}
                   className="w-full h-full object-contain"
                   poster="https://i.ytimg.com/vi/Qw8Pvk2PeMk/maxresdefault.jpg"
                   playsInline
                   controls={false}
+                  preload="auto"
                 >
-                  <source src="https://assets.mixkit.co/videos/preview/mixkit-forest-stream-in-the-sunlight-529-large.mp4" type="video/mp4" />
+                  <source src="https://interactive-examples.mdn.mozilla.net/media/cc0-videos/flower.mp4" type="video/mp4" />
+                  <source src="https://storage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4" type="video/mp4" />
                   您的浏览器不支持视频标签。
                 </video>
                 
@@ -174,25 +235,34 @@ export default function VideoTranslation() {
                   </div>
                 )}
                 
-                {/* 视频信息叠加层 */}
-                <div className="absolute bottom-2 left-2 right-2 flex justify-between items-center">
-                  <div className="bg-black/60 backdrop-blur-sm rounded-lg px-2 py-1 text-white text-xs max-w-[70%] truncate">
-                    {selectedFile?.name || "video.mp4"}
-                  </div>
-                  
-                  <Button 
-                    variant="ghost" 
-                    size="icon" 
-                    className="h-8 w-8 bg-black/60 backdrop-blur-sm text-white rounded-full" 
-                    onClick={resetUpload}
-                  >
-                    <IonIcon icon={close} className="h-4 w-4" />
-                  </Button>
+                {/* 关闭按钮 - 右上角 */}
+                <Button 
+                  variant="ghost" 
+                  size="icon" 
+                  className="absolute top-2 right-2 h-8 w-8 bg-black/60 backdrop-blur-sm text-white rounded-full z-10" 
+                  onClick={resetUpload}
+                >
+                  <IonIcon icon={close} className="h-4 w-4" />
+                </Button>
+                
+                {/* 最大化按钮 - 右下角 */}
+                <Button 
+                  variant="ghost" 
+                  size="icon" 
+                  className="absolute bottom-2 right-2 h-8 w-8 bg-black/60 backdrop-blur-sm text-white rounded-full z-10" 
+                  onClick={toggleFullScreen}
+                >
+                  <IonIcon icon={expandOutline} className="h-4 w-4" />
+                </Button>
+                
+                {/* 视频名称 - 左下角 */}
+                <div className="absolute bottom-2 left-2 bg-black/60 backdrop-blur-sm rounded-lg px-2 py-1 text-white text-xs max-w-[70%] truncate z-10">
+                  {selectedFile?.name || "sample-video.mp4"}
                 </div>
               </div>
             ) : isUploading ? (
               // 上传进度显示
-              <div className="relative w-56 h-56 overflow-hidden rounded-xl bg-gradient-to-br from-blue-100 to-blue-300 flex items-center justify-center">
+              <div className="relative w-full h-full overflow-hidden rounded-xl bg-gradient-to-br from-blue-100 to-blue-300 flex items-center justify-center">
                 <div className="absolute inset-0 flex items-center justify-center">
                   <div className="w-40 h-40 rounded-full bg-white/20 backdrop-blur-md flex items-center justify-center">
                     <div className="text-center">
@@ -206,10 +276,10 @@ export default function VideoTranslation() {
                 </div>
               </div>
             ) : (
-              // 默认静态图片区域
-              <div className="relative w-56 h-56 overflow-hidden rounded-xl bg-gradient-to-br from-blue-100 to-blue-300 flex items-center justify-center">
+              // 默认静态图片区域 - 填充整个空间
+              <div className="relative w-full h-full overflow-hidden rounded-xl bg-gradient-to-br from-blue-100 to-blue-300 flex items-center justify-center">
                 {/* 视频相关图像 */}
-                <div className="relative flex justify-center">
+                <div className="relative flex justify-center scale-110">
                   <div className="absolute w-24 h-36 bg-blue-500 rounded-lg transform -rotate-6 translate-x-6"></div>
                   <div className="absolute w-24 h-36 bg-blue-600 rounded-lg transform rotate-3 -translate-x-6"></div>
                   <div className="absolute w-24 h-36 bg-blue-400 rounded-lg transform rotate-0 z-10"></div>
