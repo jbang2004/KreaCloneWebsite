@@ -14,7 +14,7 @@ import {
   colorWand, 
   sunny, 
   moon, 
-  globe, 
+  language, 
   menu, 
   close, 
   person, 
@@ -62,7 +62,7 @@ export default function Header() {
   const [isOpen, setIsOpen] = useState(false);
   const [location] = useLocation();
   const isMobile = useMobile();
-  const { t, language, setLanguage } = useLanguage();
+  const { t, language: currentLanguage, setLanguage } = useLanguage();
   const { theme, toggleTheme } = useTheme();
   const { user, logoutMutation } = useAuth();
 
@@ -143,17 +143,17 @@ export default function Header() {
                 className="hidden md:flex h-9 w-9 items-center justify-center rounded-xl bg-white/60 dark:bg-gray-800/60 hover:bg-white/70 dark:hover:bg-gray-700/70 transition-colors shadow-sm backdrop-blur-md"
                 aria-label={t("switchLanguage")}
               >
-                <IonIcon icon={globe} className="h-5 w-5" />
+                <IonIcon icon={language} className="h-5 w-5" />
               </button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end">
               <DropdownMenuItem onClick={() => setLanguage("en")}>
-                <span className={cn(language === "en" && "font-bold")}>
+                <span className={cn(currentLanguage === "en" && "font-bold")}>
                   {t("english")}
                 </span>
               </DropdownMenuItem>
               <DropdownMenuItem onClick={() => setLanguage("zh")}>
-                <span className={cn(language === "zh" && "font-bold")}>
+                <span className={cn(currentLanguage === "zh" && "font-bold")}>
                   {t("chinese")}
                 </span>
               </DropdownMenuItem>
@@ -175,7 +175,7 @@ export default function Header() {
               className="py-2 px-3 sm:px-4 md:px-6 rounded-xl bg-red-600/90 hover:bg-red-700/90 text-white text-xs sm:text-sm font-medium transition-colors shadow-sm backdrop-blur-md flex items-center"
             >
               <IonIcon icon={logOut} className="h-4 w-4 mr-1" />
-              <span>{t("logIn")}</span>
+              <span>{t("logout")}</span>
             </button>
           ) : (
             <Link 
@@ -232,7 +232,7 @@ export default function Header() {
                 <span className="w-6 h-6 flex items-center justify-center">
                   <IonIcon icon={logOut} className="h-5 w-5" />
                 </span>
-                <span className="font-medium">{t("logIn")}</span>
+                <span className="font-medium">{t("logout")}</span>
               </button>
             ) : (
               <Link 
@@ -249,10 +249,10 @@ export default function Header() {
             
             <div 
               className="flex items-center p-2 rounded-lg hover:bg-white/50 dark:hover:bg-gray-700/50 transition-colors"
-              onClick={() => setLanguage(language === "en" ? "zh" : "en")}
+              onClick={() => setLanguage(currentLanguage === "en" ? "zh" : "en")}
             >
               <span className="w-6 h-6 flex items-center justify-center">
-                <IonIcon icon={globe} className="h-5 w-5" />
+                <IonIcon icon={language} className="h-5 w-5" />
               </span>
               <span className="font-medium">{t("switchLanguage")}</span>
             </div>

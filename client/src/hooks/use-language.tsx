@@ -28,6 +28,7 @@ export type TranslationKey =
   | "pricing"
   | "logIn"
   | "signUp"
+  | "logout"
   | "switchLanguage"
   | "english"
   | "chinese"
@@ -131,6 +132,7 @@ const translations: Record<"en" | "zh", Translations> = {
     pricing: "Pricing",
     logIn: "Log In",
     signUp: "Sign Up",
+    logout: "Logout",
     switchLanguage: "Switch Language",
     english: "English",
     chinese: "Chinese",
@@ -228,6 +230,7 @@ const translations: Record<"en" | "zh", Translations> = {
     pricing: "价格",
     logIn: "登录",
     signUp: "注册",
+    logout: "退出",
     switchLanguage: "切换语言",
     english: "英文",
     chinese: "中文",
