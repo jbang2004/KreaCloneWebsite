@@ -106,10 +106,14 @@ export default function AudioTranscription() {
       transition={{ duration: 0.5 }}
     >
       <div className="w-full max-w-md mx-auto">
-        <div className={cn(
-          "p-6 rounded-3xl shadow-lg", 
-          theme === "dark" ? "bg-zinc-900" : "bg-gray-100"
-        )}>
+        <motion.div
+          layout
+          transition={{ duration: 0.4, ease: "easeInOut" }}
+          className={cn(
+            "p-6 rounded-3xl shadow-lg", 
+            theme === "dark" ? "bg-zinc-900" : "bg-gray-100"
+          )}
+        >
           {/* 内容上部区域 - 缩小高度 */}
           <div className="h-[280px] mb-6 flex items-center justify-center">
             {/* 静态图片区域 - 苹果风格 */}
@@ -247,7 +251,7 @@ export default function AudioTranscription() {
           <div className="text-center mt-4 text-xs text-muted-foreground">
             Max 20MB / MP3, WAV, M4A, FLAC
           </div>
-        </div>
+        </motion.div>
       </div>
       
       <input
