@@ -100,20 +100,20 @@ export default function TextToSpeech() {
 
   return (
     <motion.div 
-      className="flex flex-col items-center justify-center min-h-[70vh]"
+      className="flex flex-col items-center justify-center min-h-[70vh] py-12"
       initial={{ opacity: 0, y: 10 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.5 }}
     >
-      <div className="w-full max-w-sm mx-auto">
+      <div className="w-full max-w-md mx-auto">
         <div className={cn(
-          "p-4 rounded-3xl", 
+          "p-6 rounded-3xl shadow-lg", 
           theme === "dark" ? "bg-zinc-900" : "bg-gray-100"
         )}>
-          {/* 内容上部区域 - 保持同样高度 */}
-          <div className="h-[290px] mb-6 flex items-center justify-center">
+          {/* 内容上部区域 - 缩小高度 */}
+          <div className="h-[280px] mb-6 flex items-center justify-center">
             {/* 静态图片区域 - 苹果风格 */}
-            <div className="relative w-full h-full overflow-hidden rounded-xl bg-gradient-to-br from-purple-100 to-purple-300 flex items-center justify-center">
+            <div className="relative w-full h-full overflow-hidden rounded-2xl bg-gradient-to-br from-purple-100 to-purple-300 flex items-center justify-center">
               {/* 语音相关图像 */}
               <div className="relative flex justify-center scale-110">
                 <div className="absolute w-24 h-36 bg-purple-500 rounded-lg transform -rotate-6 translate-x-6"></div>
@@ -127,30 +127,30 @@ export default function TextToSpeech() {
           </div>
           
           {/* 标题和图标并排 */}
-          <div className="flex items-center justify-center mb-2">
+          <div className="flex items-center justify-center mb-3">
             <div className={cn(
-              "w-7 h-7 rounded-lg flex items-center justify-center mr-2",
+              "w-8 h-8 rounded-lg flex items-center justify-center mr-3",
               theme === "dark" ? "bg-zinc-800" : "bg-purple-100"
             )}>
-              <IonIcon icon={volumeHigh} className="w-4 h-4" />
+              <IonIcon icon={volumeHigh} className="w-5 h-5" />
             </div>
             <h1 className="text-xl font-bold">{title}</h1>
           </div>
           
           {/* 描述文字 */}
-          <p className="text-muted-foreground text-xs text-center mb-5">
+          <p className="text-muted-foreground text-sm text-center mb-6">
             {description}
           </p>
           
           {/* 文本输入区域 */}
-          <div className="mb-4">
+          <div className="mb-5">
             <Textarea 
               value={text}
               onChange={handleTextChange}
               placeholder={textPlaceholder}
-              className="w-full p-3 h-24 bg-background rounded-xl border border-border focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent resize-none text-sm"
+              className="w-full p-4 h-28 bg-background rounded-xl border border-border focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent resize-none text-sm"
             />
-            <div className="flex justify-between mt-1 items-center">
+            <div className="flex justify-between mt-2 items-center">
               <div className="text-xs text-muted-foreground">
                 {characterCountText}: {text.length}
               </div>
@@ -159,10 +159,10 @@ export default function TextToSpeech() {
           
           {/* 选择声音部分 */}
           {selectedVoice && (
-            <div className="mb-4 p-3 bg-background rounded-xl border border-border">
+            <div className="mb-5 p-4 bg-background rounded-xl border border-border">
               <div className="flex items-center justify-between">
-                <div className="flex items-center gap-2">
-                  <div className="w-10 h-10 rounded-full overflow-hidden bg-muted">
+                <div className="flex items-center gap-3">
+                  <div className="w-12 h-12 rounded-full overflow-hidden bg-muted">
                     {voices.find(v => v.id === selectedVoice)?.avatar ? (
                       <img 
                         src={voices.find(v => v.id === selectedVoice)?.avatar} 
@@ -185,20 +185,20 @@ export default function TextToSpeech() {
                 <Button
                   variant="ghost"
                   size="icon"
-                  className="h-8 w-8"
+                  className="h-10 w-10"
                   onClick={() => setShowSettings(!showSettings)}
                 >
-                  <IonIcon icon={settings} className="h-4 w-4" />
+                  <IonIcon icon={settings} className="h-5 w-5" />
                 </Button>
               </div>
               
               {/* 语音设置 */}
               {showSettings && (
-                <div className="mt-3 pt-3 border-t border-border space-y-3">
+                <div className="mt-4 pt-4 border-t border-border space-y-4">
                   <div>
-                    <div className="flex justify-between items-center mb-1">
+                    <div className="flex justify-between items-center mb-2">
                       <label className="text-xs">{speedText}</label>
-                      <span className="text-xs bg-muted px-1.5 py-0.5 rounded text-muted-foreground">
+                      <span className="text-xs bg-muted px-2 py-1 rounded text-muted-foreground">
                         {speed[0].toFixed(1)}x
                       </span>
                     </div>
@@ -212,9 +212,9 @@ export default function TextToSpeech() {
                     />
                   </div>
                   <div>
-                    <div className="flex justify-between items-center mb-1">
+                    <div className="flex justify-between items-center mb-2">
                       <label className="text-xs">{pitchText}</label>
-                      <span className="text-xs bg-muted px-1.5 py-0.5 rounded text-muted-foreground">
+                      <span className="text-xs bg-muted px-2 py-1 rounded text-muted-foreground">
                         {pitch[0].toFixed(1)}
                       </span>
                     </div>
@@ -234,42 +234,42 @@ export default function TextToSpeech() {
           
           {/* 生成的音频显示 */}
           {generatedAudioUrl && (
-            <div className="mb-4 p-3 bg-background rounded-xl border border-border">
+            <div className="mb-5 p-4 bg-background rounded-xl border border-border">
               <div className="flex items-center justify-between">
                 <Button 
                   variant="ghost" 
                   size="icon" 
-                  className="h-10 w-10 text-primary"
+                  className="h-12 w-12 text-primary"
                   onClick={togglePlayback}
                 >
-                  <IonIcon icon={play} className="h-6 w-6" />
+                  <IonIcon icon={play} className="h-7 w-7" />
                 </Button>
-                <div className="flex-1 mx-2 h-2 bg-muted rounded-full">
+                <div className="flex-1 mx-3 h-3 bg-muted rounded-full">
                   <div 
                     className={`h-full bg-primary rounded-full transition-all duration-200 ${
                       isPlaying ? "w-1/2" : "w-0"
                     }`} 
                   />
                 </div>
-                <Button variant="ghost" size="icon" className="h-8 w-8">
-                  <IonIcon icon={download} className="h-4 w-4" />
+                <Button variant="ghost" size="icon" className="h-10 w-10">
+                  <IonIcon icon={download} className="h-5 w-5" />
                 </Button>
               </div>
             </div>
           )}
           
           {/* 按钮区域 - 左右排列 */}
-          <div className="flex gap-3 w-full mt-5">
+          <div className="flex flex-col sm:flex-row gap-3 sm:gap-5 w-full mt-6">
             <Button
               className={cn(
-                "flex-1 h-12 text-white rounded-xl transition-colors flex items-center justify-center",
+                "w-full sm:flex-1 h-14 text-white rounded-xl transition-colors flex items-center justify-center",
                 "bg-purple-600 hover:bg-purple-700"
               )}
               onClick={generateSpeech}
               disabled={text.trim() === "" || isGenerating || !selectedVoice}
             >
-              <IonIcon icon={addCircle} className="w-5 h-5 mr-2" />
-              <span>{isGenerating ? processingText : generateButtonText}</span>
+              <IonIcon icon={addCircle} className="w-6 h-6 mr-2" />
+              <span className="text-base">{isGenerating ? processingText : generateButtonText}</span>
             </Button>
             
             <Popover>
@@ -277,17 +277,17 @@ export default function TextToSpeech() {
                 <Button
                   variant="outline"
                   className={cn(
-                    "flex-1 h-12 rounded-xl transition-colors flex items-center justify-center",
+                    "w-full sm:flex-1 h-14 rounded-xl transition-colors flex items-center justify-center",
                     theme === "dark" ? "bg-zinc-800 border-zinc-700" : "bg-purple-50 border-purple-100 text-purple-700"
                   )}
                 >
-                  <IonIcon icon={person} className="w-5 h-5 mr-2" />
-                  <span>{selectVoiceText}</span>
+                  <IonIcon icon={person} className="w-6 h-6 mr-2" />
+                  <span className="text-base">{selectVoiceText}</span>
                   <IonIcon icon={chevronDown} className="w-4 h-4 ml-2" />
                 </Button>
               </PopoverTrigger>
               <PopoverContent 
-                className="w-64 p-2 rounded-xl"
+                className="w-64 p-3 rounded-xl"
                 align="end"
               >
                 <div className="space-y-1 max-h-64 overflow-y-auto">

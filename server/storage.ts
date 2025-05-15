@@ -1,9 +1,8 @@
-import { db } from "@db";
-import { users, insertUserSchema, InsertUser, User } from "@shared/schema";
+import { db } from "../db";
+import { users, insertUserSchema, InsertUser, User } from "../shared/schema";
 import { eq } from "drizzle-orm";
 import session from "express-session";
 import connectPg from "connect-pg-simple";
-import { pool } from "@db";
 
 const PostgresSessionStore = connectPg(session);
 
@@ -19,7 +18,7 @@ export class DatabaseStorage implements IStorage {
 
   constructor() {
     this.sessionStore = new PostgresSessionStore({ 
-      pool, 
+      conString: process.env.DATABASE_URL,
       createTableIfMissing: true,
     });
   }

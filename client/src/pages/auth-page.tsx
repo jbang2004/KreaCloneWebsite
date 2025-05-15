@@ -1,28 +1,26 @@
 import { useState, useEffect } from "react";
-import { useLocation, useRoute } from "wouter";
+import { useLocation } from "wouter";
 import { motion } from "framer-motion";
-import { Mail, User, Lock } from "lucide-react";
+import { Mail, Lock } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Separator } from "@/components/ui/separator";
 import { useToast } from "@/hooks/use-toast";
 import { useLanguage } from "@/hooks/use-language";
 import { useTheme } from "@/hooks/use-theme";
-import { useAuth } from "@/hooks/use-auth";
+import { useAuth } from "@/contexts/AuthContext";
 
 export default function AuthPage() {
-  const [isMatch, params] = useRoute("/auth");
   const [, navigate] = useLocation();
   const [isRegistering, setIsRegistering] = useState(false);
-  const [username, setUsername] = useState("");
+  const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const { toast } = useToast();
   const { t, language } = useLanguage();
   const { theme } = useTheme();
-  const { user, loginMutation, registerMutation } = useAuth();
+  const { user, signIn, signUp, loading, error: authError } = useAuth();
 
-  // Redirect if already logged in
   useEffect(() => {
     if (user) {
       navigate("/");
@@ -32,7 +30,7 @@ export default function AuthPage() {
   const handleGoogleLogin = () => {
     toast({
       title: t("googleLoginNotAvailable"),
-      description: t("featureNotImplemented"),
+      description: t("featureNotImplemented") + " (Supabase)",
       variant: "destructive",
     });
   };
@@ -41,16 +39,24 @@ export default function AuthPage() {
     setIsRegistering(!isRegistering);
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
-    if (!username.trim()) {
+    if (!email.trim()) {
       toast({
-        title: "Username required",
-        description: "Please enter your username",
+        title: "Email required",
+        description: "Please enter your email",
         variant: "destructive",
       });
       return;
+    }
+    if (!/\S+@\S+\.\S+/.test(email)) {
+        toast({
+            title: "Invalid email format",
+            description: "Please enter a valid email address",
+            variant: "destructive",
+        });
+        return;
     }
 
     if (!password) {
@@ -60,6 +66,14 @@ export default function AuthPage() {
         variant: "destructive",
       });
       return;
+    }
+    if (password.length < 6) {
+        toast({
+            title: "Password too short",
+            description: "Password should be at least 6 characters long",
+            variant: "destructive",
+        });
+        return;
     }
 
     if (isRegistering && password !== confirmPassword) {
@@ -71,15 +85,35 @@ export default function AuthPage() {
       return;
     }
 
+    let opError = null;
     if (isRegistering) {
-      registerMutation.mutate({
-        username,
-        password,
-      });
+      const { error } = await signUp({ email, password });
+      opError = error;
+      if (!error) {
+        toast({
+          title: "Registration Successful",
+          description: "Please check your email for verification (if enabled), then log in.",
+        });
+        setIsRegistering(false);
+        setEmail("");
+        setPassword("");
+        setConfirmPassword("");
+      }
     } else {
-      loginMutation.mutate({
-        username,
-        password,
+      const { error } = await signIn({ email, password });
+      opError = error;
+      if (!error) {
+        toast({
+            title: "Login Successful",
+        });
+      } 
+    }
+
+    if (opError) {
+      toast({
+        title: isRegistering ? "Registration Failed" : "Login Failed",
+        description: opError.message,
+        variant: "destructive",
       });
     }
   };
@@ -130,7 +164,7 @@ export default function AuthPage() {
                   <Separator />
                 </div>
                 <div className="relative flex justify-center text-xs uppercase">
-                  <span className="bg-background px-2 text-muted-foreground">
+                  <span className={`${theme === 'dark' ? 'bg-zinc-900' : 'bg-gray-100'} px-2 text-muted-foreground`}>
                     {t("or")}
                   </span>
                 </div>
@@ -140,13 +174,14 @@ export default function AuthPage() {
                 <div className="space-y-4">
                   <div className="relative">
                     <Input
-                      type="text"
-                      placeholder={language === "zh" ? "用户名" : "Username"}
+                      type="email"
+                      placeholder={language === "zh" ? "邮箱" : "Email"}
                       className="pl-10 py-5"
-                      value={username}
-                      onChange={(e) => setUsername(e.target.value)}
+                      value={email}
+                      onChange={(e) => setEmail(e.target.value)}
+                      autoComplete="email"
                     />
-                    <User className="h-5 w-5 absolute left-3 top-2.5 text-muted-foreground/60" />
+                    <Mail className="h-5 w-5 absolute left-3 top-2.5 text-muted-foreground/60" />
                   </div>
                   
                   <div className="relative">
@@ -156,6 +191,7 @@ export default function AuthPage() {
                       className="pl-10 py-5"
                       value={password}
                       onChange={(e) => setPassword(e.target.value)}
+                      autoComplete={isRegistering ? "new-password" : "current-password"}
                     />
                     <Lock className="h-5 w-5 absolute left-3 top-2.5 text-muted-foreground/60" />
                   </div>
@@ -168,24 +204,28 @@ export default function AuthPage() {
                         className="pl-10 py-5"
                         value={confirmPassword}
                         onChange={(e) => setConfirmPassword(e.target.value)}
+                        autoComplete="new-password"
                       />
                       <Lock className="h-5 w-5 absolute left-3 top-2.5 text-muted-foreground/60" />
                     </div>
                   )}
                   
+                  {authError && (
+                    <p className="text-sm text-red-500 text-center">{authError.message}</p>
+                  )}
+
                   <Button 
                     type="submit" 
                     className="w-full bg-primary hover:bg-primary/90 text-primary-foreground py-5 rounded-xl"
-                    disabled={loginMutation.isPending || registerMutation.isPending}
+                    disabled={loading}
                   >
-                    {isRegistering 
-                      ? (language === "zh" ? "注册" : "Sign Up") 
-                      : (language === "zh" ? "登录" : "Login")}
-                    {(loginMutation.isPending || registerMutation.isPending) && (
-                      <svg className="animate-spin ml-2 h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                        <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                        <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                      </svg>
+                    {loading 
+                        ? (language === "zh" ? "处理中..." : "Processing...") 
+                        : isRegistering 
+                            ? (language === "zh" ? "注册" : "Sign Up") 
+                            : (language === "zh" ? "登录" : "Login")}
+                    {loading && (
+                      <svg className="animate-spin ml-2 h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle><path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
                     )}
                   </Button>
 
@@ -231,24 +271,9 @@ export default function AuthPage() {
                 : "Transform your content with our powerful AI tools for audio transcription, text-to-speech, and video translation."}
             </p>
             <ul className="space-y-4">
-              <li className="flex items-center">
-                <svg className="h-5 w-5 mr-3 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-                </svg>
-                {language === "zh" ? "专业音频转文字" : "Professional Audio Transcription"}
-              </li>
-              <li className="flex items-center">
-                <svg className="h-5 w-5 mr-3 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-                </svg>
-                {language === "zh" ? "逼真的AI语音合成" : "Realistic AI Voice Synthesis"}
-              </li>
-              <li className="flex items-center">
-                <svg className="h-5 w-5 mr-3 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-                </svg>
-                {language === "zh" ? "视频字幕翻译" : "Video Subtitle Translation"}
-              </li>
+              <li className="flex items-center"><svg className="h-5 w-5 mr-3 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" /></svg>{language === "zh" ? "专业音频转文字" : "Professional Audio Transcription"}</li>
+              <li className="flex items-center"><svg className="h-5 w-5 mr-3 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" /></svg>{language === "zh" ? "逼真的AI语音合成" : "Realistic AI Voice Synthesis"}</li>
+              <li className="flex items-center"><svg className="h-5 w-5 mr-3 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" /></svg>{language === "zh" ? "视频字幕翻译" : "Video Subtitle Translation"}</li>
             </ul>
           </div>
         </motion.div>

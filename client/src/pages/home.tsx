@@ -11,7 +11,7 @@ export default function Home() {
   const galleryItems = useGalleryData();
 
   return (
-    <section>
+    <section className="max-w-7xl mx-auto">
       <StaggeredAnimation staggerDelay={0.15} initialY={20}>
         <div>
           <Carousel items={carouselItems} />

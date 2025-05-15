@@ -100,20 +100,20 @@ export default function AudioTranscription() {
 
   return (
     <motion.div 
-      className="flex flex-col items-center justify-center min-h-[70vh]"
+      className="flex flex-col items-center justify-center min-h-[70vh] py-12"
       initial={{ opacity: 0, y: 10 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.5 }}
     >
-      <div className="w-full max-w-sm mx-auto">
+      <div className="w-full max-w-md mx-auto">
         <div className={cn(
-          "p-4 rounded-3xl", 
+          "p-6 rounded-3xl shadow-lg", 
           theme === "dark" ? "bg-zinc-900" : "bg-gray-100"
         )}>
-          {/* 内容上部区域 - 保持同样高度 */}
-          <div className="h-[290px] mb-6 flex items-center justify-center">
+          {/* 内容上部区域 - 缩小高度 */}
+          <div className="h-[280px] mb-6 flex items-center justify-center">
             {/* 静态图片区域 - 苹果风格 */}
-            <div className="relative w-full h-full overflow-hidden rounded-xl bg-gradient-to-br from-indigo-100 to-indigo-300 flex items-center justify-center">
+            <div className="relative w-full h-full overflow-hidden rounded-2xl bg-gradient-to-br from-indigo-100 to-indigo-300 flex items-center justify-center">
               {/* 音频相关图像 */}
               <div className="relative flex justify-center scale-110">
                 <div className="absolute w-24 h-36 bg-indigo-500 rounded-lg transform -rotate-6 translate-x-6"></div>
@@ -127,27 +127,27 @@ export default function AudioTranscription() {
           </div>
           
           {/* 标题和图标并排 */}
-          <div className="flex items-center justify-center mb-2">
+          <div className="flex items-center justify-center mb-3">
             <div className={cn(
-              "w-7 h-7 rounded-lg flex items-center justify-center mr-2",
+              "w-8 h-8 rounded-lg flex items-center justify-center mr-3",
               theme === "dark" ? "bg-zinc-800" : "bg-indigo-100"
             )}>
-              <IonIcon icon={mic} className="w-4 h-4" />
+              <IonIcon icon={mic} className="w-5 h-5" />
             </div>
             <h1 className="text-xl font-bold">{title}</h1>
           </div>
           
           {/* 描述文字 */}
-          <p className="text-muted-foreground text-xs text-center mb-5">
+          <p className="text-muted-foreground text-sm text-center mb-6">
             {description}
           </p>
           
           {/* 文件上传状态 */}
           {file && !transcriptionStarted && (
-            <div className="mb-4 p-3 bg-background rounded-xl border border-border">
+            <div className="mb-5 p-4 bg-background rounded-xl border border-border">
               <div className="flex items-center gap-3">
-                <div className="bg-muted rounded-lg h-10 w-10 flex items-center justify-center flex-shrink-0">
-                  <IonIcon icon={document} className="h-5 w-5 text-foreground/70" />
+                <div className="bg-muted rounded-lg h-12 w-12 flex items-center justify-center flex-shrink-0">
+                  <IonIcon icon={document} className="h-6 w-6 text-foreground/70" />
                 </div>
                 <div className="flex-1 min-w-0">
                   <h3 className="font-medium text-sm truncate">{file.name}</h3>
@@ -167,8 +167,8 @@ export default function AudioTranscription() {
           
           {/* 转录进度 */}
           {transcriptionStarted && progress < 100 && (
-            <div className="mb-4 p-3 bg-background rounded-xl border border-border">
-              <div className="space-y-2">
+            <div className="mb-5 p-4 bg-background rounded-xl border border-border">
+              <div className="space-y-3">
                 <Progress value={progress} className="h-2" />
                 <p className="text-sm text-center text-muted-foreground">{processingText} {progress}%</p>
               </div>
@@ -177,11 +177,11 @@ export default function AudioTranscription() {
           
           {/* 转录结果 */}
           {transcriptionResult.length > 0 && (
-            <div className="mb-4 p-3 bg-background rounded-xl border border-border">
-              <h3 className="font-medium text-sm mb-2">{transcriptionResultText}</h3>
-              <div className="max-h-32 overflow-y-auto space-y-2 text-xs">
+            <div className="mb-5 p-4 bg-background rounded-xl border border-border">
+              <h3 className="font-medium text-sm mb-3">{transcriptionResultText}</h3>
+              <div className="max-h-36 overflow-y-auto space-y-3 text-xs">
                 {transcriptionResult.map((line, index) => (
-                  <div key={index} className="p-2 bg-muted rounded-lg">
+                  <div key={index} className="p-3 bg-muted rounded-lg">
                     {line}
                   </div>
                 ))}
@@ -190,16 +190,16 @@ export default function AudioTranscription() {
           )}
           
           {/* 按钮区域 - 左右排列 */}
-          <div className="flex gap-3 w-full mt-5">
+          <div className="flex flex-col sm:flex-row gap-3 sm:gap-5 w-full mt-6">
             <Button
               className={cn(
-                "flex-1 h-12 text-white rounded-xl transition-colors flex items-center justify-center",
+                "w-full sm:flex-1 h-14 text-white rounded-xl transition-colors flex items-center justify-center",
                 "bg-indigo-600 hover:bg-indigo-700"
               )}
               onClick={handleFileClick}
             >
-              <IonIcon icon={addCircle} className="w-5 h-5 mr-2" />
-              <span>{uploadLabel}</span>
+              <IonIcon icon={addCircle} className="w-6 h-6 mr-2" />
+              <span className="text-base">{uploadLabel}</span>
             </Button>
             
             <Popover>
@@ -207,17 +207,17 @@ export default function AudioTranscription() {
                 <Button
                   variant="outline"
                   className={cn(
-                    "flex-1 h-12 rounded-xl transition-colors flex items-center justify-center",
+                    "w-full sm:flex-1 h-14 rounded-xl transition-colors flex items-center justify-center",
                     theme === "dark" ? "bg-zinc-800 border-zinc-700" : "bg-indigo-50 border-indigo-100 text-indigo-700"
                   )}
                 >
-                  <IonIcon icon={language} className="w-5 h-5 mr-2" />
-                  <span>{selectLanguageLabel}</span>
+                  <IonIcon icon={language} className="w-6 h-6 mr-2" />
+                  <span className="text-base">{selectLanguageLabel}</span>
                   <IonIcon icon={chevronDown} className="w-4 h-4 ml-2" />
                 </Button>
               </PopoverTrigger>
               <PopoverContent 
-                className="w-64 p-2 rounded-xl"
+                className="w-64 p-3 rounded-xl"
                 align="end"
               >
                 <div className="space-y-1">
