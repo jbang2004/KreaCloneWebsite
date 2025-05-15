@@ -2,16 +2,7 @@ import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { cn } from "@/lib/utils";
 import { ChevronLeft, ChevronRight } from "lucide-react";
-
-interface CarouselItem {
-  id: string;
-  title: string;
-  description: string;
-  buttonText: string;
-  buttonLink: string;
-  imageUrl: string;
-  tag?: string;
-}
+import type { CarouselItem } from "@shared/types";
 
 interface CarouselProps {
   items: CarouselItem[];
