@@ -20,6 +20,7 @@ import {
 } from "@/components/ui/popover";
 import { Progress } from "@/components/ui/progress";
 import { Badge } from "@/components/ui/badge";
+import { BlurFade } from "@/components/magicui/blur-fade";
 
 export default function AudioTranscription() {
   const { language: currentLanguage } = useLanguage();
@@ -106,9 +107,10 @@ export default function AudioTranscription() {
       transition={{ duration: 0.5 }}
     >
       <div className="w-full max-w-md mx-auto">
-        <motion.div
+        <BlurFade
           layout
-          transition={{ duration: 0.4, ease: "easeInOut" }}
+          delay={0.25}
+          inView={true}
           className={cn(
             "p-6 rounded-3xl shadow-lg", 
             theme === "dark" ? "bg-zinc-900" : "bg-gray-100"
@@ -251,7 +253,7 @@ export default function AudioTranscription() {
           <div className="text-center mt-4 text-xs text-muted-foreground">
             Max 20MB / MP3, WAV, M4A, FLAC
           </div>
-        </motion.div>
+        </BlurFade>
       </div>
       
       <input

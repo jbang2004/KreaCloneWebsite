@@ -14,6 +14,7 @@ import { getTranslations, Language as AppLanguage } from "@/lib/translations";
 // Import the new components
 import VideoPanel from "@/components/video-translation/VideoPanel";
 import SubtitlesPanel from "@/components/video-translation/SubtitlePanel";
+import { BlurFade } from "@/components/magicui/blur-fade";
 
 const FIXED_TASK_ID = "29a49af4-600f-4613-a1b4-31a4d6e1c210";
 
@@ -175,58 +176,49 @@ export default function VideoTranslation() {
         isMobile ? "mx-auto" : "-mx-2 md:-mx-3",
         isMobile && displaySubtitlesPanel ? "items-center flex-col" : "items-start"
       )}>
-        <AnimatePresence>
-          <motion.div
-            layout
-            className={cn(
-              "px-2 md:px-3 mb-8",
-              isMobile ? "w-full mx-auto max-w-md" :
-                (displaySubtitlesPanel ? "md:mx-0 w-full max-w-md md:shrink-0" : "w-full max-w-md mx-auto")
-            )}
-            initial={false}
-            animate={{ 
-            }}
-            transition={{ duration: 0.5, ease: "easeInOut" }}
-          >
-            <VideoPanel
-              theme={theme}
-              selectedFile={selectedFile}
-              videoPreviewUrl={videoPreviewUrl}
-              isUploading={isUploading}
-              uploadProgress={uploadProgress}
-              uploadComplete={uploadComplete}
-              isPlaying={isPlaying}
-              displaySubtitlesPanel={displaySubtitlesPanel} 
-              translations={T}
-              handleUploadClick={triggerFileInput} 
-              resetUpload={resetFullUploadAndPlayer}
-              togglePlayback={togglePlayback} 
-              handlePreprocessingTrigger={handlePreprocessingTrigger}
-              startGenerating={startGenerating}
-              videoRef={videoRef}
-              fileInputRef={fileInputRef}
-            />
-          </motion.div>
-        </AnimatePresence>
+        <BlurFade
+          layout
+          className={cn(
+            "px-2 md:px-3 mb-8",
+            isMobile ? "w-full mx-auto max-w-md" :
+              (displaySubtitlesPanel ? "md:mx-0 w-full max-w-md md:shrink-0" : "w-full max-w-md mx-auto")
+          )}
+          delay={0.25}
+          inView={true}
+        >
+          <VideoPanel
+            theme={theme}
+            selectedFile={selectedFile}
+            videoPreviewUrl={videoPreviewUrl}
+            isUploading={isUploading}
+            uploadProgress={uploadProgress}
+            uploadComplete={uploadComplete}
+            isPlaying={isPlaying}
+            displaySubtitlesPanel={displaySubtitlesPanel} 
+            translations={T}
+            handleUploadClick={triggerFileInput} 
+            resetUpload={resetFullUploadAndPlayer}
+            togglePlayback={togglePlayback} 
+            handlePreprocessingTrigger={handlePreprocessingTrigger}
+            startGenerating={startGenerating}
+            videoRef={videoRef}
+            fileInputRef={fileInputRef}
+          />
+        </BlurFade>
         
         <AnimatePresence mode="popLayout">
           {displaySubtitlesPanel && ( 
-            <motion.div 
+            <BlurFade
               layout
               className={cn(
                 "w-full px-2 md:px-3 mx-auto",
                 isMobile ? "mt-8 max-w-xl" : "mt-0 md:mx-0 md:basis-[36rem] md:grow md:shrink h-full"
               )}
-              initial={{ opacity: 0, x: isMobile ? 0 : 50, y: isMobile ? 20 : 0 }}
-              animate={{ 
-                opacity: 1, 
-                x: 0, 
-                y: 0,
-                marginLeft: isMobile ? "auto" : undefined,
-                marginRight: isMobile ? "auto" : undefined
-              }}
-              exit={{ opacity: 0, x: isMobile ? 0 : 50, y: isMobile ? 20 : 0 }}
-              transition={{ duration: 0.5 }}
+              inView={true}
+              delay={0.1}
+              direction={isMobile ? "up" : "left"}
+              offset={isMobile ? 20 : 50}
+              duration={0.5}
             >
               <SubtitlesPanel
                 theme={theme}
@@ -247,7 +239,7 @@ export default function VideoTranslation() {
                 subtitlesContainerRef={subtitlesContainerRef}
                 currentTaskId={FIXED_TASK_ID} 
               />
-            </motion.div>
+            </BlurFade>
           )}
         </AnimatePresence>
       </div>

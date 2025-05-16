@@ -22,6 +22,7 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
+import { BlurFade } from "@/components/magicui/blur-fade";
 
 interface Voice {
   id: string;
@@ -106,9 +107,10 @@ export default function TextToSpeech() {
       transition={{ duration: 0.5 }}
     >
       <div className="w-full max-w-md mx-auto">
-        <motion.div
+        <BlurFade
           layout
-          transition={{ duration: 0.4, ease: "easeInOut" }}
+          delay={0.25}
+          inView={true}
           className={cn(
             "p-6 rounded-3xl shadow-lg", 
             theme === "dark" ? "bg-zinc-900" : "bg-gray-100"
@@ -333,7 +335,7 @@ export default function TextToSpeech() {
           <div className="text-center mt-4 text-xs text-muted-foreground">
             {currentLanguage === "zh" ? "支持40种语言，100+种声音" : "Supports 40 languages, 100+ voices"}
           </div>
-        </motion.div>
+        </BlurFade>
       </div>
     </motion.div>
   );
