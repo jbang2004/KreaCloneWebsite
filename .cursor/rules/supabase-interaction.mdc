@@ -1,0 +1,56 @@
+---
+description: 
+globs: 
+alwaysApply: false
+---
+# Supabase Interaction Guide for KreaCloneWebsite
+
+This document outlines how the KreaCloneWebsite project interacts with Supabase services.
+
+## Client-Side Integration
+
+The primary interaction with Supabase happens on the client-side.
+
+### 1. Supabase Client Initialization
+
+The Supabase client is initialized in `[client/src/lib/supabaseClient.ts](mdc:client/src/lib/supabaseClient.ts)`.
+It uses `createClient` from `@supabase/supabase-js`.
+Supabase URL and Anon Key are crucial for this initialization and are sourced from environment variables:
+- `VITE_SUPABASE_URL`
+- `VITE_SUPABASE_KEY`
+
+These variables should be defined in a `.env` file at the root of the project.
+
+### 2. Authentication
+
+User authentication is managed through Supabase Auth.
+- **Core Logic**: The `[client/src/hooks/use-auth.ts](mdc:client/src/hooks/use-auth.ts)` custom hook handles fetching user sessions, user details, and listens for authentication state changes (`onAuthStateChange`).
+- **Context Provider**: `[client/src/contexts/AuthContext.tsx](mdc:client/src/contexts/AuthContext.tsx)` provides an `AuthProvider`. This context wraps parts of the application needing authentication state and exposes methods like `signIn`, `signUp`, and `signOut`. These methods internally call Supabase Auth functions (e.g., `supabase.auth.signInWithPassword`, `supabase.auth.signUp`).
+- **Usage**: The `[client/src/pages/auth-page.tsx](mdc:client/src/pages/auth-page.tsx)` demonstrates how the `AuthContext` is used for user login and registration forms.
+
+### 3. Database Operations
+
+The project uses Supabase's PostgreSQL database for storing and retrieving data.
+- **Example - Fetching Subtitles**: The `[client/src/hooks/use-subtitles.ts](mdc:client/src/hooks/use-subtitles.ts)` hook, specifically its `fetchSubtitles` function, shows how data is queried. It uses `supabase.from('table_name').select(...)` to retrieve data from a table (e.g., `sentences`).
+- **Example - Storing Video Metadata**: After a video upload, metadata is stored in the `videos` table using `supabase.from('videos').insert(...)` as seen in `[client/src/hooks/use-video-upload.ts](mdc:client/src/hooks/use-video-upload.ts)`.
+
+### 4. Storage (File Uploads)
+
+Supabase Storage is used for handling file uploads, particularly videos.
+- **Video Upload Hook**: `[client/src/hooks/use-video-upload.ts](mdc:client/src/hooks/use-video-upload.ts)` manages the video upload process.
+- **TUS Resumable Uploads**: It utilizes the `tus-js-client` library for robust, resumable uploads. The TUS endpoint is configured to point to the project's Supabase storage (`https://${SUPABASE_PROJECT_ID}.supabase.co/storage/v1/upload/resumable`). Note: `SUPABASE_PROJECT_ID` seems to be hardcoded in this hook but ideally should also be an environment variable.
+- **Public URLs**: After a successful upload to a bucket (e.g., 'videos'), `supabase.storage.from('bucketName').getPublicUrl()` is called to retrieve the publicly accessible URL of the uploaded file.
+
+## Server-Side Interaction
+
+Based on the initial search, there's no direct evidence of server-side Supabase interaction (e.g., using Supabase Admin SDK in a Node.js backend). Interactions appear to be primarily client-driven. If server-side logic involving Supabase exists, it would typically be in the `server/` directory and might involve using the Supabase Admin Key for privileged operations.
+
+## Environment Variables
+
+Ensure the following environment variables are correctly set up in your `.env` file for Supabase integration to work:
+- `VITE_SUPABASE_URL`: Your Supabase project URL.
+- `VITE_SUPABASE_KEY`: Your Supabase project's anon (public) key.
+
+(Possibly `SUPABASE_PROJECT_ID` if refactored from `use-video-upload.ts`)
+
+This rule provides a high-level overview. For specific implementation details, refer to the linked files.

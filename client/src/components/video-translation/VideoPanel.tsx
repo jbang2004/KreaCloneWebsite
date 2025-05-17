@@ -11,6 +11,7 @@ import { IonIcon } from "@ionic/react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { Translations } from "@/lib/translations";
+import TVStaticEffect from "./TVStaticEffect";
 
 interface VideoPanelProps {
   theme: string | undefined;
@@ -94,14 +95,10 @@ export default function VideoPanel({
             </div>
           </div>
         ) : (
-          <div className="relative w-full h-full overflow-hidden rounded-2xl bg-gradient-to-br from-blue-100 to-blue-300 flex items-center justify-center">
-            <div className="relative flex justify-center scale-110">
-              <div className="absolute w-24 h-36 bg-blue-500 rounded-lg transform -rotate-6 translate-x-6"></div>
-              <div className="absolute w-24 h-36 bg-blue-600 rounded-lg transform rotate-3 -translate-x-6"></div>
-              <div className="absolute w-24 h-36 bg-blue-400 rounded-lg transform rotate-0 z-10"></div>
-              <div className="absolute inset-0 flex items-center justify-center z-20">
-                <IonIcon icon={videocam} className="w-12 h-12 text-white" />
-              </div>
+          <div className="relative w-full h-full overflow-hidden rounded-2xl bg-black flex items-center justify-center">
+            <TVStaticEffect />
+            <div className="absolute inset-0 flex items-center justify-center z-10">
+              <IonIcon icon={videocam} className="w-12 h-12 text-white opacity-75" />
             </div>
           </div>
         )}
