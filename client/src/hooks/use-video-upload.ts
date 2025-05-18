@@ -18,6 +18,11 @@ interface VideoUploadActions {
 
 const SUPABASE_PROJECT_ID = "aupsrnasyirsqrjtjvok"; // Store this in env vars ideally
 
+// 新增: 读取后端地址和端口号，构建 API 基础 URL
+const BACKEND_URL = import.meta.env.VITE_BACKEND_URL as string;
+const BACKEND_PORT = import.meta.env.VITE_BACKEND_PORT as string;
+const API_BASE_URL = BACKEND_PORT ? `${BACKEND_URL}:${BACKEND_PORT}` : BACKEND_URL;
+
 export function useVideoUpload(): VideoUploadState & VideoUploadActions {
   const [isUploading, setIsUploading] = useState<boolean>(false);
   const [uploadProgress, setUploadProgress] = useState<number>(0);
@@ -90,6 +95,7 @@ export function useVideoUpload(): VideoUploadState & VideoUploadActions {
           status: 'uploaded',
         };
 
+        // 插入视频元数据到数据库
         const { error: dbError } = await supabase
           .from('videos')
           .insert([videoDataToInsert]);
@@ -100,6 +106,13 @@ export function useVideoUpload(): VideoUploadState & VideoUploadActions {
           setIsUploading(false); // Keep URL for preview but flag DB error
           return;
         }
+
+        // 新增: 通知后端开始处理视频，仅传递存储路径与存储桶信息
+        fetch(`${API_BASE_URL}/api/process-video`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ storagePath: finalObjectNameInBucket, bucketName }),
+        }).catch(err => console.error('Notify backend failed:', err));
 
         setIsUploading(false);
         setUploadComplete(true);
