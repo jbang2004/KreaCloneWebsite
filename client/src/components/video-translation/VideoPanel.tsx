@@ -146,8 +146,7 @@ export default function VideoPanel({
             className="w-full sm:flex-1 h-14 text-white rounded-xl bg-green-600 hover:bg-green-700 flex items-center justify-center transition-colors"
             onClick={handlePreprocessingTrigger}
           >
-            <IonIcon icon={logoTableau} className="w-6 h-6 mr-2" />
-            <span className="text-base">{T.startPreprocessingLabel}</span>
+            <span className="text-lg font-bold shiny-text">{T.startPreprocessingLabel}</span>
           </Button>
         )}
         
