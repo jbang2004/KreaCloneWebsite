@@ -16,12 +16,15 @@ interface VideoUploadActions {
   resetUploadState: () => void;
 }
 
-const SUPABASE_PROJECT_ID = "aupsrnasyirsqrjtjvok"; // Store this in env vars ideally
+// 从环境变量读取 Supabase 项目 ID
+const SUPABASE_PROJECT_ID = import.meta.env.VITE_SUPABASE_PROJECT_ID as string;
 
-// 新增: 读取后端地址和端口号，构建 API 基础 URL
+// 新增: 读取后端地址、端口号及存储桶名称，构建常量
 const BACKEND_URL = import.meta.env.VITE_BACKEND_URL as string;
 const BACKEND_PORT = import.meta.env.VITE_BACKEND_PORT as string;
 const API_BASE_URL = BACKEND_PORT ? `${BACKEND_URL}:${BACKEND_PORT}` : BACKEND_URL;
+// 新增: 从环境变量读取 Supabase 存储桶名称，默认为 'videos'
+const SUPABASE_BUCKET_NAME = import.meta.env.VITE_SUPABASE_BUCKET_NAME ?? 'videos';
 
 export function useVideoUpload(): VideoUploadState & VideoUploadActions {
   const [isUploading, setIsUploading] = useState<boolean>(false);
@@ -44,7 +47,7 @@ export function useVideoUpload(): VideoUploadState & VideoUploadActions {
 
     const fileExt = fileToUpload.name.split('.').pop();
     const objectName = `${user.id}_${Date.now()}.${fileExt}`;
-    const bucketName = 'videos';
+    const bucketName = SUPABASE_BUCKET_NAME;
     const tusEndpoint = `https://${SUPABASE_PROJECT_ID}.supabase.co/storage/v1/upload/resumable`;
 
     const upload = new tus.Upload(fileToUpload, {
@@ -88,17 +91,31 @@ export function useVideoUpload(): VideoUploadState & VideoUploadActions {
         }
         setVideoPreviewUrl(publicUrlData.publicUrl);
 
+        // 新增: 获取视频宽高
+        const metadataUrl = URL.createObjectURL(fileToUpload);
+        const tmpVideo = document.createElement('video');
+        tmpVideo.preload = 'metadata';
+        tmpVideo.src = metadataUrl;
+        await new Promise<void>(resolve => (tmpVideo.onloadedmetadata = () => resolve()));
+        const width = tmpVideo.videoWidth;
+        const height = tmpVideo.videoHeight;
+        URL.revokeObjectURL(metadataUrl);
+
         const videoDataToInsert = {
           user_id: user.id,
           file_name: fileToUpload.name,
           storage_path: finalObjectNameInBucket,
+          bucket_name: bucketName,
           status: 'uploaded',
+          video_width: width,
+          video_height: height,
         };
 
-        // 插入视频元数据到数据库
-        const { error: dbError } = await supabase
+        // 插入视频元数据到数据库，并返回生成的 video_id
+        const { data: insertedData, error: dbError } = await supabase
           .from('videos')
-          .insert([videoDataToInsert]);
+          .insert([videoDataToInsert])
+          .select('id');
 
         if (dbError) {
           console.error("数据库插入失败:", dbError);
@@ -107,12 +124,15 @@ export function useVideoUpload(): VideoUploadState & VideoUploadActions {
           return;
         }
 
-        // 新增: 通知后端开始处理视频，仅传递存储路径与存储桶信息
-        fetch(`${API_BASE_URL}/api/process-video`, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ storagePath: finalObjectNameInBucket, bucketName }),
-        }).catch(err => console.error('Notify backend failed:', err));
+        // 新增: 通知后端开始处理视频，传递 video_id, storagePath 与存储桶信息
+        const videoId = insertedData?.[0]?.id;
+        if (videoId) {
+          fetch(`${API_BASE_URL}/api/preprovideo`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ videoId: String(videoId) }),
+          }).catch(err => console.error('Notify backend failed:', err));
+        }
 
         setIsUploading(false);
         setUploadComplete(true);
