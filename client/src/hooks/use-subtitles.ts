@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, useCallback } from 'react';
 import { Subtitle } from '@/types';
 import { supabase } from '@/lib/supabaseClient'; // Ensure this path is correct
 
@@ -27,7 +27,7 @@ export function useSubtitles({ loadCondition, initialTaskId }: UseSubtitlesProps
   const [subtitleError, setSubtitleError] = useState<string | null>(null);
   const panelClosedByUserRef = useRef<boolean>(false);
 
-  const fetchSubtitles = async (taskId: string, targetLanguageCode: string) => {
+  const fetchSubtitles = useCallback(async (taskId: string, targetLanguageCode: string) => {
     if (!taskId) {
       setSubtitleError("Task ID is required to fetch subtitles.");
       return;
@@ -77,7 +77,7 @@ export function useSubtitles({ loadCondition, initialTaskId }: UseSubtitlesProps
     } finally {
       setIsLoadingSubtitles(false);
     }
-  };
+  }, []);
   
   // Optional: Load initial subtitles if taskId is provided and conditions met
   useEffect(() => {

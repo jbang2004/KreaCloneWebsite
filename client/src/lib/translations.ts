@@ -97,7 +97,7 @@ const translations: Record<Language, Translations> = {
     description: "上传视频，自动提取字幕并翻译成多种语言。支持批量导出与编辑。",
     uploadVideoLabel: "上传视频",
     selectLanguageLabel: "选择语言",
-    startPreprocessingLabel: "视频预处理中……",
+    startPreprocessingLabel: "视频处理中……",
     startTranslationLabel: "开始翻译",
     uploadingLabel: "上传中...",
     translatingLabel: "翻译中...",

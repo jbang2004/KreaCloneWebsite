@@ -30,6 +30,8 @@ interface VideoPanelProps {
   startGenerating: () => void;
   videoRef: React.RefObject<HTMLVideoElement>;
   fileInputRef: React.RefObject<HTMLInputElement>;
+  processingComplete: boolean;
+  processingError: Error | null;
 }
 
 export default function VideoPanel({
@@ -48,7 +50,9 @@ export default function VideoPanel({
   handlePreprocessingTrigger,
   startGenerating,
   videoRef,
-  fileInputRef
+  fileInputRef,
+  processingComplete,
+  processingError
 }: VideoPanelProps) {
 
   return (
@@ -141,17 +145,24 @@ export default function VideoPanel({
           </div>
         )}
         
-        {!isUploading && uploadComplete && !displaySubtitlesPanel && (
+        {!isUploading && uploadComplete && !processingComplete && processingError && (
           <Button
-            className="w-full sm:flex-1 h-14 text-white rounded-xl bg-green-600 hover:bg-green-700 flex items-center justify-center transition-colors"
-            onClick={handlePreprocessingTrigger}
+            className="w-full sm:flex-1 h-14 text-white rounded-xl bg-red-600 flex items-center justify-center transition-colors"
+          >
+            <span className="text-base font-semibold">{processingError.message}</span>
+          </Button>
+        )}
+        {!isUploading && uploadComplete && !processingComplete && !processingError && (
+          <Button
+            disabled
+            className="w-full sm:flex-1 h-14 text-white rounded-xl bg-green-600 flex items-center justify-center transition-colors"
           >
             <span className="text-lg font-bold shiny-text">{T.startPreprocessingLabel}</span>
           </Button>
         )}
-        
-        {!isUploading && uploadComplete && displaySubtitlesPanel && (
-           <Button
+
+        {!isUploading && uploadComplete && processingComplete && displaySubtitlesPanel && (
+          <Button
             className={cn(
               "w-full sm:flex-1 h-14 rounded-xl transition-colors flex items-center justify-center",
               theme === "dark" ? "dark:bg-zinc-800 dark:hover:bg-zinc-700 dark:text-blue-400" : "bg-slate-200 hover:bg-slate-300 text-blue-600"

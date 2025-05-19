@@ -16,8 +16,6 @@ import VideoPanel from "@/components/video-translation/VideoPanel";
 import SubtitlesPanel from "@/components/video-translation/SubtitlePanel";
 import { BlurFade } from "@/components/magicui/blur-fade";
 
-const FIXED_TASK_ID = "29a49af4-600f-4613-a1b4-31a4d6e1c210";
-
 export default function VideoTranslation() {
   const { language: currentInterfaceLanguage } = useLanguage();
   const { theme } = useTheme();
@@ -38,8 +36,12 @@ export default function VideoTranslation() {
     isUploading,
     uploadProgress,
     uploadComplete,
+    isProcessing,
+    processingComplete,
     videoPreviewUrl,
     uploadError,
+    processingError,
+    taskId,
     initiateUpload,
     resetUploadState: resetVideoUploadHookState
   } = useVideoUpload();
@@ -63,7 +65,7 @@ export default function VideoTranslation() {
     closeSubtitlesPanel: closeSubtitlesPanelHook,
     resetSubtitlesState,
   } = useSubtitles({ 
-    loadCondition: uploadComplete && !!videoPreviewUrl && displaySubtitlesPanel,
+    loadCondition: processingComplete && !!videoPreviewUrl && displaySubtitlesPanel,
   });
 
   useEffect(() => {
@@ -78,6 +80,18 @@ export default function VideoTranslation() {
     }
   }, [videoPreviewUrl]);
   
+  useEffect(() => {
+    if (processingComplete && !displaySubtitlesPanel) {
+      setDisplaySubtitlesPanel(true);
+    }
+  }, [processingComplete, displaySubtitlesPanel]);
+
+  useEffect(() => {
+    if (processingComplete && displaySubtitlesPanel && taskId) {
+      fetchSubtitles(taskId, targetLanguage);
+    }
+  }, [processingComplete, displaySubtitlesPanel, taskId, targetLanguage, fetchSubtitles]);
+
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
@@ -143,7 +157,7 @@ export default function VideoTranslation() {
   };
   
   const handlePreprocessingTrigger = () => {
-    if (uploadComplete) {
+    if (processingComplete) {
       setDisplaySubtitlesPanel(true); 
     } else {
       alert(T.alertMessages.uploadNotComplete);
@@ -193,6 +207,8 @@ export default function VideoTranslation() {
             isUploading={isUploading}
             uploadProgress={uploadProgress}
             uploadComplete={uploadComplete}
+            processingComplete={processingComplete}
+            processingError={processingError}
             isPlaying={isPlaying}
             displaySubtitlesPanel={displaySubtitlesPanel} 
             translations={T}
@@ -237,7 +253,7 @@ export default function VideoTranslation() {
                 fetchSubtitles={fetchSubtitles}   
                 closeSubtitlesPanel={handleCloseSubtitlesPanel} 
                 subtitlesContainerRef={subtitlesContainerRef}
-                currentTaskId={FIXED_TASK_ID} 
+                currentTaskId={taskId || ""} 
               />
             </BlurFade>
           )}

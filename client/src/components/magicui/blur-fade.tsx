@@ -8,7 +8,7 @@ import {
   Variants,
   MotionProps,
 } from "motion/react";
-import { useRef } from "react";
+import React, { useRef, forwardRef, useImperativeHandle } from "react";
 
 type MarginType = UseInViewOptions["margin"];
 
@@ -28,7 +28,7 @@ interface BlurFadeProps extends MotionProps {
   blur?: string;
 }
 
-export function BlurFade({
+export const BlurFade = forwardRef<HTMLDivElement, BlurFadeProps>(({
   children,
   className,
   variant,
@@ -40,9 +40,10 @@ export function BlurFade({
   inViewMargin = "-50px",
   blur = "6px",
   ...props
-}: BlurFadeProps) {
-  const ref = useRef(null);
-  const inViewResult = useInView(ref, { once: true, margin: inViewMargin });
+}, forwardedRef) => {
+  const localRef = useRef<HTMLDivElement>(null);
+  useImperativeHandle(forwardedRef, () => localRef.current!);
+  const inViewResult = useInView(localRef, { once: true, margin: inViewMargin });
   const isInView = !inView || inViewResult;
   const defaultVariants: Variants = {
     hidden: {
@@ -61,7 +62,7 @@ export function BlurFade({
   return (
     <AnimatePresence>
       <motion.div
-        ref={ref}
+        ref={localRef}
         initial="hidden"
         animate={isInView ? "visible" : "hidden"}
         exit="hidden"
@@ -78,4 +79,6 @@ export function BlurFade({
       </motion.div>
     </AnimatePresence>
   );
-}
+});
+
+BlurFade.displayName = 'BlurFade';

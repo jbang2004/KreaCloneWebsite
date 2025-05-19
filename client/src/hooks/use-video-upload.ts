@@ -7,8 +7,12 @@ interface VideoUploadState {
   isUploading: boolean;
   uploadProgress: number;
   uploadComplete: boolean;
+  isProcessing: boolean;
+  processingComplete: boolean;
   videoPreviewUrl: string | null;
   uploadError: Error | null;
+  processingError: Error | null;
+  taskId: string | null;
 }
 
 interface VideoUploadActions {
@@ -30,15 +34,23 @@ export function useVideoUpload(): VideoUploadState & VideoUploadActions {
   const [isUploading, setIsUploading] = useState<boolean>(false);
   const [uploadProgress, setUploadProgress] = useState<number>(0);
   const [uploadComplete, setUploadComplete] = useState<boolean>(false);
+  const [isProcessing, setIsProcessing] = useState<boolean>(false);
+  const [processingComplete, setProcessingComplete] = useState<boolean>(false);
   const [videoPreviewUrl, setVideoPreviewUrl] = useState<string | null>(null);
   const [uploadError, setUploadError] = useState<Error | null>(null);
+  const [processingError, setProcessingError] = useState<Error | null>(null);
+  const [taskId, setTaskId] = useState<string | null>(null);
 
   const resetUploadState = () => {
     setIsUploading(false);
     setUploadProgress(0);
     setUploadComplete(false);
+    setIsProcessing(false);
+    setProcessingComplete(false);
     setVideoPreviewUrl(null);
     setUploadError(null);
+    setProcessingError(null);
+    setTaskId(null);
   };
 
   const initiateUpload = async (fileToUpload: File, user: User, token: string) => {
@@ -78,10 +90,10 @@ export function useVideoUpload(): VideoUploadState & VideoUploadActions {
         console.log("TUS Upload Succeeded for:", fileToUpload.name, upload.url);
         const finalObjectNameInBucket = objectName;
 
+        // 获取视频公开 URL
         const { data: publicUrlData } = supabase.storage
           .from(bucketName)
           .getPublicUrl(finalObjectNameInBucket);
-
         if (!publicUrlData || !publicUrlData.publicUrl) {
           const err = new Error("无法获取视频的公开URL。");
           console.error(err);
@@ -91,7 +103,7 @@ export function useVideoUpload(): VideoUploadState & VideoUploadActions {
         }
         setVideoPreviewUrl(publicUrlData.publicUrl);
 
-        // 新增: 获取视频宽高
+        // 获取视频宽高
         const metadataUrl = URL.createObjectURL(fileToUpload);
         const tmpVideo = document.createElement('video');
         tmpVideo.preload = 'metadata';
@@ -101,6 +113,7 @@ export function useVideoUpload(): VideoUploadState & VideoUploadActions {
         const height = tmpVideo.videoHeight;
         URL.revokeObjectURL(metadataUrl);
 
+        // 插入视频记录到数据库
         const videoDataToInsert = {
           user_id: user.id,
           file_name: fileToUpload.name,
@@ -110,32 +123,71 @@ export function useVideoUpload(): VideoUploadState & VideoUploadActions {
           video_width: width,
           video_height: height,
         };
-
-        // 插入视频元数据到数据库，并返回生成的 video_id
         const { data: insertedData, error: dbError } = await supabase
           .from('videos')
           .insert([videoDataToInsert])
           .select('id');
-
         if (dbError) {
           console.error("数据库插入失败:", dbError);
           setUploadError(new Error(dbError.message));
-          setIsUploading(false); // Keep URL for preview but flag DB error
+          setIsUploading(false);
           return;
         }
 
-        // 新增: 通知后端开始处理视频，传递 video_id, storagePath 与存储桶信息
         const videoId = insertedData?.[0]?.id;
         if (videoId) {
-          fetch(`${API_BASE_URL}/api/preprovideo`, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ videoId: String(videoId) }),
-          }).catch(err => console.error('Notify backend failed:', err));
+          // 上传完成，进入预处理阶段
+          setIsUploading(false);
+          setUploadComplete(true);
+          setIsProcessing(true);
+          setProcessingError(null);
+          try {
+            // 触发后端预处理，并获取任务 ID
+            const res = await fetch(`${API_BASE_URL}/api/preprovideo`, {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ videoId: String(videoId) }),
+            });
+            if (!res.ok) {
+              const text = await res.text();
+              // 只截取返回 JSON 的 detail 字段
+              let errMsg = text;
+              try {
+                const errJson = JSON.parse(text);
+                if (errJson.detail) {
+                  errMsg = errJson.detail;
+                }
+              } catch {
+                // 非 JSON 格式时保留原文本
+              }
+              throw new Error(errMsg);
+            }
+            const respJson = await res.json();
+            const newTaskId = respJson.task_id;
+            setTaskId(newTaskId);
+            // 轮询任务状态直到完成
+            let status = '';
+            while (status !== 'preprocessed') {
+              await new Promise(r => setTimeout(r, 3000));
+              const { data: taskData, error: taskError } = await supabase
+                .from('tasks')
+                .select('status')
+                .eq('task_id', newTaskId)
+                .single();
+              if (taskError) {
+                console.error("轮询任务状态失败:", taskError);
+                continue;
+              }
+              status = taskData.status;
+            }
+            setProcessingComplete(true);
+          } catch (err: any) {
+            console.error("触发预处理失败:", err);
+            setProcessingError(err instanceof Error ? err : new Error(String(err)));
+          } finally {
+            setIsProcessing(false);
+          }
         }
-
-        setIsUploading(false);
-        setUploadComplete(true);
       },
     });
 
@@ -146,8 +198,12 @@ export function useVideoUpload(): VideoUploadState & VideoUploadActions {
     isUploading,
     uploadProgress,
     uploadComplete,
+    isProcessing,
+    processingComplete,
     videoPreviewUrl,
     uploadError,
+    processingError,
+    taskId,
     initiateUpload,
     resetUploadState,
   };
