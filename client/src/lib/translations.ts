@@ -16,6 +16,7 @@ export interface Translations {
   editLabel: string;
   saveLabel: string;
   generateLabel: string;
+  preprocessingErrorLabel: string;
   originalSubtitleLabel: string;
   translatedSubtitleLabel: string;
   jumpToLabel: string;
@@ -59,6 +60,7 @@ const translations: Record<Language, Translations> = {
     editLabel: "Edit",
     saveLabel: "Save",
     generateLabel: "Start Generating",
+    preprocessingErrorLabel: "Preprocessing failed",
     originalSubtitleLabel: "Original Subtitle",
     translatedSubtitleLabel: "Translated Subtitle",
     jumpToLabel: "Jump to",
@@ -108,6 +110,7 @@ const translations: Record<Language, Translations> = {
     editLabel: "编辑",
     saveLabel: "保存",
     generateLabel: "开始生成",
+    preprocessingErrorLabel: "预处理出错",
     originalSubtitleLabel: "原始字幕",
     translatedSubtitleLabel: "翻译字幕",
     jumpToLabel: "跳转",

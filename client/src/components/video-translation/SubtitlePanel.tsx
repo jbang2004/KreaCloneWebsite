@@ -124,7 +124,7 @@ export default function SubtitlesPanel({
         </div>
       </div>
       
-      <div className="h-[500px] overflow-hidden [mask-image:linear-gradient(to_bottom,transparent,black_10%,black_90%,transparent)]">
+      <div className="h-[500px] overflow-hidden [mask-image:linear-gradient(to_bottom,transparent,black_5%,black_95%,transparent)]">
         <ScrollArea className={cn("rounded-md h-full")}>
           <div className="space-y-4 pb-4" ref={subtitlesContainerRef}>
             {isLoading && (

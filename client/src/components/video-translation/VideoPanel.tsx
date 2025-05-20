@@ -149,7 +149,11 @@ export default function VideoPanel({
           <Button
             className="w-full sm:flex-1 h-14 text-white rounded-xl bg-red-600 flex items-center justify-center transition-colors"
           >
-            <span className="text-base font-semibold">{processingError.message}</span>
+            <span className="text-base font-semibold">
+              {processingError.message === 'TASK_ERROR'
+                ? T.preprocessingErrorLabel
+                : processingError.message}
+            </span>
           </Button>
         )}
         {!isUploading && uploadComplete && !processingComplete && !processingError && (

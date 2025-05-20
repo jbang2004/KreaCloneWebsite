@@ -165,9 +165,9 @@ export function useVideoUpload(): VideoUploadState & VideoUploadActions {
             const respJson = await res.json();
             const newTaskId = respJson.task_id;
             setTaskId(newTaskId);
-            // 轮询任务状态直到完成
+            // 轮询任务状态直到完成或发生错误
             let status = '';
-            while (status !== 'preprocessed') {
+            while (status !== 'preprocessed' && status !== 'error') {
               await new Promise(r => setTimeout(r, 3000));
               const { data: taskData, error: taskError } = await supabase
                 .from('tasks')
@@ -180,7 +180,11 @@ export function useVideoUpload(): VideoUploadState & VideoUploadActions {
               }
               status = taskData.status;
             }
-            setProcessingComplete(true);
+            if (status === 'preprocessed') {
+              setProcessingComplete(true);
+            } else if (status === 'error') {
+              setProcessingError(new Error('TASK_ERROR'));
+            }
           } catch (err: any) {
             console.error("触发预处理失败:", err);
             setProcessingError(err instanceof Error ? err : new Error(String(err)));
