@@ -34,7 +34,7 @@ export function useSubtitles({ loadCondition, initialTaskId }: UseSubtitlesProps
     }
     setIsLoadingSubtitles(true);
     setSubtitleError(null);
-    setSubtitles([]); // Clear previous subtitles
+    // setSubtitles([]); // Keep existing subtitles during translation fetch
 
     try {
       const { data, error } = await supabase

@@ -20,6 +20,15 @@ import {
 import { cn } from "@/lib/utils";
 import { Subtitle } from "@/types";
 import { Translations } from "@/lib/translations";
+import { useState, useEffect, useRef } from "react";
+import { supabase } from "@/lib/supabaseClient";
+import Skeleton from 'react-loading-skeleton';
+import 'react-loading-skeleton/dist/skeleton.css';
+
+// 添加后端 API 地址配置
+const BACKEND_URL = import.meta.env.VITE_BACKEND_URL as string;
+const BACKEND_PORT = import.meta.env.VITE_BACKEND_PORT as string;
+const API_BASE_URL = BACKEND_PORT ? `${BACKEND_URL}:${BACKEND_PORT}` : BACKEND_URL;
 
 interface SubtitlesPanelProps {
   theme: string | undefined;
@@ -60,12 +69,65 @@ export default function SubtitlesPanel({
   subtitlesContainerRef,
   currentTaskId
 }: SubtitlesPanelProps) {
+  const [isTranslating, setIsTranslating] = useState(false);
+  const [translationStatus, setTranslationStatus] = useState<'idle' | 'translating' | 'translated' | 'error'>('idle');
+  const sentencePollerRef = useRef<NodeJS.Timeout | null>(null);
 
-  const handleFetchSubtitles = () => {
-    if (currentTaskId && targetLanguage) {
-      fetchSubtitles(currentTaskId, targetLanguage);
+  const handleTranslate = async () => {
+    if (!currentTaskId || !targetLanguage) return;
+    // 立即清空旧翻译，展示骨架屏
+    subtitles.forEach(s => updateSubtitleTranslation(s.id, ""));
+    try {
+      setIsTranslating(true);
+      setTranslationStatus('translating');
+      const res = await fetch(`${API_BASE_URL}/api/translate_subtitles`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ task_id: currentTaskId, target_language: targetLanguage }),
+      });
+      if (!res.ok) {
+        const errData = await res.json();
+        throw new Error(errData.detail || 'Translate failed');
+      }
+      // 按句子轮询翻译结果
+      if (sentencePollerRef.current) clearInterval(sentencePollerRef.current);
+      sentencePollerRef.current = setInterval(async () => {
+        const { data: rows, error: rowsErr } = await supabase
+          .from('sentences')
+          .select('id, trans_text')
+          .eq('task_id', currentTaskId);
+        if (!rowsErr && rows) {
+          let allDone = true;
+          rows.forEach(r => {
+            const trans = r.trans_text ?? "";
+            updateSubtitleTranslation(String(r.id), trans);
+            if (!r.trans_text) {
+              allDone = false;
+            }
+          });
+          if (allDone) {
+            clearInterval(sentencePollerRef.current!);
+            setTranslationStatus('translated');
+            setIsTranslating(false);
+          }
+        }
+      }, 3000);
+    } catch (err) {
+      console.error(err);
+      setTranslationStatus('error');
+      setIsTranslating(false);
     }
   };
+
+  useEffect(() => {
+    // 切换到新任务时重置翻译状态并清理轮询器
+    setTranslationStatus('idle');
+    setIsTranslating(false);
+    if (sentencePollerRef.current) {
+      clearInterval(sentencePollerRef.current);
+      sentencePollerRef.current = null;
+    }
+  }, [currentTaskId]);
 
   return (
     <div className={cn(
@@ -111,15 +173,17 @@ export default function SubtitlesPanel({
               </div>
             </PopoverContent>
           </Popover>
-          <Button 
-            variant="default" 
-            size="sm" 
+          <Button
+            variant="default"
+            size="sm"
             className="h-8 px-3 text-xs bg-blue-600 hover:bg-blue-700 text-white whitespace-nowrap"
-            onClick={handleFetchSubtitles}
-            disabled={isLoading || !targetLanguage || !currentTaskId}
+            onClick={handleTranslate}
+            disabled={isLoading || isTranslating || !targetLanguage || !currentTaskId}
           >
             <IonIcon icon={languageIcon} className="h-4 w-4 mr-1.5" />
-            {isLoading ? (T.loadingLabel || "Loading...") : (T.translateButtonLabel || "Translate")}
+            {isTranslating
+              ? (T.translatingLabel || "Translating...")
+              : (T.translateButtonLabel || "Translate")}
           </Button>
         </div>
       </div>
@@ -127,7 +191,7 @@ export default function SubtitlesPanel({
       <div className="h-[500px] overflow-hidden [mask-image:linear-gradient(to_bottom,transparent,black_5%,black_95%,transparent)]">
         <ScrollArea className={cn("rounded-md h-full")}>
           <div className="space-y-4 pb-4" ref={subtitlesContainerRef}>
-            {isLoading && (
+            {subtitles.length === 0 && isLoading && (
               <div className="flex justify-center items-center h-32">
                 <p>{T.loadingSubtitlesLabel || T.loadingLabel || "Loading subtitles..."}</p>
               </div>
@@ -135,7 +199,7 @@ export default function SubtitlesPanel({
             {error && !isLoading && (
               <div className="flex flex-col justify-center items-center h-32 text-red-500">
                 <p>{T.errorLabel || "Error"}: {error}</p>
-                <Button variant="link" onClick={handleFetchSubtitles} className="mt-2">
+                <Button variant="link" onClick={handleTranslate} className="mt-2">
                   {T.retryLabel || "Try Again"}
                 </Button>
               </div>
@@ -198,6 +262,7 @@ export default function SubtitlesPanel({
                       size="sm"
                       className="h-6 px-2 text-xs"
                       onClick={() => toggleEditMode(subtitle.id)}
+                      disabled={translationStatus !== 'translated'}
                     >
                       <IonIcon icon={editingSubtitleId === subtitle.id ? checkmark : pencil} className="h-3 w-3 mr-1" />
                       {editingSubtitleId === subtitle.id ? T.saveLabel : T.editLabel}
@@ -213,13 +278,20 @@ export default function SubtitlesPanel({
                         theme === "dark" ? "bg-zinc-800 border-zinc-700" : "bg-white"
                       )}
                     />
-                  ) : (
+                  ) : subtitle.translation ? (
                     <div className={cn(
                       "p-2 sm:p-3 rounded-lg text-sm",
                       theme === "dark" ? "bg-zinc-900 text-blue-400" : "bg-blue-50 text-blue-700"
                     )}>
                       {subtitle.translation}
                     </div>
+                  ) : translationStatus === 'translating' ? (
+                    <Skeleton height={24} width="100%" />
+                  ) : (
+                    <div className={cn(
+                      "p-2 sm:p-3 rounded-lg text-sm",
+                      theme === "dark" ? "bg-zinc-900" : "bg-gray-50"
+                    )} />
                   )}
                 </div>
               </motion.div>
