@@ -16,6 +16,11 @@ import VideoPanel from "@/components/video-translation/VideoPanel";
 import SubtitlesPanel from "@/components/video-translation/SubtitlePanel";
 import { BlurFade } from "@/components/magicui/blur-fade";
 
+// 新增: 后端 API 基础地址配置
+const BACKEND_URL = import.meta.env.VITE_BACKEND_URL as string;
+const BACKEND_PORT = import.meta.env.VITE_BACKEND_PORT as string;
+const API_BASE_URL = BACKEND_PORT ? `${BACKEND_URL}:${BACKEND_PORT}` : BACKEND_URL;
+
 export default function VideoTranslation() {
   const { language: currentInterfaceLanguage } = useLanguage();
   const { theme } = useTheme();
@@ -164,8 +169,26 @@ export default function VideoTranslation() {
     }
   };
   
-  const startGenerating = () => {
-    alert(T.alertMessages.generatingVideo);
+  const startGenerating = async () => {
+    if (!taskId) {
+      alert('任务 ID 缺失，无法触发 TTS');
+      return;
+    }
+    try {
+      const response = await fetch(`${API_BASE_URL}/api/tts`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ task_id: taskId }),
+      });
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.detail || 'TTS 请求失败');
+      }
+      const data = await response.json();
+      alert(data.message || 'TTS 合成已开始');
+    } catch (e: any) {
+      alert(`无法触发 TTS: ${e.message}`);
+    }
   };
 
   const getLanguageLabel = (value: string) => {
