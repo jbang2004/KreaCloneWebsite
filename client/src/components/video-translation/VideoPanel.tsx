@@ -4,8 +4,7 @@ import {
   close,
   play,
   pauseCircle,
-  sparkles,
-  logoTableau
+  sparkles
 } from "ionicons/icons";
 import { IonIcon } from "@ionic/react";
 import { Button } from "@/components/ui/button";

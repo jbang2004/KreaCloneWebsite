@@ -89,14 +89,27 @@ export function useSubtitles({ loadCondition, initialTaskId }: UseSubtitlesProps
   }, [loadCondition, initialTaskId, showSubtitles, subtitles.length]);
 
 
-  const updateSubtitleTranslation = (id: string, newTranslation: string) => {
+  const updateSubtitleTranslation = async (id: string, newTranslation: string) => {
+    // 立即更新UI
     setSubtitles(prevSubtitles =>
       prevSubtitles.map(sub =>
         sub.id === id ? { ...sub, translation: newTranslation } : sub
       )
     );
-    // TODO: Add a call to update the translation in the database if needed
-    // e.g., supabase.from('sentences').update({ trans_text: newTranslation }).eq('id', id);
+    
+    // 同步更新数据库
+    try {
+      const { error } = await supabase
+        .from('sentences')
+        .update({ trans_text: newTranslation })
+        .eq('id', id);
+      
+      if (error) {
+        console.error('更新字幕翻译到数据库失败:', error);
+      }
+    } catch (err) {
+      console.error('数据库更新异常:', err);
+    }
   };
 
   const toggleEditMode = (id: string) => {

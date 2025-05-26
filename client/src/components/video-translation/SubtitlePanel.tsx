@@ -24,11 +24,7 @@ import { useState, useEffect, useRef } from "react";
 import { supabase } from "@/lib/supabaseClient";
 import Skeleton from 'react-loading-skeleton';
 import 'react-loading-skeleton/dist/skeleton.css';
-
-// 添加后端 API 地址配置
-const BACKEND_URL = import.meta.env.VITE_BACKEND_URL as string;
-const BACKEND_PORT = import.meta.env.VITE_BACKEND_PORT as string;
-const API_BASE_URL = BACKEND_PORT ? `${BACKEND_URL}:${BACKEND_PORT}` : BACKEND_URL;
+import { FrontendTranslator, translationConfigManager } from "@/lib/translation";
 
 interface SubtitlesPanelProps {
   theme: string | undefined;
@@ -41,7 +37,7 @@ interface SubtitlesPanelProps {
   error: string | null;
   getLanguageLabel: (value: string) => string;
   jumpToTime: (timeString: string) => void;
-  updateSubtitleTranslation: (id: string, newTranslation: string) => void;
+  updateSubtitleTranslation: (id: string, newTranslation: string) => void | Promise<void>;
   toggleEditMode: (id: string) => void;
   setTargetLanguage: (language: string) => void;
   fetchSubtitles: (taskId: string, targetLang: string) => Promise<void>;
@@ -71,62 +67,63 @@ export default function SubtitlesPanel({
 }: SubtitlesPanelProps) {
   const [isTranslating, setIsTranslating] = useState(false);
   const [translationStatus, setTranslationStatus] = useState<'idle' | 'translating' | 'translated' | 'error'>('idle');
-  const sentencePollerRef = useRef<NodeJS.Timeout | null>(null);
 
   const handleTranslate = async () => {
     if (!currentTaskId || !targetLanguage) return;
+    
+    // 初始化翻译配置
+    translationConfigManager.initFromEnv();
+    const config = translationConfigManager.getDefaultConfig();
+    
+    if (!config) {
+      alert('未找到有效的翻译API配置，请检查环境变量');
+      return;
+    }
+
     // 立即清空旧翻译，展示骨架屏
     subtitles.forEach(s => updateSubtitleTranslation(s.id, ""));
+    
     try {
       setIsTranslating(true);
       setTranslationStatus('translating');
-      const res = await fetch(`${API_BASE_URL}/api/translate_subtitles`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ task_id: currentTaskId, target_language: targetLanguage }),
-      });
-      if (!res.ok) {
-        const errData = await res.json();
-        throw new Error(errData.detail || 'Translate failed');
-      }
-      // 按句子轮询翻译结果
-      if (sentencePollerRef.current) clearInterval(sentencePollerRef.current);
-      sentencePollerRef.current = setInterval(async () => {
-        const { data: rows, error: rowsErr } = await supabase
-          .from('sentences')
-          .select('id, trans_text')
-          .eq('task_id', currentTaskId);
-        if (!rowsErr && rows) {
-          let allDone = true;
-          rows.forEach(r => {
-            const trans = r.trans_text ?? "";
-            updateSubtitleTranslation(String(r.id), trans);
-            if (!r.trans_text) {
-              allDone = false;
-            }
-          });
-          if (allDone) {
-            clearInterval(sentencePollerRef.current!);
-            setTranslationStatus('translated');
-            setIsTranslating(false);
-          }
+      
+      // 创建翻译器实例
+      const translator = new FrontendTranslator(config);
+      
+      let translatedCount = 0;
+      const totalSentences = subtitles.length;
+      
+      // 使用翻译生成器进行批量翻译
+      for await (const batch of translator.translateSentences(
+        currentTaskId, 
+        targetLanguage, 
+        config.batchSize || 50,
+        (translated, total) => {
+          translatedCount = translated;
+          console.log(`翻译进度: ${translated}/${total}`);
         }
-      }, 3000);
+      )) {
+        // 更新UI中的翻译结果
+        batch.forEach(sentence => {
+          updateSubtitleTranslation(String(sentence.id), sentence.trans_text || sentence.raw_text);
+        });
+      }
+      
+      setTranslationStatus('translated');
+      setIsTranslating(false);
+      
     } catch (err) {
-      console.error(err);
+      console.error('翻译失败:', err);
       setTranslationStatus('error');
       setIsTranslating(false);
+      alert(`翻译失败: ${err instanceof Error ? err.message : '未知错误'}`);
     }
   };
 
   useEffect(() => {
-    // 切换到新任务时重置翻译状态并清理轮询器
+    // 切换到新任务时重置翻译状态
     setTranslationStatus('idle');
     setIsTranslating(false);
-    if (sentencePollerRef.current) {
-      clearInterval(sentencePollerRef.current);
-      sentencePollerRef.current = null;
-    }
   }, [currentTaskId]);
 
   return (
