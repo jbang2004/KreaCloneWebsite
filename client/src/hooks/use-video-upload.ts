@@ -119,7 +119,7 @@ export function useVideoUpload(): VideoUploadState & VideoUploadActions {
           file_name: fileToUpload.name,
           storage_path: finalObjectNameInBucket,
           bucket_name: bucketName,
-          status: 'uploaded',
+          status: 'pending',
           video_width: width,
           video_height: height,
         };
