@@ -7,6 +7,7 @@ import { useMediaQuery } from "@/hooks/use-media-query";
 import { useVideoUpload } from "@/hooks/use-video-upload";
 import { useSubtitles } from "@/hooks/use-subtitles";
 import { useVideoPlayer } from "@/hooks/use-video-player";
+import { useHLSPlayer } from "@/hooks/use-hls-player";
 import { cn } from "@/lib/utils";
 import { supabase } from "@/lib/supabaseClient";
 import { getTranslations, Language as AppLanguage } from "@/lib/translations";
@@ -32,6 +33,8 @@ export default function VideoTranslation() {
   const [targetLanguage, setTargetLanguage] = useState<string>("en");
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [displaySubtitlesPanel, setDisplaySubtitlesPanel] = useState<boolean>(false);
+  const [isTranslating, setIsTranslating] = useState<boolean>(false);
+  const [translationCompleted, setTranslationCompleted] = useState<boolean>(false);
 
   const videoRef = useRef<HTMLVideoElement>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -59,6 +62,16 @@ export default function VideoTranslation() {
   } = useVideoPlayer({ videoRef });
 
   const {
+    isGenerating,
+    hlsPlaylistUrl,
+    canPlay,
+    generatingError,
+    isVideoCompleted,
+    startGenerating: startHLSGenerating,
+    resetHLSState,
+  } = useHLSPlayer();
+
+  const {
     subtitles,
     showSubtitles, 
     editingSubtitleId,
@@ -78,6 +91,12 @@ export default function VideoTranslation() {
       alert(T.alertMessages.uploadFailed(uploadError.message));
     }
   }, [uploadError, T.alertMessages]);
+
+  useEffect(() => {
+    if (generatingError) {
+      alert(`生成失败: ${generatingError.message}`);
+    }
+  }, [generatingError]);
 
   useEffect(() => {
     if (videoRef.current && videoPreviewUrl) {
@@ -156,6 +175,7 @@ export default function VideoTranslation() {
     setSelectedFile(null);
     resetVideoUploadHookState();
     resetSubtitlesState();
+    resetHLSState();
     setIsPlaying(false);
     setDisplaySubtitlesPanel(false); 
     if(fileInputRef.current) fileInputRef.current.value = "";
@@ -174,21 +194,7 @@ export default function VideoTranslation() {
       alert('任务 ID 缺失，无法触发 TTS');
       return;
     }
-    try {
-      const response = await fetch(`${API_BASE_URL}/api/tts`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ task_id: taskId }),
-      });
-      if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.detail || 'TTS 请求失败');
-      }
-      const data = await response.json();
-      alert(data.message || 'TTS 合成已开始');
-    } catch (e: any) {
-      alert(`无法触发 TTS: ${e.message}`);
-    }
+    await startHLSGenerating(taskId);
   };
 
   const getLanguageLabel = (value: string) => {
@@ -242,6 +248,12 @@ export default function VideoTranslation() {
             startGenerating={startGenerating}
             videoRef={videoRef}
             fileInputRef={fileInputRef}
+            isGenerating={isGenerating}
+            canPlay={canPlay}
+            hlsPlaylistUrl={hlsPlaylistUrl}
+            isTranslating={isTranslating}
+            translationCompleted={translationCompleted}
+            isVideoCompleted={isVideoCompleted}
           />
         </BlurFade>
         
@@ -266,17 +278,25 @@ export default function VideoTranslation() {
                 targetLanguage={targetLanguage}
                 translations={T}
                 isMobile={isMobile}
-                isLoading={isLoadingSubtitles} 
-                error={subtitleError}        
+                isLoading={isLoadingSubtitles}
+                error={subtitleError}
                 getLanguageLabel={getLanguageLabel}
                 jumpToTime={jumpToTime}
                 updateSubtitleTranslation={updateSubtitleTranslation}
                 toggleEditMode={toggleEditMode}
                 setTargetLanguage={setTargetLanguage}
-                fetchSubtitles={fetchSubtitles}   
-                closeSubtitlesPanel={handleCloseSubtitlesPanel} 
+                fetchSubtitles={fetchSubtitles}
+                closeSubtitlesPanel={handleCloseSubtitlesPanel}
                 subtitlesContainerRef={subtitlesContainerRef}
-                currentTaskId={taskId || ""} 
+                currentTaskId={taskId || ""}
+                onTranslationStart={() => {
+                  setIsTranslating(true);
+                  setTranslationCompleted(false);
+                }}
+                onTranslationComplete={() => {
+                  setIsTranslating(false);
+                  setTranslationCompleted(true);
+                }}
               />
             </BlurFade>
           )}

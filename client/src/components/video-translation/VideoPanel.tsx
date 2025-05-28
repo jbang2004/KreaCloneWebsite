@@ -11,6 +11,7 @@ import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { Translations } from "@/lib/translations";
 import TVStaticEffect from "./TVStaticEffect";
+import HLSPlayer from "./HLSPlayer";
 
 interface VideoPanelProps {
   theme: string | undefined;
@@ -31,6 +32,12 @@ interface VideoPanelProps {
   fileInputRef: React.RefObject<HTMLInputElement>;
   processingComplete: boolean;
   processingError: Error | null;
+  isGenerating: boolean;
+  canPlay: boolean;
+  hlsPlaylistUrl: string | null;
+  isTranslating: boolean;
+  translationCompleted: boolean;
+  isVideoCompleted: boolean;
 }
 
 export default function VideoPanel({
@@ -51,7 +58,13 @@ export default function VideoPanel({
   videoRef,
   fileInputRef,
   processingComplete,
-  processingError
+  processingError,
+  isGenerating,
+  canPlay,
+  hlsPlaylistUrl,
+  isTranslating,
+  translationCompleted,
+  isVideoCompleted
 }: VideoPanelProps) {
 
   return (
@@ -60,7 +73,29 @@ export default function VideoPanel({
       theme === "dark" ? "bg-zinc-900" : "bg-gray-100"
     )}>
       <div className="h-[280px] mb-6 flex items-center justify-center">
-        {selectedFile && videoPreviewUrl ? (
+        {canPlay && hlsPlaylistUrl ? (
+          <div className="w-full h-full rounded-2xl overflow-hidden bg-black relative">
+            <HLSPlayer
+              src={hlsPlaylistUrl}
+              className="w-full h-full object-contain"
+              controls={true}
+              autoPlay={false}
+            />
+            
+            <Button 
+              variant="ghost" 
+              size="icon" 
+              className="absolute top-2 right-2 h-8 w-8 bg-black/60 backdrop-blur-sm text-white hover:bg-black/80 rounded-full z-10" 
+              onClick={resetUpload}
+            >
+              <IonIcon icon={close} className="h-4 w-4" />
+            </Button>
+            
+            <div className="absolute bottom-2 left-2 bg-black/60 backdrop-blur-sm rounded-lg px-2 py-1 text-white text-xs max-w-[70%] truncate z-10">
+              翻译后的视频 (HLS流)
+            </div>
+          </div>
+        ) : selectedFile && videoPreviewUrl ? (
           <div className="w-full h-full rounded-2xl overflow-hidden bg-black relative group/video">
             <video 
               ref={videoRef}
@@ -164,16 +199,49 @@ export default function VideoPanel({
           </Button>
         )}
 
-        {!isUploading && uploadComplete && processingComplete && displaySubtitlesPanel && (
+        {!isUploading && uploadComplete && processingComplete && displaySubtitlesPanel && !isGenerating && !canPlay && (
           <Button
             className={cn(
               "w-full sm:flex-1 h-14 rounded-xl transition-colors flex items-center justify-center",
               theme === "dark" ? "dark:bg-zinc-800 dark:hover:bg-zinc-700 dark:text-blue-400" : "bg-slate-200 hover:bg-slate-300 text-blue-600"
             )}
             onClick={startGenerating}
+            disabled={isTranslating || !translationCompleted}
           >
             <IonIcon icon={sparkles} className="w-6 h-6 mr-2" />
-            <span className="text-base">{T.generateLabel}</span>
+            <span className="text-base">
+              {isTranslating ? "翻译中..." : !translationCompleted ? "请先完成翻译" : T.generateLabel}
+            </span>
+          </Button>
+        )}
+
+        {!isUploading && uploadComplete && processingComplete && displaySubtitlesPanel && isGenerating && !canPlay && (
+          <Button
+            disabled
+            className="w-full sm:flex-1 h-14 text-white rounded-xl bg-blue-600 flex items-center justify-center transition-colors"
+          >
+            <IonIcon icon={sparkles} className="w-6 h-6 mr-2" />
+            <span className="text-lg font-bold shiny-text">{T.generatingLabel}</span>
+          </Button>
+        )}
+
+        {!isUploading && uploadComplete && processingComplete && displaySubtitlesPanel && isGenerating && canPlay && !isVideoCompleted && (
+          <Button
+            disabled
+            className="w-full sm:flex-1 h-14 text-white rounded-xl bg-blue-600 flex items-center justify-center transition-colors"
+          >
+            <IonIcon icon={sparkles} className="w-6 h-6 mr-2" />
+            <span className="text-lg font-bold shiny-text">{T.generatingLabel}</span>
+          </Button>
+        )}
+
+        {!isUploading && uploadComplete && processingComplete && displaySubtitlesPanel && isVideoCompleted && (
+          <Button
+            disabled
+            className="w-full sm:flex-1 h-14 text-white rounded-xl bg-green-600 flex items-center justify-center transition-colors"
+          >
+            <IonIcon icon={sparkles} className="w-6 h-6 mr-2" />
+            <span className="text-lg font-bold">已完成</span>
           </Button>
         )}
       </div>

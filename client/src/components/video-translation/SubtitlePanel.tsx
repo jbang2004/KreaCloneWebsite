@@ -44,6 +44,8 @@ interface SubtitlesPanelProps {
   closeSubtitlesPanel: () => void;
   subtitlesContainerRef: React.RefObject<HTMLDivElement>;
   currentTaskId: string;
+  onTranslationStart: () => void;
+  onTranslationComplete: () => void;
 }
 
 export default function SubtitlesPanel({
@@ -63,7 +65,9 @@ export default function SubtitlesPanel({
   fetchSubtitles,
   closeSubtitlesPanel,
   subtitlesContainerRef,
-  currentTaskId
+  currentTaskId,
+  onTranslationStart,
+  onTranslationComplete
 }: SubtitlesPanelProps) {
   const [isTranslating, setIsTranslating] = useState(false);
   const [translationStatus, setTranslationStatus] = useState<'idle' | 'translating' | 'translated' | 'error'>('idle');
@@ -86,6 +90,7 @@ export default function SubtitlesPanel({
     try {
       setIsTranslating(true);
       setTranslationStatus('translating');
+      onTranslationStart(); // 通知父组件翻译开始
       
       // 创建翻译器实例
       const translator = new FrontendTranslator(config);
@@ -111,11 +116,13 @@ export default function SubtitlesPanel({
       
       setTranslationStatus('translated');
       setIsTranslating(false);
+      onTranslationComplete(); // 通知父组件翻译完成
       
     } catch (err) {
       console.error('翻译失败:', err);
       setTranslationStatus('error');
       setIsTranslating(false);
+      onTranslationComplete(); // 即使失败也通知完成，允许用户重试
       alert(`翻译失败: ${err instanceof Error ? err.message : '未知错误'}`);
     }
   };
