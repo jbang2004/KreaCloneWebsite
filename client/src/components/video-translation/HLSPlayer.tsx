@@ -30,13 +30,27 @@ export default function HLSPlayer({
     }
 
     if (Hls.isSupported()) {
-      // 使用hls.js - 使用默认配置，与HTML示例保持一致
+      // 优化HLS配置以解决缓冲停滞问题
       const hls = new Hls({
-        // 使用默认配置，适合大多数HLS播放场景
-        // 播放列表刷新配置 - 更频繁地检查播放列表更新
-        manifestLoadingTimeOut: 10000, // 播放列表加载超时时间（毫秒）
-        manifestLoadingMaxRetry: 3, // 播放列表加载最大重试次数
-        manifestLoadingRetryDelay: 500, // 播放列表加载重试延迟（毫秒）
+        // 播放列表加载配置
+        manifestLoadingTimeOut: 10000,
+        manifestLoadingMaxRetry: 3,
+        manifestLoadingRetryDelay: 500,
+        
+        // 缓冲配置 - 关键优化
+        maxBufferLength: 60, // 最大缓冲长度（秒）
+        maxMaxBufferLength: 120, // 最大允许缓冲长度（秒）
+        maxBufferSize: 60 * 1000 * 1000, // 最大缓冲大小（字节）
+        maxBufferHole: 0.5, // 最大缓冲空洞（秒）
+        
+        // 片段加载配置
+        fragLoadingTimeOut: 20000, // 片段加载超时
+        fragLoadingMaxRetry: 6, // 片段加载最大重试次数
+        fragLoadingRetryDelay: 1000, // 片段加载重试延迟
+        
+        // 启用渐进式增强
+        progressive: true,
+        enableWorker: true,
       });
 
       hlsRef.current = hls;
@@ -53,6 +67,22 @@ export default function HLSPlayer({
 
       hls.on(Hls.Events.ERROR, (event, data) => {
         console.error('HLS error:', data);
+        
+        // 处理非致命错误
+        if (!data.fatal) {
+          // 特别处理缓冲停滞错误
+          if (data.details === 'bufferStalledError') {
+            console.log('Buffer stalled error detected, attempting recovery...');
+            // 尝试跳过小的时间间隔来恢复播放
+            const currentTime = video.currentTime;
+            if (currentTime > 0) {
+              video.currentTime = currentTime + 0.1;
+            }
+          }
+          return;
+        }
+        
+        // 处理致命错误
         if (data.fatal) {
           switch (data.type) {
             case Hls.ErrorTypes.NETWORK_ERROR:
@@ -70,6 +100,51 @@ export default function HLSPlayer({
           }
         }
       });
+
+      // 监听缓冲事件
+      hls.on(Hls.Events.BUFFER_APPENDED, (event, data) => {
+        console.log('Buffer appended:', data);
+      });
+
+      hls.on(Hls.Events.BUFFER_EOS, (event, data) => {
+        console.log('Buffer end of stream:', data);
+      });
+
+      // 处理视频卡住的情况
+      let stallTimer: NodeJS.Timeout | null = null;
+      let lastTime = 0;
+      
+      const handleTimeUpdate = () => {
+        const currentTime = video.currentTime;
+        
+        // 如果时间没有变化且不是暂停状态，可能卡住了
+        if (Math.abs(currentTime - lastTime) < 0.1 && !video.paused && !video.ended) {
+          if (!stallTimer) {
+            stallTimer = setTimeout(() => {
+              console.log('Video appears to be stalled, attempting recovery...');
+              // 尝试微调播放位置
+              video.currentTime = currentTime + 0.1;
+              stallTimer = null;
+            }, 2000); // 2秒后尝试恢复
+          }
+        } else {
+          if (stallTimer) {
+            clearTimeout(stallTimer);
+            stallTimer = null;
+          }
+          lastTime = currentTime;
+        }
+      };
+
+      video.addEventListener('timeupdate', handleTimeUpdate);
+
+      // 清理函数
+      return () => {
+        video.removeEventListener('timeupdate', handleTimeUpdate);
+        if (stallTimer) {
+          clearTimeout(stallTimer);
+        }
+      };
 
     } else if (video.canPlayType('application/vnd.apple.mpegurl')) {
       // 原生支持HLS (Safari)

@@ -29,6 +29,7 @@ export interface Translations {
   errorLabel: string;
   retryLabel: string;
   noSubtitlesFoundLabel: string;
+  retranslateConfirmLabel: string;
   alertMessages: {
     selectVideoFirst: string;
     userInfoIncomplete: string;
@@ -74,6 +75,7 @@ const translations: Record<Language, Translations> = {
     errorLabel: "Error",
     retryLabel: "Try Again",
     noSubtitlesFoundLabel: "No subtitles found. Select language and click Translate.",
+    retranslateConfirmLabel: "Translation already exists. Do you want to retranslate? This will overwrite existing translations.",
     alertMessages: {
       selectVideoFirst: "Please select a video file first.",
       userInfoIncomplete: "User info incomplete, attempting to refresh...",
@@ -125,6 +127,7 @@ const translations: Record<Language, Translations> = {
     errorLabel: "错误",
     retryLabel: "重试",
     noSubtitlesFoundLabel: "未找到字幕。请选择语言后点击翻译。",
+    retranslateConfirmLabel: "已有翻译内容，是否重新翻译？这将覆盖现有的翻译。",
     alertMessages: {
       selectVideoFirst: "请先选择一个视频文件。",
       userInfoIncomplete: "用户信息不完整，正在尝试重新获取...",

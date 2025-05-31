@@ -89,7 +89,7 @@ export function useSubtitles({ loadCondition, initialTaskId }: UseSubtitlesProps
   }, [loadCondition, initialTaskId, showSubtitles, subtitles.length]);
 
 
-  const updateSubtitleTranslation = async (id: string, newTranslation: string) => {
+  const updateSubtitleTranslation = async (id: string, newTranslation: string, syncToDatabase: boolean = true) => {
     // 立即更新UI
     setSubtitles(prevSubtitles =>
       prevSubtitles.map(sub =>
@@ -97,18 +97,20 @@ export function useSubtitles({ loadCondition, initialTaskId }: UseSubtitlesProps
       )
     );
     
-    // 同步更新数据库
-    try {
-      const { error } = await supabase
-        .from('sentences')
-        .update({ trans_text: newTranslation })
-        .eq('id', id);
-      
-      if (error) {
-        console.error('更新字幕翻译到数据库失败:', error);
+    // 根据参数决定是否同步更新数据库
+    if (syncToDatabase) {
+      try {
+        const { error } = await supabase
+          .from('sentences')
+          .update({ trans_text: newTranslation })
+          .eq('id', id);
+        
+        if (error) {
+          console.error('更新字幕翻译到数据库失败:', error);
+        }
+      } catch (err) {
+        console.error('数据库更新异常:', err);
       }
-    } catch (err) {
-      console.error('数据库更新异常:', err);
     }
   };
 
