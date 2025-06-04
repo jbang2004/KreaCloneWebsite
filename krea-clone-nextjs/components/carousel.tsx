@@ -1,15 +1,18 @@
+'use client';
+
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { cn } from "@/lib/utils";
 import { ChevronLeft, ChevronRight } from "lucide-react";
-import type { CarouselItem } from "@shared/types";
+import { useCarouselData } from "@/data/home-data";
+import type { CarouselItem } from "@/types";
 
 interface CarouselProps {
-  items: CarouselItem[];
   autoplayInterval?: number;
 }
 
-export default function Carousel({ items, autoplayInterval = 5000 }: CarouselProps) {
+export default function Carousel({ autoplayInterval = 5000 }: CarouselProps) {
+  const items = useCarouselData();
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isPaused, setIsPaused] = useState(false);
 

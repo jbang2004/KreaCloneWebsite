@@ -6,7 +6,7 @@ import { Upload, User, Wand2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { useLanguage } from "@/hooks/use-language";
-import { useTheme } from "@/hooks/use-theme";
+import { useTheme } from "next-themes";
 
 export default function Image() {
   const [prompt, setPrompt] = useState("");

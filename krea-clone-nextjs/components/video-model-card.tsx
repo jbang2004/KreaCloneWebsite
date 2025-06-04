@@ -1,6 +1,6 @@
 import { cn } from "@/lib/utils";
 import { useLanguage } from "@/hooks/use-language";
-import { useTheme } from "@/hooks/use-theme";
+import { useTheme } from "next-themes";
 
 interface VideoModelCardProps {
   name: string;

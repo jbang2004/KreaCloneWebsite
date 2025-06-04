@@ -1,3 +1,5 @@
+'use client';
+
 import { useState } from "react";
 import { motion } from "framer-motion";
 import { Sparkles } from "lucide-react";
@@ -5,7 +7,7 @@ import PricingToggle from "@/components/pricing-toggle";
 import PlanCard, { PlanProps } from "@/components/plan-card";
 import FaqAccordion from "@/components/faq-accordion";
 
-export default function Pricing() {
+export default function PricingContent() {
   const [isYearly, setIsYearly] = useState(true);
   
   const handlePricingToggle = (yearly: boolean) => {
@@ -139,4 +141,4 @@ export default function Pricing() {
       </div>
     </motion.div>
   );
-}
+} 

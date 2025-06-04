@@ -1,6 +1,7 @@
 import React, { createContext, useContext, useEffect, useState, ReactNode } from 'react';
 import { Session, User, AuthError, SignUpWithPasswordCredentials, SignInWithPasswordCredentials, AuthChangeEvent } from '@supabase/supabase-js';
 import { createClient } from '@/lib/supabase/client';
+import { useRouter } from 'next/navigation';
 
 const supabase = createClient();
 
@@ -72,6 +73,12 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     const { error } = await supabase.auth.signOut();
     setLoading(false);
     if (error) setError(error);
+    
+    // 退出登录后重定向到注册页面
+    if (!error) {
+      window.location.href = '/auth';
+    }
+    
     // Session and user state will be updated by onAuthStateChange listener
     return { error };
   };

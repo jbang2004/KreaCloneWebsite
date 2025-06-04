@@ -1,41 +1,33 @@
 'use client';
 
 import { Suspense } from "react";
-import dynamic from "next/dynamic";
-import { motion } from "framer-motion";
-import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
-import { 
-  Play, 
-  Sparkles 
-} from "lucide-react";
-import { useLanguage } from "@/hooks/use-language";
+import { BlurFade } from "@/components/magicui/blur-fade";
 import Carousel from "@/components/carousel";
 import GenerateSection from "@/components/generate-section";
 import GallerySection from "@/components/gallery-section";
-import { useCarouselData, useGalleryData } from "@/data/home-data";
-import { BlurFade } from "@/components/magicui/blur-fade";
 
 export default function Home() {
-  const { t } = useLanguage();
-  const carouselItems = useCarouselData();
-  const galleryItems = useGalleryData();
-
   return (
     <section className="max-w-7xl mx-auto">
       <BlurFade delay={0.25} inView={true}>
         <div>
-          <Carousel items={carouselItems} />
+          <Suspense fallback={<div className="h-64 bg-gray-100 animate-pulse rounded-lg" />}>
+            <Carousel />
+          </Suspense>
         </div>
       </BlurFade>
       <BlurFade delay={0.25 + 0.15} inView={true}>
         <div className="mt-12">
-          <GenerateSection />
+          <Suspense fallback={<div className="h-32 bg-gray-100 animate-pulse rounded-lg" />}>
+            <GenerateSection />
+          </Suspense>
         </div>
       </BlurFade>
       <BlurFade delay={0.25 + 0.15 + 0.15} inView={true}>
         <div className="mt-12">
-          <GallerySection items={galleryItems} />
+          <Suspense fallback={<div className="h-64 bg-gray-100 animate-pulse rounded-lg" />}>
+            <GallerySection />
+          </Suspense>
         </div>
       </BlurFade>
     </section>

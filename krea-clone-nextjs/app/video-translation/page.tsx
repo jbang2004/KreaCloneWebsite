@@ -3,8 +3,8 @@
 import { useState, useRef, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useLanguage } from "@/hooks/use-language";
-import { useTheme } from "@/hooks/use-theme";
-import { useAuth } from "@/hooks/use-auth";
+import { useTheme } from "next-themes";
+import { useAuth } from "@/contexts/AuthContext";
 import { useMediaQuery } from "@/hooks/use-media-query";
 import { useVideoUpload } from "@/hooks/use-video-upload";
 import { useSubtitles } from "@/hooks/use-subtitles";

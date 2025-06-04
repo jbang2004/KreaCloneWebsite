@@ -1,10 +1,12 @@
+'use client';
+
 import { useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { cn } from "@/lib/utils";
 import { useMobile } from "@/hooks/use-mobile";
 import { useLanguage, TranslationKey } from "@/hooks/use-language";
-import { useTheme } from "@/hooks/use-theme";
+import { useTheme } from "next-themes";
 import { useAuth } from "@/contexts/AuthContext";
 import { 
   Home, 
@@ -63,7 +65,7 @@ export default function Header() {
   const pathname = usePathname();
   const isMobile = useMobile();
   const { t, language: currentLanguage, setLanguage } = useLanguage();
-  const { theme, toggleTheme } = useTheme();
+  const { theme, setTheme } = useTheme();
   const { user, signOut, loading: authLoading } = useAuth();
 
   const toggleMenu = () => setIsOpen(!isOpen);
@@ -142,7 +144,7 @@ export default function Header() {
         {/* Right side menu - Floating buttons like Krea.ai */}
         <div className="flex items-center space-x-4">
           <button
-            onClick={toggleTheme}
+            onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
             className="hidden xl:flex h-11 w-11 items-center justify-center rounded-xl bg-white/60 dark:bg-gray-800/60 hover:bg-white/70 dark:hover:bg-gray-700/70 transition-colors shadow-sm backdrop-blur-md"
             aria-label={theme === "dark" ? t("lightMode") : t("darkMode")}
           >

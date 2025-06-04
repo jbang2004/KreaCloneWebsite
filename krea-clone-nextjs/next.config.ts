@@ -1,7 +1,27 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
-  /* config options here */
+  // 开发模式性能优化
+  experimental: {
+    optimizePackageImports: ['@radix-ui/react-icons', 'lucide-react', 'framer-motion'],
+  },
+  
+  // 图片优化
+  images: {
+    domains: ['images.unsplash.com', 'pixabay.com'],
+    formats: ['image/webp', 'image/avif'],
+  },
+  
+  // 编译优化
+  compiler: {
+    removeConsole: process.env.NODE_ENV === 'production',
+  },
+  
+  // 压缩优化
+  compress: true,
+  
+  // 静态资源优化
+  poweredByHeader: false,
 };
 
 export default nextConfig;

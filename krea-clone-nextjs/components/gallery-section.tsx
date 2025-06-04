@@ -4,7 +4,8 @@ import Link from "next/link";
 import { ChevronRight } from "lucide-react";
 import { motion } from "framer-motion";
 import { useLanguage } from "@/hooks/use-language";
-import { useTheme } from "@/hooks/use-theme";
+import { useTheme } from "next-themes";
+import { useGalleryData } from "@/data/home-data";
 
 interface GalleryItem {
   id: string;
@@ -15,11 +16,8 @@ interface GalleryItem {
   link: string;
 }
 
-interface GallerySectionProps {
-  items: GalleryItem[];
-}
-
-export default function GallerySection({ items }: GallerySectionProps) {
+export default function GallerySection() {
+  const items = useGalleryData();
   const [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
   const { language } = useLanguage();
   const { theme } = useTheme();
@@ -70,13 +68,6 @@ export default function GallerySection({ items }: GallerySectionProps) {
                 
                 {item.authorName && (
                   <div className="flex items-center mt-1">
-                    {item.authorAvatar && (
-                      <img 
-                        src={item.authorAvatar} 
-                        alt={item.authorName} 
-                        className="w-5 h-5 rounded-full mr-1"
-                      />
-                    )}
                     <span className="text-white/80 text-xs">{item.authorName}</span>
                   </div>
                 )}

@@ -2,7 +2,7 @@
 import Link from "next/link";
 import { ChevronRight } from "lucide-react";
 import { useLanguage } from "@/hooks/use-language";
-import { useTheme } from "@/hooks/use-theme";
+import { useTheme } from "next-themes";
 import { useGenerateCardData } from "@/data/home-data";
 
 interface GenerateCardProps {
