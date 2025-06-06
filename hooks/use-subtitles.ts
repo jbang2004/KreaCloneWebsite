@@ -39,29 +39,27 @@ export function useSubtitles({ loadCondition, initialTaskId }: UseSubtitlesProps
     try {
       const { data, error } = await createClient()
         .from('sentences')
-        .select('id, sentence_index, raw_text, start_ms, end_ms, trans_text')
+        .select('id, sentence_index, raw_text, start_ms, end_ms, trans_text, speaker_id')
         .eq('task_id', taskId)
         // .eq('language', targetLanguageCode) // Assuming 'trans_text' is already for the target lang OR we'd need a lang column
                                           // If trans_text is always the target language of the task, no need for this.
-                                          // If 'sentences' stores multiple translations, we'd need a language column.
-                                          // Based on schema, 'trans_text' seems singular.
+                                          // If 'sentences' stores multiple languages, then we need a language column
         .order('sentence_index', { ascending: true });
 
       if (error) {
-        console.error("Error fetching subtitles:", error);
-        setSubtitleError(`Failed to fetch subtitles: ${error.message}`);
-        setShowSubtitles(false);
-        return;
+        throw error;
       }
 
       if (data) {
-        const formattedSubtitles: Subtitle[] = data.map(s => ({
-          id: String(s.id),
-          startTime: formatTime(s.start_ms),
-          endTime: formatTime(s.end_ms),
-          text: s.raw_text || "", // Original text
-          translation: s.trans_text || "", // Translated text for the task's target language
+        const formattedSubtitles: Subtitle[] = data.map((row) => ({
+          id: row.id.toString(),
+          startTime: formatTime(row.start_ms),
+          endTime: formatTime(row.end_ms),
+          text: row.raw_text,
+          translation: row.trans_text || "",
+          speaker: `说话人 ${row.speaker_id}`, // 格式化说话人信息
         }));
+
         setSubtitles(formattedSubtitles);
         setShowSubtitles(true); // Show panel once data is fetched
         panelClosedByUserRef.current = false; // Reset closed by user flag
@@ -70,9 +68,8 @@ export function useSubtitles({ loadCondition, initialTaskId }: UseSubtitlesProps
         setShowSubtitles(true); // Show panel but it will be empty
         setSubtitleError("No subtitles found for this task.");
       }
-    } catch (err: any) {
-      console.error("Client-side error fetching subtitles:", err);
-      setSubtitleError(`An unexpected error occurred: ${err.message}`);
+    } catch (error) {
+      setSubtitleError(`Error fetching subtitles: ${(error as Error).message}`);
       setShowSubtitles(false);
     } finally {
       setIsLoadingSubtitles(false);

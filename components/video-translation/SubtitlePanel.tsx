@@ -4,18 +4,13 @@ import {
   Clock,
   Play,
   Edit,
-  Check,
-  ChevronDown,
+  User,
   Globe
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/components/ui/popover";
+import { LanguageSwitch } from "@/components/ui/language-switch";
 import { cn } from "@/lib/utils";
 import { Subtitle } from "@/types";
 import { Translations } from "@/lib/translations";
@@ -75,6 +70,18 @@ export default function SubtitlesPanel({
   const [isTranslating, setIsTranslating] = useState(false);
   const [translationStatus, setTranslationStatus] = useState<'idle' | 'translating' | 'translated' | 'error'>('idle');
   const pollIntervalRef = useRef<NodeJS.Timeout | null>(null);
+
+  // 处理语言切换，避免页面刷新
+  const handleLanguageChange = async (newLanguage: string) => {
+    if (newLanguage === targetLanguage) return;
+    
+    setTargetLanguage(newLanguage);
+    
+    // 如果有当前任务ID，立即获取新语言的字幕
+    if (currentTaskId) {
+      await fetchSubtitles(currentTaskId, newLanguage);
+    }
+  };
 
   // 轮询Supabase中的翻译数据
   const pollTranslationProgress = async () => {
@@ -154,26 +161,32 @@ export default function SubtitlesPanel({
       setTranslationStatus('translating');
       onTranslationStart(); // 通知父组件翻译开始
       
-      // 如果确认重新翻译，先清空数据库中的翻译内容
-      if (hasExistingTranslations) {
-        console.log('清空现有翻译内容...');
-        
-        // 清空前端显示
-        subtitles.forEach(s => updateSubtitleTranslation(s.id, "", false));
-        
-        // 清空数据库中的翻译内容
-        const { error: clearError } = await createClient()
-          .from('sentences')
-          .update({ trans_text: null })
-          .eq('task_id', currentTaskId);
-          
-        if (clearError) {
-          console.error('清空数据库翻译内容失败:', clearError);
-          throw new Error('清空现有翻译失败');
-        }
-        
-        console.log('翻译内容已清空');
+      // 停止当前的轮询（如果有的话）
+      if (pollIntervalRef.current) {
+        clearInterval(pollIntervalRef.current);
+        pollIntervalRef.current = null;
       }
+      
+      console.log('清空数据库中的翻译内容...');
+      
+      // 清空前端显示
+      subtitles.forEach(s => updateSubtitleTranslation(s.id, "", false));
+      
+      // 无论是否有现有翻译，都清空数据库中的翻译内容，确保轮询不会获取到旧数据
+      const { error: clearError } = await createClient()
+        .from('sentences')
+        .update({ trans_text: null })
+        .eq('task_id', currentTaskId);
+        
+      if (clearError) {
+        console.error('清空数据库翻译内容失败:', clearError);
+        throw new Error('清空现有翻译失败');
+      }
+      
+      console.log('数据库翻译内容已清空');
+      
+      // 稍微延迟确保数据库更新完成
+      await new Promise(resolve => setTimeout(resolve, 500));
       
       // 调用后端翻译API
       const response = await fetch(`${API_BASE_URL}/api/translation`, {
@@ -249,32 +262,14 @@ export default function SubtitlesPanel({
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-4 pr-10">
         <h2 className="text-xl font-bold mb-2 sm:mb-0 whitespace-nowrap">{T.translatedSubtitleLabel}</h2>
         <div className="flex items-center space-x-2 flex-wrap sm:flex-nowrap mt-2 sm:mt-0">
-          <Popover>
-            <PopoverTrigger asChild>
-              <Button variant="outline" size="sm" className="h-8 px-2 text-xs whitespace-nowrap">
-                {T.languageLabel || "Language"}: {getLanguageLabel(targetLanguage)}
-                <ChevronDown className="ml-1 h-3 w-3" />
-              </Button>
-            </PopoverTrigger>
-            <PopoverContent className="w-40 p-0" align="end">
-              <div className="p-1">
-                {T.languageOptions.map((lang: { value: string; label: string }) => (
-                  <Button
-                    key={lang.value}
-                    variant="ghost"
-                    size="sm"
-                    className={cn(
-                      "w-full justify-start text-left text-xs",
-                      targetLanguage === lang.value && "bg-blue-50 text-blue-700 dark:bg-blue-900/20 dark:text-blue-500"
-                    )}
-                    onClick={() => setTargetLanguage(lang.value)}
-                  >
-                    {lang.label}
-                  </Button>
-                ))}
-              </div>
-            </PopoverContent>
-          </Popover>
+          <div className="flex items-center space-x-2">
+            <span className="text-xs text-muted-foreground">{T.languageLabel}:</span>
+            <LanguageSwitch
+              value={targetLanguage}
+              onChange={handleLanguageChange}
+              disabled={isTranslating}
+            />
+          </div>
           <Button
             variant="default"
             size="sm"
@@ -330,6 +325,14 @@ export default function SubtitlesPanel({
                         {subtitle.startTime} - {subtitle.endTime} 
                       </span>
                     </div>
+                    {subtitle.speaker && (
+                      <div className="flex items-center space-x-1">
+                        <User className="h-4 w-4 text-green-500" />
+                        <span className="text-xs text-muted-foreground">
+                          {subtitle.speaker}
+                        </span>
+                      </div>
+                    )}
                     <Button
                       variant="ghost"
                       size="sm"

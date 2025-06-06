@@ -91,11 +91,6 @@ const translations: Record<Language, Translations> = {
     languageOptions: [
       { value: "zh", label: "Chinese" },
       { value: "en", label: "English" },
-      { value: "ja", label: "Japanese" },
-      { value: "ko", label: "Korean" },
-      { value: "fr", label: "French" },
-      { value: "de", label: "German" },
-      { value: "es", label: "Spanish" },
     ],
   },
   zh: {
@@ -143,11 +138,6 @@ const translations: Record<Language, Translations> = {
     languageOptions: [
       { value: "zh", label: "中文" },
       { value: "en", label: "英文" },
-      { value: "ja", label: "日语" },
-      { value: "ko", label: "韩语" },
-      { value: "fr", label: "法语" },
-      { value: "de", label: "德语" },
-      { value: "es", label: "西班牙语" },
     ],
   },
 };
