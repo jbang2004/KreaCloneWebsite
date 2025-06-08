@@ -1,11 +1,11 @@
 import { 
-  Plus,
-  Video,
-  X,
-  Play,
-  PauseCircle,
-  Sparkles
-} from "lucide-react";
+  PlusIcon,
+  VideoCameraIcon,
+  XMarkIcon,
+  PlayIcon,
+  PauseIcon,
+  SparklesIcon
+} from "@heroicons/react/24/solid";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { Translations } from "@/lib/translations";
@@ -87,7 +87,7 @@ export default function VideoPanel({
               className="absolute top-2 right-2 h-8 w-8 bg-black/60 backdrop-blur-sm text-white hover:bg-black/80 rounded-full z-10" 
               onClick={resetUpload}
             >
-              <X className="h-4 w-4" />
+              <XMarkIcon className="h-4 w-4" />
             </Button>
             
             <div className="absolute bottom-2 left-2 bg-black/60 backdrop-blur-sm rounded-lg px-2 py-1 text-white text-xs max-w-[70%] truncate z-10">
@@ -114,7 +114,7 @@ export default function VideoPanel({
                 "bg-white/20 backdrop-blur-sm h-16 w-16 rounded-full flex items-center justify-center transition-all duration-300 ease-out",
                 isPlaying ? "opacity-0 scale-75 group-hover/video:opacity-100 group-hover/video:scale-100" : "opacity-100 scale-100"
               )}>
-                {isPlaying ? <PauseCircle className="h-10 w-10 text-white" /> : <Play className="h-10 w-10 text-white" />}
+                {isPlaying ? <PauseIcon className="h-10 w-10 text-white" /> : <PlayIcon className="h-10 w-10 text-white" />}
               </div>
             </div>
             
@@ -124,7 +124,7 @@ export default function VideoPanel({
               className="absolute top-2 right-2 h-8 w-8 bg-black/60 backdrop-blur-sm text-white hover:bg-black/80 rounded-full z-10" 
               onClick={resetUpload}
             >
-              <X className="h-4 w-4" />
+              <XMarkIcon className="h-4 w-4" />
             </Button>
             
             <div className="absolute bottom-2 left-2 bg-black/60 backdrop-blur-sm rounded-lg px-2 py-1 text-white text-xs max-w-[70%] truncate z-10">
@@ -135,7 +135,7 @@ export default function VideoPanel({
           <div className="relative w-full h-full overflow-hidden rounded-2xl bg-black flex items-center justify-center">
             <TVStaticEffect />
             <div className="absolute inset-0 flex items-center justify-center z-10">
-              <Video className="w-12 h-12 text-white opacity-75" />
+              <VideoCameraIcon className="w-12 h-12 text-white opacity-75" />
             </div>
           </div>
         )}
@@ -146,7 +146,7 @@ export default function VideoPanel({
           "w-8 h-8 rounded-lg flex items-center justify-center mr-3",
           theme === "dark" ? "bg-zinc-800" : "bg-blue-100"
         )}>
-          <Video className="w-5 h-5" />
+          <VideoCameraIcon className="w-5 h-5" />
         </div>
         <h1 className="text-xl font-bold">{T.title}</h1>
       </div>
@@ -161,7 +161,7 @@ export default function VideoPanel({
             className="w-full sm:flex-1 h-14 text-white rounded-xl bg-blue-500 hover:bg-blue-600 flex items-center justify-center transition-colors"
             onClick={handleUploadClick}
           >
-            <Plus className="w-6 h-6 mr-2" />
+            <PlusIcon className="w-6 h-6 mr-2" />
             <span className="text-base">{T.uploadVideoLabel}</span>
           </Button>
         )}
@@ -207,7 +207,7 @@ export default function VideoPanel({
             onClick={startGenerating}
             disabled={isTranslating || !translationCompleted}
           >
-            <Sparkles className="w-6 h-6 mr-2" />
+            <SparklesIcon className="w-6 h-6 mr-2" />
             <span className="text-base">
               {isTranslating ? "翻译中..." : !translationCompleted ? "请先完成翻译" : T.generateLabel}
             </span>
@@ -219,7 +219,7 @@ export default function VideoPanel({
             disabled
             className="w-full sm:flex-1 h-14 text-white rounded-xl bg-blue-600 flex items-center justify-center transition-colors"
           >
-            <Sparkles className="w-6 h-6 mr-2" />
+            <SparklesIcon className="w-6 h-6 mr-2" />
             <span className="text-lg font-bold shiny-text">{T.generatingLabel}</span>
           </Button>
         )}
@@ -229,7 +229,7 @@ export default function VideoPanel({
             disabled
             className="w-full sm:flex-1 h-14 text-white rounded-xl bg-blue-600 flex items-center justify-center transition-colors"
           >
-            <Sparkles className="w-6 h-6 mr-2" />
+            <SparklesIcon className="w-6 h-6 mr-2" />
             <span className="text-lg font-bold shiny-text">{T.generatingLabel}</span>
           </Button>
         )}
@@ -239,7 +239,7 @@ export default function VideoPanel({
             disabled
             className="w-full sm:flex-1 h-14 text-white rounded-xl bg-green-600 flex items-center justify-center transition-colors"
           >
-            <Sparkles className="w-6 h-6 mr-2" />
+            <SparklesIcon className="w-6 h-6 mr-2" />
             <span className="text-lg font-bold">已完成</span>
           </Button>
         )}
@@ -248,7 +248,6 @@ export default function VideoPanel({
       <div className="text-center mt-6 text-xs text-muted-foreground">
         Max 75MB / 15 seconds
       </div>
-
     </div>
   );
 } 

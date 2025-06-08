@@ -151,8 +151,8 @@ export default function AudioTranscription() {
                 </h3>
                 <p className="text-xs text-yellow-700 mt-1">
                   {currentLanguage === "zh" 
-                    ? "我们正在开发最先进的AI音频转录功能，预计2024年第一季度上线" 
-                    : "We are developing advanced AI audio transcription features, expected to launch in Q1 2024"}
+                    ? "我们正在开发最先进的AI音频转录功能" 
+                                          : "We are developing advanced AI audio transcription features"}
                 </p>
               </div>
             </div>

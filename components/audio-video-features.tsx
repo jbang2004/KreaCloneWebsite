@@ -1,7 +1,7 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { Mic, Volume2, Languages, ArrowRight, CheckCircle, Clock } from "lucide-react";
+import { MicrophoneIcon, SpeakerWaveIcon, LanguageIcon, ArrowRightIcon, CheckCircleIcon, ClockIcon } from "@heroicons/react/24/solid";
 import { BlurFade } from "@/components/magicui/blur-fade";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -27,7 +27,7 @@ export default function AudioVideoFeatures() {
       title: t("audioTranscriptionTitle"),
       description: t("audioTranscriptionDesc"),
       features: t("audioTranscriptionFeatures"),
-      icon: <Mic className="w-8 h-8" />,
+      icon: <MicrophoneIcon className="w-8 h-8" />,
       href: "/audio-transcription",
       gradient: "from-blue-500 to-cyan-500",
       badge: "即将推出",
@@ -37,7 +37,7 @@ export default function AudioVideoFeatures() {
       title: t("textToSpeechTitle"),
       description: t("textToSpeechDesc"),
       features: t("textToSpeechFeatures"),
-      icon: <Volume2 className="w-8 h-8" />,
+      icon: <SpeakerWaveIcon className="w-8 h-8" />,
       href: "/text-to-speech",
       gradient: "from-purple-500 to-pink-500",
       badge: "即将推出",
@@ -47,7 +47,7 @@ export default function AudioVideoFeatures() {
       title: t("videoTranslationTitle"),
       description: t("videoTranslationDesc"),
       features: t("videoTranslationFeatures"),
-      icon: <Languages className="w-8 h-8" />,
+      icon: <LanguageIcon className="w-8 h-8" />,
       href: "/video-translation",
       gradient: "from-green-500 to-teal-500",
       badge: "已上线",
@@ -84,7 +84,7 @@ export default function AudioVideoFeatures() {
                 : 'bg-green-100 text-green-700 border-green-300'
             }`}
           >
-            {isComingSoon && <Clock className="w-3 h-3 mr-1" />}
+            {isComingSoon && <ClockIcon className="w-3 h-3 mr-1" />}
             {feature.badge}
           </Badge>
         </div>
@@ -115,7 +115,7 @@ export default function AudioVideoFeatures() {
               <div key={idx} className={`flex items-center text-sm bg-muted/30 px-3 py-1 rounded-full ${
                 isComingSoon ? 'text-muted-foreground/60' : 'text-muted-foreground'
               }`}>
-                <CheckCircle className={`w-3 h-3 mr-2 flex-shrink-0 ${
+                <CheckCircleIcon className={`w-3 h-3 mr-2 flex-shrink-0 ${
                   isComingSoon ? 'text-muted-foreground/60' : 'text-green-500'
                 }`} />
                 <span>{item}</span>
@@ -137,10 +137,10 @@ export default function AudioVideoFeatures() {
         >
           {isComingSoon ? '即将推出' : '开始使用'}
           {!isComingSoon && (
-            <ArrowRight className="w-4 h-4 ml-2 group-hover:translate-x-1 transition-transform duration-300" />
+            <ArrowRightIcon className="w-4 h-4 ml-2 group-hover:translate-x-1 transition-transform duration-300" />
           )}
           {isComingSoon && (
-            <Clock className="w-4 h-4 ml-2" />
+            <ClockIcon className="w-4 h-4 ml-2" />
           )}
         </Button>
       </div>
@@ -177,7 +177,7 @@ export default function AudioVideoFeatures() {
               transition={{ duration: 0.6 }}
               className="inline-flex items-center px-4 py-2 rounded-full bg-primary/10 border border-primary/20 text-sm font-medium text-primary mb-6"
             >
-              <Volume2 className="w-4 h-4 mr-2" />
+              <SpeakerWaveIcon className="w-4 h-4 mr-2" />
               {t("coreFeatures")}
             </motion.div>
             
@@ -220,7 +220,7 @@ export default function AudioVideoFeatures() {
                 <Link href="/pricing">
                   <Button size="lg" className="px-8 py-3">
                     查看企业方案
-                    <ArrowRight className="w-5 h-5 ml-2" />
+                    <ArrowRightIcon className="w-5 h-5 ml-2" />
                   </Button>
                 </Link>
                 

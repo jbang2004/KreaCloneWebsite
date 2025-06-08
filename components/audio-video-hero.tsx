@@ -1,7 +1,7 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { ArrowRight, Mic, Volume2, Languages, Play } from "lucide-react";
+import { ArrowRightIcon, MicrophoneIcon, SpeakerWaveIcon, LanguageIcon, PlayIcon } from "@heroicons/react/24/solid";
 import { useEffect, useState } from "react";
 import { BlurFade } from "@/components/magicui/blur-fade";
 import { Button } from "@/components/ui/button";
@@ -111,7 +111,7 @@ export default function AudioVideoHero() {
               transition={{ duration: 0.6 }}
               className="inline-flex items-center px-4 py-2 rounded-full bg-primary/10 border border-primary/20 text-sm font-medium text-primary mb-8"
             >
-              <Volume2 className="w-4 h-4 mr-2" />
+              <SpeakerWaveIcon className="w-4 h-4 mr-2" />
               {t("siteTagline")}
             </motion.div>
           </div>
@@ -168,7 +168,7 @@ export default function AudioVideoHero() {
               transition={{ duration: 0.2 }}
             >
               <div className="flex items-center justify-center mb-2">
-                <Mic className="w-6 h-6 text-blue-500 mr-2" />
+                <MicrophoneIcon className="w-6 h-6 text-blue-500 mr-2" />
                 <span className="text-2xl font-bold text-primary">
                   <NumberCounter value={1000000} suffix="+" />
                 </span>
@@ -182,7 +182,7 @@ export default function AudioVideoHero() {
               transition={{ duration: 0.2 }}
             >
               <div className="flex items-center justify-center mb-2">
-                <Languages className="w-6 h-6 text-green-500 mr-2" />
+                <LanguageIcon className="w-6 h-6 text-green-500 mr-2" />
                 <span className="text-2xl font-bold text-primary">
                   <NumberCounter value={120} suffix="+" />
                 </span>
@@ -196,7 +196,7 @@ export default function AudioVideoHero() {
               transition={{ duration: 0.2 }}
             >
               <div className="flex items-center justify-center mb-2">
-                <Volume2 className="w-6 h-6 text-purple-500 mr-2" />
+                <SpeakerWaveIcon className="w-6 h-6 text-purple-500 mr-2" />
                 <span className="text-2xl font-bold text-primary">
                   <NumberCounter value={50000} suffix="+" />
                 </span>
@@ -210,7 +210,7 @@ export default function AudioVideoHero() {
               transition={{ duration: 0.2 }}
             >
               <div className="flex items-center justify-center mb-2">
-                <Play className="w-6 h-6 text-orange-500 mr-2" />
+                <PlayIcon className="w-6 h-6 text-orange-500 mr-2" />
                 <span className="text-2xl font-bold text-primary">
                   <NumberCounter value={99} suffix="%" />
                 </span>
@@ -233,7 +233,7 @@ export default function AudioVideoHero() {
                   className="bg-gradient-to-r from-primary to-blue-600 hover:from-primary/90 hover:to-blue-600/90 px-8 py-4 text-lg font-semibold shadow-lg"
                 >
                   {t("tryForFree")}
-                  <ArrowRight className="ml-2 w-5 h-5" />
+                  <ArrowRightIcon className="ml-2 w-5 h-5" />
                 </Button>
               </motion.div>
             </Link>
@@ -257,9 +257,9 @@ export default function AudioVideoHero() {
             <p className="text-sm text-muted-foreground mb-6">{t("coreFeatures")}</p>
             <div className="flex flex-wrap justify-center gap-4">
               {[
-                { href: "/audio-transcription", icon: Mic, label: t("audioTranscription"), status: 'coming-soon' },
-                { href: "/text-to-speech", icon: Volume2, label: t("textToSpeech"), status: 'coming-soon' },
-                { href: "/video-translation", icon: Languages, label: t("videoTranslation"), status: 'available' }
+                { href: "/audio-transcription", icon: MicrophoneIcon, label: t("audioTranscription"), status: 'coming-soon' },
+                { href: "/text-to-speech", icon: SpeakerWaveIcon, label: t("textToSpeech"), status: 'coming-soon' },
+                { href: "/video-translation", icon: LanguageIcon, label: t("videoTranslation"), status: 'available' }
               ].map((feature, index) => {
                 const isComingSoon = feature.status === 'coming-soon';
                 

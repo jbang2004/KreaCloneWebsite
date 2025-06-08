@@ -1,4 +1,4 @@
-import { CheckCircle } from "lucide-react";
+import { CheckCircleIcon } from "@heroicons/react/24/solid";
 import { cn } from "@/lib/utils";
 
 export interface PlanFeature {
@@ -60,7 +60,7 @@ export default function PlanCard({
       <ul className="space-y-4 flex-grow">
         {features.map((feature, index) => (
           <li key={index} className="flex items-center">
-            <CheckCircle className="h-5 w-5 mr-2 text-gray-400" />
+            <CheckCircleIcon className="h-5 w-5 mr-2 text-gray-400" />
             <span>{feature.title}</span>
           </li>
         ))}

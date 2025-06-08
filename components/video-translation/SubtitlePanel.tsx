@@ -1,12 +1,12 @@
 import { motion } from "framer-motion";
 import {
-  X,
-  Clock,
-  Play,
-  Edit,
-  User,
-  Globe
-} from "lucide-react";
+  XMarkIcon,
+  ClockIcon,
+  PlayIcon,
+  PencilIcon,
+  UserIcon,
+  GlobeAltIcon
+} from "@heroicons/react/24/solid";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { ScrollArea } from "@/components/ui/scroll-area";
@@ -255,7 +255,7 @@ export default function SubtitlesPanel({
         className="absolute top-3 right-3 h-8 w-8 rounded-full p-0 z-20"
         onClick={closeSubtitlesPanel}
       >
-        <X className="h-4 w-4" />
+                    <XMarkIcon className="h-4 w-4" />
         <span className="sr-only">{T.closeLabel}</span>
       </Button>
       
@@ -277,7 +277,7 @@ export default function SubtitlesPanel({
             onClick={handleTranslate}
             disabled={isLoading || isTranslating || !targetLanguage || !currentTaskId}
           >
-            <Globe className="h-4 w-4 mr-1.5" />
+            <GlobeAltIcon className="h-4 w-4 mr-1.5" />
             {isTranslating
               ? (T.translatingLabel || "Translating...")
               : (T.translateButtonLabel || "Translate")}
@@ -320,14 +320,14 @@ export default function SubtitlesPanel({
                 <div className="flex flex-wrap sm:flex-nowrap items-center gap-2 sm:gap-0 sm:justify-between mb-3">
                   <div className="flex flex-wrap sm:flex-nowrap items-center gap-2 sm:gap-4">
                     <div className="flex items-center space-x-1">
-                      <Clock className="h-4 w-4 text-blue-500" />
+                      <ClockIcon className="h-4 w-4 text-blue-500" />
                       <span className="text-xs text-muted-foreground">
                         {subtitle.startTime} - {subtitle.endTime} 
                       </span>
                     </div>
                     {subtitle.speaker && (
                       <div className="flex items-center space-x-1">
-                        <User className="h-4 w-4 text-green-500" />
+                        <UserIcon className="h-4 w-4 text-green-500" />
                         <span className="text-xs text-muted-foreground">
                           {subtitle.speaker}
                         </span>
@@ -339,7 +339,7 @@ export default function SubtitlesPanel({
                       className="h-7 px-2 text-xs text-blue-600 hover:text-blue-700 hover:bg-blue-50 dark:text-blue-400 dark:hover:bg-blue-900/20"
                       onClick={() => jumpToTime(subtitle.startTime)}
                     >
-                      <Play className="h-3 w-3 mr-1" />
+                      <PlayIcon className="h-3 w-3 mr-1" />
                       {T.jumpToLabel}
                     </Button>
                   </div>

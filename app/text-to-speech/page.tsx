@@ -159,8 +159,8 @@ export default function TextToSpeech() {
                 </h3>
                 <p className="text-xs text-yellow-700 mt-1">
                   {currentLanguage === "zh" 
-                    ? "我们正在开发最自然的AI语音合成技术，预计2024年第一季度上线" 
-                    : "We are developing natural AI speech synthesis technology, expected to launch in Q1 2024"}
+                    ? "我们正在开发最自然的AI语音合成技术" 
+                                          : "We are developing natural AI speech synthesis technology"}
                 </p>
               </div>
             </div>

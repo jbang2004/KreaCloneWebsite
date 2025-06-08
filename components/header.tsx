@@ -9,19 +9,19 @@ import { useLanguage, TranslationKey } from "@/hooks/use-language";
 import { useTheme } from "next-themes";
 import { useAuth } from "@/contexts/AuthContext";
 import { 
-  Home, 
-  Mic, 
-  Volume2, 
-  Video, 
-  Sun, 
-  Moon, 
-  Globe, 
-  Menu, 
-  X, 
-  User,
-  Wallet,
-  LogOut
-} from "lucide-react";
+  HomeIcon, 
+  MicrophoneIcon, 
+  SpeakerWaveIcon, 
+  VideoCameraIcon, 
+  SunIcon, 
+  MoonIcon, 
+  GlobeAltIcon, 
+  Bars3Icon, 
+  XMarkIcon, 
+  UserIcon,
+  WalletIcon,
+  ArrowRightOnRectangleIcon
+} from "@heroicons/react/24/solid";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -39,22 +39,22 @@ const NavItems: NavItem[] = [
   {
     path: "/",
     labelKey: "home",
-    icon: Home,
+    icon: HomeIcon,
   },
   {
     path: "/audio-transcription",
     labelKey: "audioTranscription",
-    icon: Mic,
+    icon: MicrophoneIcon,
   },
   {
     path: "/text-to-speech",
     labelKey: "textToSpeech",
-    icon: Volume2,
+    icon: SpeakerWaveIcon,
   },
   {
     path: "/video-translation",
     labelKey: "videoTranslation",
-    icon: Video,
+    icon: VideoCameraIcon,
   },
 ];
 
@@ -135,7 +135,7 @@ export default function Header() {
             aria-label="Toggle menu"
             disabled={authLoading}
           >
-            {isOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
+            {isOpen ? <XMarkIcon className="h-6 w-6" /> : <Bars3Icon className="h-6 w-6" />}
           </button>
         )}
 
@@ -146,7 +146,7 @@ export default function Header() {
             className="hidden xl:flex h-11 w-11 items-center justify-center rounded-xl bg-white/60 dark:bg-gray-800/60 hover:bg-white/70 dark:hover:bg-gray-700/70 transition-colors shadow-sm backdrop-blur-md"
             aria-label={theme === "dark" ? t("lightMode") : t("darkMode")}
           >
-            {theme === "dark" ? <Sun className="h-4.5 w-4.5" /> : <Moon className="h-4.5 w-4.5" />}
+            {theme === "dark" ? <SunIcon className="h-5 w-5" /> : <MoonIcon className="h-5 w-5" />}
           </button>
 
           <DropdownMenu>
@@ -155,7 +155,7 @@ export default function Header() {
                 className="hidden lg:flex h-11 w-11 items-center justify-center rounded-xl bg-white/60 dark:bg-gray-800/60 hover:bg-white/70 dark:hover:bg-gray-700/70 transition-colors shadow-sm backdrop-blur-md"
                 aria-label={t("switchLanguage")}
               >
-                <Globe className="h-4.5 w-4.5" />
+                <GlobeAltIcon className="h-5 w-5" />
               </button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end">
@@ -189,7 +189,7 @@ export default function Header() {
               className="hidden md:flex items-center py-2.5 px-3 sm:px-4 md:px-6 rounded-xl bg-red-600/90 hover:bg-red-700/90 text-white text-xs sm:text-sm font-medium transition-colors shadow-sm backdrop-blur-md"
               disabled={authLoading}
             >
-              <LogOut className="h-5 w-5 mr-1" />
+              <ArrowRightOnRectangleIcon className="h-5 w-5 mr-1" />
               <span>{t("logout")}</span>
             </button>
           ) : (
@@ -231,7 +231,7 @@ export default function Header() {
               className="flex items-center p-2 rounded-xl hover:bg-white/50 dark:hover:bg-gray-700/50 transition-colors"
             >
               <span className="w-8 h-8 flex items-center justify-center">
-                <Wallet className="h-5 w-5" />
+                <WalletIcon className="h-5 w-5" />
               </span>
               <span className="font-medium">{t("pricing")}</span>
             </Link>
@@ -247,7 +247,7 @@ export default function Header() {
                 className="flex items-center p-2 rounded-xl hover:bg-white/50 dark:hover:bg-gray-700/50 transition-colors text-red-600"
               >
                 <span className="w-8 h-8 flex items-center justify-center">
-                  <LogOut className="h-5 w-5" />
+                  <ArrowRightOnRectangleIcon className="h-5 w-5" />
                 </span>
                 <span className="font-medium">{t("logout")}</span>
               </button>
@@ -258,7 +258,7 @@ export default function Header() {
                 className="flex items-center p-2 rounded-xl hover:bg-white/50 dark:hover:bg-gray-700/50 transition-colors"
               >
                 <span className="w-8 h-8 flex items-center justify-center">
-                  <User className="h-5 w-5" />
+                  <UserIcon className="h-5 w-5" />
                 </span>
                 <span className="font-medium">{t("signUp")}</span>
               </Link>
