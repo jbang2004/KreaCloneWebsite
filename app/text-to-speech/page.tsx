@@ -10,7 +10,8 @@ import {
   FileText,
   Play,
   Download,
-  ChevronDown
+  ChevronDown,
+  Clock
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
@@ -23,6 +24,7 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
+import { Badge } from "@/components/ui/badge";
 import { BlurFade } from "@/components/magicui/blur-fade";
 
 interface Voice {
@@ -56,32 +58,18 @@ export default function TextToSpeech() {
   ];
 
   const handleTextChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
-    setText(e.target.value);
-    // 如果有生成的音频，当文本改变时重置
-    if (generatedAudioUrl) {
-      setGeneratedAudioUrl(null);
-      setIsPlaying(false);
-    }
+    // 即将推出功能，禁用文本输入处理
+    return;
   };
 
   const generateSpeech = () => {
-    if (text.trim() === "" || !selectedVoice) return;
-    
-    setIsGenerating(true);
-    
-    // 模拟生成过程
-    setTimeout(() => {
-      // 这里只是模拟URL，实际应用中会从API获取真实的音频URL
-      setGeneratedAudioUrl("https://example.com/generated-audio.mp3");
-      setIsGenerating(false);
-      setIsPlaying(true);
-    }, 2000);
+    // 即将推出功能，禁用语音生成
+    return;
   };
 
   const togglePlayback = () => {
-    if (generatedAudioUrl) {
-      setIsPlaying(!isPlaying);
-    }
+    // 即将推出功能，禁用播放
+    return;
   };
 
   // 根据语言选择显示的文本
@@ -99,6 +87,7 @@ export default function TextToSpeech() {
   const pitchText = currentLanguage === "zh" ? "音高" : "Pitch";
   const characterCountText = currentLanguage === "zh" ? "字符数" : "Characters";
   const settingsText = currentLanguage === "zh" ? "设置" : "Settings";
+  const comingSoonText = currentLanguage === "zh" ? "即将推出" : "Coming Soon";
 
   return (
     <motion.div 
@@ -113,14 +102,25 @@ export default function TextToSpeech() {
           delay={0.25}
           inView={true}
           className={cn(
-            "p-6 rounded-3xl shadow-lg", 
+            "p-6 rounded-3xl shadow-lg relative", 
             theme === "dark" ? "bg-zinc-900" : "bg-gray-100"
           )}
         >
+          {/* 即将推出标识 */}
+          <div className="absolute -top-3 -right-3 z-10">
+            <Badge className="bg-yellow-500 text-white px-3 py-1 rounded-full text-sm font-medium flex items-center gap-1 shadow-lg">
+              <Clock className="w-3 h-3" />
+              {comingSoonText}
+            </Badge>
+          </div>
+          
+          {/* 即将推出遮罩 */}
+          <div className="absolute inset-0 bg-muted/20 backdrop-blur-[1px] rounded-3xl pointer-events-none" />
+          
           {/* 内容上部区域 - 缩小高度 */}
-          <div className="h-[280px] mb-6 flex items-center justify-center">
+          <div className="h-[280px] mb-6 flex items-center justify-center relative">
             {/* 静态图片区域 - 苹果风格 */}
-            <div className="relative w-full h-full overflow-hidden rounded-2xl bg-gradient-to-br from-purple-100 to-purple-300 flex items-center justify-center">
+            <div className="relative w-full h-full overflow-hidden rounded-2xl bg-gradient-to-br from-purple-100 to-purple-300 flex items-center justify-center opacity-75">
               {/* 语音相关图像 */}
               <div className="relative flex justify-center scale-110">
                 <div className="absolute w-24 h-36 bg-purple-500 rounded-lg transform -rotate-6 translate-x-6"></div>
@@ -134,39 +134,57 @@ export default function TextToSpeech() {
           </div>
           
           {/* 标题和图标并排 */}
-          <div className="flex items-center justify-center mb-3">
+          <div className="flex items-center justify-center mb-3 relative">
             <div className={cn(
-              "w-8 h-8 rounded-lg flex items-center justify-center mr-3",
+              "w-8 h-8 rounded-lg flex items-center justify-center mr-3 opacity-60",
               theme === "dark" ? "bg-zinc-800" : "bg-purple-100"
             )}>
               <Volume2 className="w-5 h-5" />
             </div>
-            <h1 className="text-xl font-bold">{title}</h1>
+            <h1 className="text-xl font-bold text-muted-foreground">{title}</h1>
           </div>
           
           {/* 描述文字 */}
-          <p className="text-muted-foreground text-sm text-center mb-6">
+          <p className="text-muted-foreground text-sm text-center mb-6 opacity-75">
             {description}
           </p>
           
-          {/* 文本输入区域 */}
-          <div className="mb-5">
+          {/* 即将推出说明 */}
+          <div className="mb-5 p-4 bg-yellow-50 border border-yellow-200 rounded-xl relative">
+            <div className="flex items-center gap-3">
+              <Clock className="w-6 h-6 text-yellow-600 flex-shrink-0" />
+              <div className="flex-1">
+                <h3 className="font-medium text-sm text-yellow-800">
+                  {currentLanguage === "zh" ? "功能开发中" : "Feature in Development"}
+                </h3>
+                <p className="text-xs text-yellow-700 mt-1">
+                  {currentLanguage === "zh" 
+                    ? "我们正在开发最自然的AI语音合成技术，预计2024年第一季度上线" 
+                    : "We are developing natural AI speech synthesis technology, expected to launch in Q1 2024"}
+                </p>
+              </div>
+            </div>
+          </div>
+          
+          {/* 文本输入区域 - 禁用状态 */}
+          <div className="mb-5 relative">
             <Textarea 
               value={text}
               onChange={handleTextChange}
               placeholder={textPlaceholder}
-              className="w-full p-4 h-28 bg-background rounded-xl border border-border focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent resize-none text-sm"
+              className="w-full p-4 h-28 bg-background rounded-xl border border-border focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent resize-none text-sm opacity-50"
+              disabled
             />
-            <div className="flex justify-between mt-2 items-center">
+            <div className="flex justify-between mt-2 items-center opacity-50">
               <div className="text-xs text-muted-foreground">
                 {characterCountText}: {text.length}
               </div>
             </div>
           </div>
           
-          {/* 选择声音部分 */}
+          {/* 选择声音部分 - 禁用状态 */}
           {selectedVoice && (
-            <div className="mb-5 p-4 bg-background rounded-xl border border-border">
+            <div className="mb-5 p-4 bg-background rounded-xl border border-border opacity-50">
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-3">
                   <div className="w-12 h-12 rounded-full overflow-hidden bg-muted">
@@ -192,14 +210,14 @@ export default function TextToSpeech() {
                 <Button
                   variant="ghost"
                   size="icon"
-                  className="h-10 w-10"
-                  onClick={() => setShowSettings(!showSettings)}
+                  className="h-10 w-10 cursor-not-allowed"
+                  disabled
                 >
                   <Settings className="h-5 w-5" />
                 </Button>
               </div>
               
-              {/* 语音设置 */}
+              {/* 语音设置 - 禁用状态 */}
               {showSettings && (
                 <div className="mt-4 pt-4 border-t border-border space-y-4">
                   <div>
@@ -215,7 +233,8 @@ export default function TextToSpeech() {
                       max={2}
                       step={0.1}
                       onValueChange={setSpeed}
-                      className="h-4"
+                      className="h-4 opacity-50 pointer-events-none"
+                      disabled
                     />
                   </div>
                   <div>
@@ -231,7 +250,8 @@ export default function TextToSpeech() {
                       max={2}
                       step={0.1}
                       onValueChange={setPitch}
-                      className="h-4"
+                      className="h-4 opacity-50 pointer-events-none"
+                      disabled
                     />
                   </div>
                 </div>
@@ -239,15 +259,15 @@ export default function TextToSpeech() {
             </div>
           )}
           
-          {/* 生成的音频显示 */}
+          {/* 生成的音频显示 - 禁用状态 */}
           {generatedAudioUrl && (
-            <div className="mb-5 p-4 bg-background rounded-xl border border-border">
+            <div className="mb-5 p-4 bg-background rounded-xl border border-border opacity-50">
               <div className="flex items-center justify-between">
                 <Button 
                   variant="ghost" 
                   size="icon" 
-                  className="h-12 w-12 text-primary"
-                  onClick={togglePlayback}
+                  className="h-12 w-12 text-primary cursor-not-allowed"
+                  disabled
                 >
                   <Play className="h-7 w-7" />
                 </Button>
@@ -258,22 +278,22 @@ export default function TextToSpeech() {
                     }`} 
                   />
                 </div>
-                <Button variant="ghost" size="icon" className="h-10 w-10">
+                <Button variant="ghost" size="icon" className="h-10 w-10 cursor-not-allowed" disabled>
                   <Download className="h-5 w-5" />
                 </Button>
               </div>
             </div>
           )}
           
-          {/* 按钮区域 - 左右排列 */}
-          <div className="flex flex-col sm:flex-row gap-3 sm:gap-5 w-full mt-6">
+          {/* 按钮区域 - 禁用状态 */}
+          <div className="flex flex-col sm:flex-row gap-3 sm:gap-5 w-full mt-6 relative">
             <Button
               className={cn(
-                "w-full sm:flex-1 h-14 text-white rounded-xl transition-colors flex items-center justify-center",
-                "bg-purple-600 hover:bg-purple-700"
+                "w-full sm:flex-1 h-14 rounded-xl transition-colors flex items-center justify-center cursor-not-allowed",
+                "bg-muted/50 text-muted-foreground hover:bg-muted/50"
               )}
               onClick={generateSpeech}
-              disabled={text.trim() === "" || isGenerating || !selectedVoice}
+              disabled
             >
               <Plus className="w-6 h-6 mr-2" />
               <span className="text-base">{isGenerating ? processingText : generateButtonText}</span>
@@ -284,9 +304,10 @@ export default function TextToSpeech() {
                 <Button
                   variant="outline"
                   className={cn(
-                    "w-full sm:flex-1 h-14 rounded-xl transition-colors flex items-center justify-center",
-                    theme === "dark" ? "bg-zinc-800 border-zinc-700" : "bg-purple-50 border-purple-100 text-purple-700"
+                    "w-full sm:flex-1 h-14 rounded-xl transition-colors flex items-center justify-center cursor-not-allowed",
+                    "bg-muted/50 border-muted text-muted-foreground hover:bg-muted/50"
                   )}
+                  disabled
                 >
                   <User className="w-6 h-6 mr-2" />
                   <span className="text-base">{selectVoiceText}</span>
@@ -294,7 +315,7 @@ export default function TextToSpeech() {
                 </Button>
               </PopoverTrigger>
               <PopoverContent 
-                className="w-64 p-3 rounded-xl"
+                className="w-64 p-3 rounded-xl opacity-50 pointer-events-none"
                 align="end"
               >
                 <div className="space-y-1 max-h-64 overflow-y-auto">
@@ -303,10 +324,10 @@ export default function TextToSpeech() {
                       key={voice.id}
                       variant="ghost"
                       className={cn(
-                        "w-full justify-start text-left font-normal",
+                        "w-full justify-start text-left font-normal cursor-not-allowed",
                         selectedVoice === voice.id && "bg-purple-50 text-purple-700 dark:bg-purple-900/20 dark:text-purple-500"
                       )}
-                      onClick={() => setSelectedVoice(voice.id)}
+                      disabled
                     >
                       <div className="flex items-center w-full">
                         <div className="w-8 h-8 rounded-full overflow-hidden bg-muted mr-2 flex-shrink-0">
@@ -333,7 +354,7 @@ export default function TextToSpeech() {
             </Popover>
           </div>
           
-          <div className="text-center mt-4 text-xs text-muted-foreground">
+          <div className="text-center mt-4 text-xs text-muted-foreground opacity-50">
             {currentLanguage === "zh" ? "支持40种语言，100+种声音" : "Supports 40 languages, 100+ voices"}
           </div>
         </BlurFade>

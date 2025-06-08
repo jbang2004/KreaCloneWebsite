@@ -6,9 +6,11 @@ import { Sparkles } from "lucide-react";
 import PricingToggle from "@/components/pricing-toggle";
 import PlanCard, { PlanProps } from "@/components/plan-card";
 import FaqAccordion from "@/components/faq-accordion";
+import { useLanguage } from "@/hooks/use-language";
 
 export default function PricingContent() {
   const [isYearly, setIsYearly] = useState(true);
+  const { t } = useLanguage();
   
   const handlePricingToggle = (yearly: boolean) => {
     setIsYearly(yearly);
@@ -16,78 +18,76 @@ export default function PricingContent() {
 
   const plans: Omit<PlanProps, 'onSelect'>[] = [
     {
-      title: "Free",
+      title: t("freePlan"),
       monthlyPrice: 0,
       features: [
-        { title: "Free daily generations" },
-        { title: "Limited access to KREA tools" }
+        { title: t("freeProcessing") },
+        { title: t("limitedAccess") }
       ],
       variant: "dark",
-      cta: "Select Plan"
+      cta: t("selectPlan")
     },
     {
-      title: "Basic",
+      title: t("basicPlan"),
       monthlyPrice: 10,
       discountedPrice: isYearly ? 8 : undefined,
       features: [
-        { title: "~1,010 Flux images" },
-        { title: "~36,000 real-time images" },
-        { title: "~180 enhanced images" },
-        { title: "~6 training jobs" },
-        { title: "Commercial license" }
+        { title: "~100小时 音频转录" },
+        { title: "~50小时 语音合成" },
+        { title: "~20小时 视频翻译" },
+        { title: "标准音质输出" },
+        { title: t("commercialLicense") }
       ],
       variant: "green",
-      cta: "Select Plan"
+      cta: t("selectPlan")
     },
     {
-      title: "Pro",
+      title: t("proPlan"),
       monthlyPrice: 35,
       discountedPrice: isYearly ? 28 : undefined,
       features: [
-        { title: "~5,048 Flux images" },
-        { title: "~180,000 real-time images" },
-        { title: "~900 enhanced images" },
-        { title: "~30 training jobs" },
-        { title: "Commercial license" }
+        { title: "~500小时 音频转录" },
+        { title: "~300小时 语音合成" },
+        { title: "~100小时 视频翻译" },
+        { title: "高保真音质输出" },
+        { title: "API 接入权限" },
+        { title: t("commercialLicense") }
       ],
       variant: "blue",
-      cta: "Select Plan"
+      cta: t("selectPlan")
     },
     {
-      title: "Max",
+      title: t("maxPlan"),
       monthlyPrice: 60,
       discountedPrice: isYearly ? 48 : undefined,
       features: [
-        { title: "~15,142 Flux images" },
-        { title: "~540,000 real-time images" },
-        { title: "~2,700 enhanced images" },
-        { title: "~90 training jobs" },
-        { title: "Commercial license" }
+        { title: "~无限 音频转录" },
+        { title: "~无限 语音合成" },
+        { title: "~500小时 视频翻译" },
+        { title: "专业级音质输出" },
+        { title: "完整 API 访问" },
+        { title: "专属技术支持" },
+        { title: t("commercialLicense") }
       ],
       variant: "purple",
-      cta: "Select Plan"
+      cta: t("selectPlan")
     }
   ];
 
   const faqs = [
     {
-      question: "What are compute units?",
-      answer: "Compute units are a measure of computational resources used to generate images or videos. They represent the processing power, memory, and time required for each creation. Different tasks consume varying amounts of compute units based on their complexity and output quality."
+      question: t("processingUnitsQuestion"),
+      answer: t("processingUnitsAnswer")
     },
     {
-      question: "Can I roll over unused compute units to the following month?",
-      answer: "Compute units do not accumulate or carry over between billing cycles. At the start of each month, your compute unit balance is reset to your plan's allocated amount, regardless of any unused units from the previous month."
+      question: t("rolloverQuestion"),
+      answer: t("rolloverAnswer")
     },
     {
-      question: "What options do I have if I exceed my compute unit limit?",
+      question: t("exceedLimitQuestion"),
       answer: (
         <div>
-          <p>If you exceed your compute unit limit, you have several options to continue your work:</p>
-          <ol className="list-decimal pl-5 mt-2 space-y-1">
-            <li>Upgrade to a higher-tier subscription with increased compute units.</li>
-            <li>Purchase additional compute units to complement your current plan.</li>
-            <li>Utilize your daily free compute units, which automatically refresh each day.</li>
-          </ol>
+          <p>{t("exceedLimitAnswer")}</p>
         </div>
       )
     }
@@ -105,12 +105,12 @@ export default function PricingContent() {
       transition={{ duration: 0.5 }}
     >
       <div className="text-center mb-8">
-        <h1 className="text-3xl font-bold mb-2">Krea Plans</h1>
-        <p className="text-gray-600">Upgrade to gain access to Pro features and generate more, faster.</p>
+        <h1 className="text-3xl font-bold mb-2">{t("voiceForgeAiPlans")}</h1>
+        <p className="text-gray-600">{t("upgradeDesc")}</p>
         
         <div className="bg-blue-50 text-blue-600 py-2 px-4 rounded-lg inline-flex items-center mt-4 text-sm">
           <Sparkles className="h-5 w-5 mr-2" />
-          Enterprise and team plans now available
+          {t("enterpriseAvailable")}
           <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 ml-2" viewBox="0 0 20 20" fill="currentColor">
             <path fillRule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clipRule="evenodd" />
           </svg>
@@ -130,14 +130,13 @@ export default function PricingContent() {
       </div>
       
       <div className="mb-12">
-        <h2 className="text-2xl font-bold mb-6 text-center">Frequently Asked Questions</h2>
+        <h2 className="text-2xl font-bold mb-6 text-center">{t("faq")}</h2>
         <FaqAccordion items={faqs} />
       </div>
       
       <div className="text-center text-sm text-gray-500">
-        Need help with your subscription? Reach out to 
-        <a href="mailto:support@krea.ai" className="text-blue-500 hover:underline ml-1">support@krea.ai</a>, 
-        or chat directly with a team member on our discord.
+        {t("needHelp")} 
+        <a href="mailto:support@voiceforge.ai" className="text-blue-500 hover:underline ml-1">support@voiceforge.ai</a>
       </div>
     </motion.div>
   );

@@ -9,14 +9,14 @@ const defaultUrl = process.env.VERCEL_URL
 export const metadata: Metadata = {
   metadataBase: new URL(defaultUrl),
   title: {
-    default: "Krea Clone - AI-Powered Creative Tools",
-    template: "%s | Krea Clone"
+    default: "VoiceForge AI - 智能音视频处理平台",
+    template: "%s | VoiceForge AI"
   },
-  description: "Create stunning images, videos, and more with AI-powered tools. Transform your ideas into reality with our advanced AI generation platform.",
-  keywords: ["AI", "图像生成", "视频生成", "人工智能", "创意工具", "AI art", "image generation", "video generation"],
-  authors: [{ name: "Krea Clone Team" }],
-  creator: "Krea Clone",
-  publisher: "Krea Clone",
+  description: "专业的AI音视频处理平台，提供音频转录、文本配音、视频翻译等服务。让每一个声音都被完美传达。",
+  keywords: ["AI", "音频转录", "文本配音", "视频翻译", "人工智能", "语音处理", "audio transcription", "text to speech", "video translation"],
+  authors: [{ name: "VoiceForge AI Team" }],
+  creator: "VoiceForge AI",
+  publisher: "VoiceForge AI",
   robots: {
     index: true,
     follow: true,
@@ -32,14 +32,14 @@ export const metadata: Metadata = {
     type: 'website',
     locale: 'zh_CN',
     url: defaultUrl,
-    title: 'Krea Clone - AI-Powered Creative Tools',
-    description: 'Create stunning images, videos, and more with AI-powered tools',
-    siteName: 'Krea Clone',
+    title: 'VoiceForge AI - 智能音视频处理平台',
+    description: '专业的AI音视频处理平台，提供音频转录、文本配音、视频翻译等服务',
+    siteName: 'VoiceForge AI',
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'Krea Clone - AI-Powered Creative Tools',
-    description: 'Create stunning images, videos, and more with AI-powered tools',
+    title: 'VoiceForge AI - 智能音视频处理平台',
+    description: '专业的AI音视频处理平台，提供音频转录、文本配音、视频翻译等服务',
   },
   verification: {
     google: 'your-google-verification-code',

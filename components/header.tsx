@@ -13,14 +13,12 @@ import {
   Mic, 
   Volume2, 
   Video, 
-  Image, 
-  Wand2, 
   Sun, 
   Moon, 
   Globe, 
   Menu, 
   X, 
-  User, 
+  User,
   Wallet,
   LogOut
 } from "lucide-react";
@@ -34,7 +32,7 @@ import {
 type NavItem = {
   path: string;
   labelKey: TranslationKey;
-  icon: any;
+  icon: React.ComponentType<{ className?: string }>;
 };
 
 const NavItems: NavItem[] = [

@@ -9,12 +9,13 @@ export interface Subtitle {
   isPanelClosed?: boolean; // This field was in the parent component's original interface, including it for completeness, can be refined if not used by all consumers.
 }
 
-export interface CarouselItem {
+// 音视频处理功能相关的类型定义
+export interface AudioVideoFeature {
   id: string;
   title: string;
   description: string;
-  imageUrl: string;
   buttonText: string;
   buttonLink: string;
-  tag?: string;
+  icon: string;
+  status: 'available' | 'coming-soon';
 } 

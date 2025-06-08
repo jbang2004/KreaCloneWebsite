@@ -18,13 +18,21 @@ export type TranslationKey =
   | "emailRequired"
   | "pleaseEnterEmail"
   
+  // Site branding and main content
+  | "siteName"
+  | "siteTagline"
+  | "heroTitle"
+  | "heroSubtitle"
+  | "heroDescription"
+  | "getStarted"
+  | "learnMore"
+  | "tryForFree"
+  
   // Navigation and common
   | "home"
-  | "image"
-  | "video"
-  | "enhancer"
-  | "edit"
-  | "assets"
+  | "audioTranscription"
+  | "textToSpeech"
+  | "videoTranslation"
   | "pricing"
   | "logIn"
   | "signUp"
@@ -36,47 +44,64 @@ export type TranslationKey =
   | "darkMode"
   | "lightMode"
   
-  // New features
-  | "audioTranscription"
-  | "textToSpeech"
-  | "videoTranslation"
+  // Core features
+  | "audioTranscriptionTitle"
+  | "audioTranscriptionDesc"
+  | "audioTranscriptionFeatures"
+  | "textToSpeechTitle"
+  | "textToSpeechDesc"
+  | "textToSpeechFeatures"
+  | "videoTranslationTitle"
+  | "videoTranslationDesc"
+  | "videoTranslationFeatures"
   
-  // Home page
-  | "heroTitle"
-  | "heroSubtitle"
-  | "heroButtonText"
-  | "featuredWorks"
-  | "viewAll"
-  | "createNow"
-  | "getStarted"
-  | "learnMore"
+  // Features section
+  | "coreFeatures"
+  | "whyChooseUs"
+  | "featuresDescription"
+  | "fastProcessing"
+  | "fastProcessingDesc"
+  | "highAccuracy"
+  | "highAccuracyDesc"
+  | "multiLanguage"
+  | "multiLanguageDesc"
+  | "securePrivate"
+  | "securePrivateDesc"
+  | "easyIntegration"
+  | "easyIntegrationDesc"
+  | "realTimeProcessing"
+  | "realTimeProcessingDesc"
   
-  // Image page
-  | "imageGeneration"
-  | "imageGenerationDesc"
-  | "promptPlaceholder"
-  | "generateImages"
-  | "recentlyGenerated"
-  | "styleOptions"
+  // Stats and social proof
+  | "statsTitle"
+  | "processedHours"
+  | "supportedLanguages"
+  | "activeUsers"
+  | "accuracyRate"
   
-  // Video page
-  | "videoGeneration"
-  | "videoGenerationDesc"
-  | "createVideo"
-  | "videoModels"
-  | "videoDuration"
-  | "videoFeatures"
+  // Testimonials
+  | "testimonials"
+  | "userTestimonials"
+  | "testimonialsDescription"
+  | "userSatisfaction"
+  | "recommendationRate"
+  | "avgProcessingTime"
+  | "technicalSupport"
   
-  // Enhancer page
-  | "imageEnhancer"
-  | "imageEnhancerDesc"
-  | "uploadImage"
-  | "dragAndDrop"
-  | "enhanceNow"
-  | "beforeAfter"
+  // CTA section
+  | "ctaTitle"
+  | "ctaSubtitle"
+  | "ctaDescription"
+  | "startCreating"
+  | "viewPricing"
+  | "ctaBenefits"
+  | "noExperienceNeeded"
+  | "multipleFormats"
+  | "cloudSync"
+  | "freeTrialNoCreditCard"
   
   // Pricing page
-  | "kreaPlans"
+  | "voiceForgeAiPlans"
   | "upgradeDesc"
   | "enterpriseAvailable"
   | "monthly"
@@ -87,12 +112,12 @@ export type TranslationKey =
   | "proPlan"
   | "maxPlan"
   | "selectPlan"
-  | "freeGenerations"
+  | "freeProcessing"
   | "limitedAccess"
   | "commercialLicense"
   | "faq"
-  | "computeUnitsQuestion"
-  | "computeUnitsAnswer"
+  | "processingUnitsQuestion"
+  | "processingUnitsAnswer"
   | "rolloverQuestion"
   | "rolloverAnswer"
   | "exceedLimitQuestion"
@@ -107,7 +132,7 @@ type Translations = {
 const translations: Record<"en" | "zh", Translations> = {
   en: {
     // Auth page
-    welcomeToKrea: "Welcome to Krea",
+    welcomeToKrea: "Welcome to VoiceForge AI",
     loginOrSignup: "Log in or sign up",
     continueWithGoogle: "Continue with Google",
     continueWithEmail: "Continue with email",
@@ -122,13 +147,21 @@ const translations: Record<"en" | "zh", Translations> = {
     emailRequired: "Email required",
     pleaseEnterEmail: "Please enter your email address",
     
+    // Site branding and main content
+    siteName: "VoiceForge AI",
+    siteTagline: "Intelligent Audio & Video Processing Platform",
+    heroTitle: "Transform Audio & Video with AI Intelligence",
+    heroSubtitle: "Where Every Voice is Perfectly Conveyed",
+    heroDescription: "Professional audio transcription, text-to-speech, and video translation powered by cutting-edge AI technology. Break language barriers and enhance communication.",
+    getStarted: "Get Started",
+    learnMore: "Learn More",
+    tryForFree: "Try for Free",
+    
     // Navigation and common
     home: "Home",
-    image: "Image",
-    video: "Video",
-    enhancer: "Enhancer",
-    edit: "Edit",
-    assets: "Assets",
+    audioTranscription: "Audio Transcription",
+    textToSpeech: "Text to Speech",
+    videoTranslation: "Video Translation",
     pricing: "Pricing",
     logIn: "Log In",
     signUp: "Sign Up",
@@ -140,48 +173,65 @@ const translations: Record<"en" | "zh", Translations> = {
     darkMode: "Dark Mode",
     lightMode: "Light Mode",
     
-    // New features
-    audioTranscription: "Audio Transcription",
-    textToSpeech: "Text to Speech",
-    videoTranslation: "Video Translation",
+    // Core features
+    audioTranscriptionTitle: "AI Audio Transcription",
+    audioTranscriptionDesc: "Convert speech to text with exceptional accuracy and speed, supporting multiple languages and dialects",
+    audioTranscriptionFeatures: "99% accuracy • Real-time processing • Auto punctuation • Speaker identification",
+    textToSpeechTitle: "Natural Text to Speech",
+    textToSpeechDesc: "Transform text into natural, human-like speech with emotional expression and multiple voice options",
+    textToSpeechFeatures: "Multi-language support • Natural intonation • Real-time conversion • High-fidelity audio",
+    videoTranslationTitle: "Video Translation & Dubbing",
+    videoTranslationDesc: "AI-powered video translation with lip-sync preservation and voice tone matching",
+    videoTranslationFeatures: "Lip synchronization • Voice preservation • Multi-language • Auto subtitles",
     
-    // Home page
-    heroTitle: "AI-Powered Image & Video Creation",
-    heroSubtitle: "Create stunning visuals with the power of AI. Generate, enhance, and transform your creative ideas into reality.",
-    heroButtonText: "Try for Free",
-    featuredWorks: "Featured Works",
-    viewAll: "View All",
-    createNow: "Create Now",
-    getStarted: "Get Started",
-    learnMore: "Learn More",
+    // Features section
+    coreFeatures: "Core Features",
+    whyChooseUs: "Why Choose VoiceForge AI",
+    featuresDescription: "We provide the most advanced AI audio and video processing tools with enterprise-grade security and performance.",
+    fastProcessing: "Lightning Fast Processing",
+    fastProcessingDesc: "Process audio and video content 10x faster than traditional methods with GPU acceleration",
+    highAccuracy: "Exceptional Accuracy",
+    highAccuracyDesc: "Industry-leading 99%+ accuracy rates for transcription and translation services",
+    multiLanguage: "Multi-Language Support",
+    multiLanguageDesc: "Support for 100+ languages and dialects with cultural context understanding",
+    securePrivate: "Secure & Private",
+    securePrivateDesc: "Enterprise-grade encryption ensures your content remains confidential and secure",
+    easyIntegration: "Easy Integration",
+    easyIntegrationDesc: "Simple APIs and SDKs for seamless integration into your existing workflows",
+    realTimeProcessing: "Real-Time Processing",
+    realTimeProcessingDesc: "Live transcription and translation for meetings, broadcasts, and streaming",
     
-    // Image page
-    imageGeneration: "AI Image Generation",
-    imageGenerationDesc: "Create stunning images with simple text prompts. Our AI models will generate high-quality visuals based on your descriptions.",
-    promptPlaceholder: "Describe the image you want to create...",
-    generateImages: "Generate Images",
-    recentlyGenerated: "Recently Generated",
-    styleOptions: "Style Options",
+    // Stats and social proof
+    statsTitle: "Trusted by Content Creators Worldwide",
+    processedHours: "Audio Hours Processed",
+    supportedLanguages: "Languages Supported",
+    activeUsers: "Active Users",
+    accuracyRate: "Average Accuracy",
     
-    // Video page
-    videoGeneration: "AI Video Creation",
-    videoGenerationDesc: "Transform your ideas into high-quality videos with our advanced AI models.",
-    createVideo: "Create Video",
-    videoModels: "Video Models",
-    videoDuration: "Duration",
-    videoFeatures: "Features",
+    // Testimonials
+    testimonials: "User Reviews",
+    userTestimonials: "What Our Users Say",
+    testimonialsDescription: "Hear from content creators, businesses, and professionals who trust VoiceForge AI for their audio and video processing needs.",
+    userSatisfaction: "User Satisfaction",
+    recommendationRate: "Recommendation Rate",
+    avgProcessingTime: "Avg Processing Time",
+    technicalSupport: "24/7 Support",
     
-    // Enhancer page
-    imageEnhancer: "Image Enhancer",
-    imageEnhancerDesc: "Improve image quality, upscale resolution, and fix imperfections with our AI enhancement tools.",
-    uploadImage: "Upload Image",
-    dragAndDrop: "Drag and drop an image or click to browse",
-    enhanceNow: "Enhance Now",
-    beforeAfter: "Before / After",
+    // CTA section
+    ctaTitle: "Ready to Transform Your Audio & Video?",
+    ctaSubtitle: "Start Your AI Journey Today",
+    ctaDescription: "Join thousands of creators, businesses, and professionals who trust VoiceForge AI for their audio and video processing needs.",
+    startCreating: "Start Processing",
+    viewPricing: "View Pricing",
+    ctaBenefits: "Why Start Today",
+    noExperienceNeeded: "No technical experience required",
+    multipleFormats: "Support for all major formats",
+    cloudSync: "Cloud-based processing",
+    freeTrialNoCreditCard: "Free trial, no credit card required",
     
     // Pricing page
-    kreaPlans: "Krea Plans",
-    upgradeDesc: "Upgrade to gain access to Pro features and generate more, faster.",
+    voiceForgeAiPlans: "VoiceForge AI Plans",
+    upgradeDesc: "Upgrade to access advanced features and process more content faster.",
     enterpriseAvailable: "Enterprise and team plans now available",
     monthly: "Monthly",
     yearly: "Yearly",
@@ -189,23 +239,23 @@ const translations: Record<"en" | "zh", Translations> = {
     freePlan: "Free",
     basicPlan: "Basic",
     proPlan: "Pro",
-    maxPlan: "Max",
+    maxPlan: "Enterprise",
     selectPlan: "Select Plan",
-    freeGenerations: "Free daily generations",
-    limitedAccess: "Limited access to KREA tools",
+    freeProcessing: "Free daily processing",
+    limitedAccess: "Limited access to VoiceForge tools",
     commercialLicense: "Commercial license",
     faq: "Frequently Asked Questions",
-    computeUnitsQuestion: "What are compute units?",
-    computeUnitsAnswer: "Compute units are a measure of computational resources used to generate images or videos. They represent the processing power, memory, and time required for each creation.",
-    rolloverQuestion: "Can I roll over unused compute units to the following month?",
-    rolloverAnswer: "Compute units do not accumulate or carry over between billing cycles. At the start of each month, your compute unit balance is reset to your plan's allocated amount.",
-    exceedLimitQuestion: "What options do I have if I exceed my compute unit limit?",
-    exceedLimitAnswer: "If you exceed your compute unit limit, you can upgrade to a higher-tier subscription, purchase additional compute units, or utilize your daily free compute units.",
+    processingUnitsQuestion: "What are processing units?",
+    processingUnitsAnswer: "Processing units measure the computational resources used for audio and video processing. They represent the processing power, memory, and time required for each task.",
+    rolloverQuestion: "Can I roll over unused processing units to the following month?",
+    rolloverAnswer: "Processing units do not accumulate or carry over between billing cycles. At the start of each month, your balance is reset to your plan's allocated amount.",
+    exceedLimitQuestion: "What options do I have if I exceed my processing limit?",
+    exceedLimitAnswer: "If you exceed your limit, you can upgrade to a higher-tier subscription, purchase additional units, or utilize your daily free processing allowance.",
     needHelp: "Need help with your subscription? Reach out to"
   },
   zh: {
     // Auth page
-    welcomeToKrea: "欢迎来到 Krea",
+    welcomeToKrea: "欢迎来到 VoiceForge AI",
     loginOrSignup: "登录或注册",
     continueWithGoogle: "使用谷歌账号继续",
     continueWithEmail: "使用邮箱继续",
@@ -220,13 +270,21 @@ const translations: Record<"en" | "zh", Translations> = {
     emailRequired: "需要邮箱",
     pleaseEnterEmail: "请输入您的邮箱地址",
     
+    // Site branding and main content
+    siteName: "VoiceForge AI",
+    siteTagline: "智能音视频处理平台",
+    heroTitle: "用AI智能变革音视频处理",
+    heroSubtitle: "让每一个声音都被完美传达",
+    heroDescription: "基于前沿AI技术的专业音频转录、文本配音和视频翻译服务。打破语言障碍，提升沟通效果。",
+    getStarted: "开始使用",
+    learnMore: "了解更多",
+    tryForFree: "免费试用",
+    
     // Navigation and common
     home: "首页",
-    image: "图片",
-    video: "视频",
-    enhancer: "增强器",
-    edit: "编辑",
-    assets: "资源",
+    audioTranscription: "音频转录",
+    textToSpeech: "文本配音",
+    videoTranslation: "视频翻译",
     pricing: "价格",
     logIn: "登录",
     signUp: "注册",
@@ -238,48 +296,65 @@ const translations: Record<"en" | "zh", Translations> = {
     darkMode: "深色模式",
     lightMode: "浅色模式",
     
-    // New features
-    audioTranscription: "音频转录",
-    textToSpeech: "文本配音",
-    videoTranslation: "视频翻译",
+    // Core features
+    audioTranscriptionTitle: "AI音频转录",
+    audioTranscriptionDesc: "以卓越的准确性和速度将语音转换为文字，支持多种语言和方言",
+    audioTranscriptionFeatures: "99%准确率 • 实时处理 • 自动标点 • 说话人识别",
+    textToSpeechTitle: "自然语音合成",
+    textToSpeechDesc: "将文字转换为自然、拟人的语音，具有情感表达和多种音色选择",
+    textToSpeechFeatures: "多语言支持 • 自然语调 • 实时转换 • 高保真音质",
+    videoTranslationTitle: "视频翻译配音",
+    videoTranslationDesc: "AI驱动的视频翻译，保持唇形同步和原声音调匹配",
+    videoTranslationFeatures: "唇形同步 • 保留语调 • 多语言 • 自动字幕",
     
-    // Home page
-    heroTitle: "AI驱动的图像和视频创作",
-    heroSubtitle: "利用AI的力量创建令人惊叹的视觉效果。生成、增强和将您的创意转化为现实。",
-    heroButtonText: "免费试用",
-    featuredWorks: "精选作品",
-    viewAll: "查看全部",
-    createNow: "立即创建",
-    getStarted: "开始使用",
-    learnMore: "了解更多",
+    // Features section
+    coreFeatures: "核心功能",
+    whyChooseUs: "为什么选择 VoiceForge AI",
+    featuresDescription: "我们提供最先进的AI音视频处理工具，具备企业级安全性和性能。",
+    fastProcessing: "闪电般处理速度",
+    fastProcessingDesc: "采用GPU加速技术，处理速度比传统方法快10倍以上",
+    highAccuracy: "卓越准确性",
+    highAccuracyDesc: "行业领先的99%+转录和翻译准确率",
+    multiLanguage: "多语言支持",
+    multiLanguageDesc: "支持100+种语言和方言，具备文化语境理解能力",
+    securePrivate: "安全私密",
+    securePrivateDesc: "企业级加密确保您的内容保持机密和安全",
+    easyIntegration: "轻松集成",
+    easyIntegrationDesc: "简单的API和SDK，无缝集成到您现有的工作流程",
+    realTimeProcessing: "实时处理",
+    realTimeProcessingDesc: "为会议、广播和直播提供实时转录和翻译",
     
-    // Image page
-    imageGeneration: "AI图像生成",
-    imageGenerationDesc: "通过简单的文字提示创建令人惊叹的图像。我们的AI模型将根据您的描述生成高质量的视觉效果。",
-    promptPlaceholder: "描述您想要创建的图像...",
-    generateImages: "生成图像",
-    recentlyGenerated: "最近生成",
-    styleOptions: "风格选项",
+    // Stats and social proof
+    statsTitle: "全球内容创作者的信赖之选",
+    processedHours: "已处理音频时长",
+    supportedLanguages: "支持语言",
+    activeUsers: "活跃用户",
+    accuracyRate: "平均准确率",
     
-    // Video page
-    videoGeneration: "AI视频创作",
-    videoGenerationDesc: "利用我们先进的AI模型将您的想法转变为高质量视频。",
-    createVideo: "创建视频",
-    videoModels: "视频模型",
-    videoDuration: "时长",
-    videoFeatures: "特点",
+    // Testimonials
+    testimonials: "用户评价",
+    userTestimonials: "用户怎么说",
+    testimonialsDescription: "听听信赖VoiceForge AI进行音视频处理的内容创作者、企业和专业人士的声音。",
+    userSatisfaction: "用户满意度",
+    recommendationRate: "推荐率",
+    avgProcessingTime: "平均处理时间",
+    technicalSupport: "24/7技术支持",
     
-    // Enhancer page
-    imageEnhancer: "图像增强器",
-    imageEnhancerDesc: "利用我们的AI增强工具提高图像质量，提升分辨率并修复瑕疵。",
-    uploadImage: "上传图像",
-    dragAndDrop: "拖放图像或点击浏览",
-    enhanceNow: "立即增强",
-    beforeAfter: "对比前后",
+    // CTA section
+    ctaTitle: "准备好变革您的音视频处理了吗？",
+    ctaSubtitle: "今天就开始您的AI之旅",
+    ctaDescription: "加入数千名信赖VoiceForge AI进行音视频处理的创作者、企业和专业人士。",
+    startCreating: "开始处理",
+    viewPricing: "查看定价",
+    ctaBenefits: "为什么今天开始",
+    noExperienceNeeded: "无需技术经验",
+    multipleFormats: "支持所有主流格式",
+    cloudSync: "云端处理",
+    freeTrialNoCreditCard: "免费试用，无需信用卡",
     
     // Pricing page
-    kreaPlans: "Krea套餐",
-    upgradeDesc: "升级以获取专业功能，更快生成更多内容。",
+    voiceForgeAiPlans: "VoiceForge AI 套餐",
+    upgradeDesc: "升级以访问高级功能，更快处理更多内容。",
     enterpriseAvailable: "现已提供企业和团队方案",
     monthly: "月付",
     yearly: "年付",
@@ -287,18 +362,18 @@ const translations: Record<"en" | "zh", Translations> = {
     freePlan: "免费",
     basicPlan: "基础",
     proPlan: "专业",
-    maxPlan: "高级",
+    maxPlan: "企业",
     selectPlan: "选择套餐",
-    freeGenerations: "每日免费生成",
-    limitedAccess: "有限访问KREA工具",
+    freeProcessing: "每日免费处理",
+    limitedAccess: "有限访问VoiceForge工具",
     commercialLicense: "商业许可",
     faq: "常见问题",
-    computeUnitsQuestion: "什么是计算单元？",
-    computeUnitsAnswer: "计算单元是衡量生成图像或视频所用计算资源的指标。它们代表每次创作所需的处理能力、内存和时间。",
-    rolloverQuestion: "我可以将未用完的计算单元结转到下个月吗？",
-    rolloverAnswer: "计算单元不会在计费周期之间累积或结转。每个月初，您的计算单元余额将重置为您套餐分配的数量。",
-    exceedLimitQuestion: "如果我超出计算单元限制有哪些选择？",
-    exceedLimitAnswer: "如果您超出计算单元限制，可以升级到更高级别的订阅，购买额外的计算单元，或利用每日免费计算单元。",
+    processingUnitsQuestion: "什么是处理单元？",
+    processingUnitsAnswer: "处理单元衡量音视频处理所用的计算资源。它们代表每个任务所需的处理能力、内存和时间。",
+    rolloverQuestion: "我可以将未用完的处理单元结转到下个月吗？",
+    rolloverAnswer: "处理单元不会在计费周期之间累积或结转。每个月初，您的余额将重置为您套餐分配的数量。",
+    exceedLimitQuestion: "如果我超出处理限制有哪些选择？",
+    exceedLimitAnswer: "如果您超出限制，可以升级到更高级别的订阅，购买额外的单元，或利用每日免费处理额度。",
     needHelp: "需要订阅帮助？请联系"
   },
 };

@@ -10,7 +10,8 @@ import {
   FileText,
   Play,
   Download,
-  ChevronDown
+  ChevronDown,
+  Clock
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
@@ -48,42 +49,18 @@ export default function AudioTranscription() {
   ];
 
   const handleFileClick = () => {
-    fileInputRef.current?.click();
+    // 即将推出功能，禁用文件选择
+    return;
   };
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const selectedFile = e.target.files?.[0];
-    if (selectedFile) {
-      setFile(selectedFile);
-      setTranscriptionStarted(false);
-      setTranscriptionResult([]);
-    }
+    // 即将推出功能，禁用文件处理
+    return;
   };
 
-  // 模拟转录过程
+  // 禁用转录功能
   const startTranscription = () => {
-    if (!file) return;
-    
-    setTranscriptionStarted(true);
-    setProgress(0);
-    
-    // 模拟进度条
-    const interval = setInterval(() => {
-      setProgress(prev => {
-        if (prev >= 100) {
-          clearInterval(interval);
-          // 模拟转录结果
-          setTranscriptionResult([
-            "嗨，谢谢你点开我们的视频，今天我要介绍我们公司的产品。",
-            "我们的产品是基于人工智能的创新解决方案，可以帮助客户提高效率。",
-            "我本人之前在科技行业工作了10年，对这个领域非常熟悉。",
-            "好了，请问有什么问题想要了解的吗？有多长？多长时间？"
-          ]);
-          return 100;
-        }
-        return prev + 2;
-      });
-    }, 100);
+    return;
   };
 
   // 根据语言选择显示的文本
@@ -96,6 +73,7 @@ export default function AudioTranscription() {
   const transcribeText = currentLanguage === "zh" ? "开始转录" : "Start Transcription";
   const processingText = currentLanguage === "zh" ? "处理中..." : "Processing...";
   const transcriptionResultText = currentLanguage === "zh" ? "转录结果" : "Transcription Result";
+  const comingSoonText = currentLanguage === "zh" ? "即将推出" : "Coming Soon";
 
   // 获取语言显示名称
   const getLanguageLabel = (value: string) => {
@@ -116,14 +94,25 @@ export default function AudioTranscription() {
           delay={0.25}
           inView={true}
           className={cn(
-            "p-6 rounded-3xl shadow-lg", 
+            "p-6 rounded-3xl shadow-lg relative", 
             theme === "dark" ? "bg-zinc-900" : "bg-gray-100"
           )}
         >
+          {/* 即将推出标识 */}
+          <div className="absolute -top-3 -right-3 z-10">
+            <Badge className="bg-yellow-500 text-white px-3 py-1 rounded-full text-sm font-medium flex items-center gap-1 shadow-lg">
+              <Clock className="w-3 h-3" />
+              {comingSoonText}
+            </Badge>
+          </div>
+          
+          {/* 即将推出遮罩 */}
+          <div className="absolute inset-0 bg-muted/20 backdrop-blur-[1px] rounded-3xl pointer-events-none" />
+          
           {/* 内容上部区域 - 缩小高度 */}
-          <div className="h-[280px] mb-6 flex items-center justify-center">
+          <div className="h-[280px] mb-6 flex items-center justify-center relative">
             {/* 静态图片区域 - 苹果风格 */}
-            <div className="relative w-full h-full overflow-hidden rounded-2xl bg-gradient-to-br from-indigo-100 to-indigo-300 flex items-center justify-center">
+            <div className="relative w-full h-full overflow-hidden rounded-2xl bg-gradient-to-br from-indigo-100 to-indigo-300 flex items-center justify-center opacity-75">
               {/* 音频相关图像 */}
               <div className="relative flex justify-center scale-110">
                 <div className="absolute w-24 h-36 bg-indigo-500 rounded-lg transform -rotate-6 translate-x-6"></div>
@@ -137,24 +126,41 @@ export default function AudioTranscription() {
           </div>
           
           {/* 标题和图标并排 */}
-          <div className="flex items-center justify-center mb-3">
+          <div className="flex items-center justify-center mb-3 relative">
             <div className={cn(
-              "w-8 h-8 rounded-lg flex items-center justify-center mr-3",
+              "w-8 h-8 rounded-lg flex items-center justify-center mr-3 opacity-60",
               theme === "dark" ? "bg-zinc-800" : "bg-indigo-100"
             )}>
               <Mic className="w-5 h-5" />
             </div>
-            <h1 className="text-xl font-bold">{title}</h1>
+            <h1 className="text-xl font-bold text-muted-foreground">{title}</h1>
           </div>
           
           {/* 描述文字 */}
-          <p className="text-muted-foreground text-sm text-center mb-6">
+          <p className="text-muted-foreground text-sm text-center mb-6 opacity-75">
             {description}
           </p>
           
-          {/* 文件上传状态 */}
+          {/* 即将推出说明 */}
+          <div className="mb-5 p-4 bg-yellow-50 border border-yellow-200 rounded-xl relative">
+            <div className="flex items-center gap-3">
+              <Clock className="w-6 h-6 text-yellow-600 flex-shrink-0" />
+              <div className="flex-1">
+                <h3 className="font-medium text-sm text-yellow-800">
+                  {currentLanguage === "zh" ? "功能开发中" : "Feature in Development"}
+                </h3>
+                <p className="text-xs text-yellow-700 mt-1">
+                  {currentLanguage === "zh" 
+                    ? "我们正在开发最先进的AI音频转录功能，预计2024年第一季度上线" 
+                    : "We are developing advanced AI audio transcription features, expected to launch in Q1 2024"}
+                </p>
+              </div>
+            </div>
+          </div>
+          
+          {/* 文件上传状态 - 禁用状态 */}
           {file && !transcriptionStarted && (
-            <div className="mb-5 p-4 bg-background rounded-xl border border-border">
+            <div className="mb-5 p-4 bg-background rounded-xl border border-border opacity-50">
               <div className="flex items-center gap-3">
                 <div className="bg-muted rounded-lg h-12 w-12 flex items-center justify-center flex-shrink-0">
                   <FileText className="h-6 w-6 text-foreground/70" />
@@ -166,8 +172,8 @@ export default function AudioTranscription() {
                   </p>
                 </div>
                 <Button 
-                  className="bg-primary hover:bg-primary/90 text-white rounded-lg px-3 py-1 text-xs"
-                  onClick={startTranscription}
+                  className="bg-muted text-muted-foreground rounded-lg px-3 py-1 text-xs cursor-not-allowed"
+                  disabled
                 >
                   {transcribeText}
                 </Button>
@@ -175,9 +181,9 @@ export default function AudioTranscription() {
             </div>
           )}
           
-          {/* 转录进度 */}
+          {/* 转录进度 - 禁用状态 */}
           {transcriptionStarted && progress < 100 && (
-            <div className="mb-5 p-4 bg-background rounded-xl border border-border">
+            <div className="mb-5 p-4 bg-background rounded-xl border border-border opacity-50">
               <div className="space-y-3">
                 <Progress value={progress} className="h-2" />
                 <p className="text-sm text-center text-muted-foreground">{processingText} {progress}%</p>
@@ -185,9 +191,9 @@ export default function AudioTranscription() {
             </div>
           )}
           
-          {/* 转录结果 */}
+          {/* 转录结果 - 禁用状态 */}
           {transcriptionResult.length > 0 && (
-            <div className="mb-5 p-4 bg-background rounded-xl border border-border">
+            <div className="mb-5 p-4 bg-background rounded-xl border border-border opacity-50">
               <h3 className="font-medium text-sm mb-3">{transcriptionResultText}</h3>
               <div className="max-h-36 overflow-y-auto space-y-3 text-xs">
                 {transcriptionResult.map((line, index) => (
@@ -199,14 +205,15 @@ export default function AudioTranscription() {
             </div>
           )}
           
-          {/* 按钮区域 - 左右排列 */}
-          <div className="flex flex-col sm:flex-row gap-3 sm:gap-5 w-full mt-6">
+          {/* 按钮区域 - 禁用状态 */}
+          <div className="flex flex-col sm:flex-row gap-3 sm:gap-5 w-full mt-6 relative">
             <Button
               className={cn(
-                "w-full sm:flex-1 h-14 text-white rounded-xl transition-colors flex items-center justify-center",
-                "bg-indigo-600 hover:bg-indigo-700"
+                "w-full sm:flex-1 h-14 rounded-xl transition-colors flex items-center justify-center cursor-not-allowed",
+                "bg-muted/50 text-muted-foreground hover:bg-muted/50"
               )}
               onClick={handleFileClick}
+              disabled
             >
               <Plus className="w-6 h-6 mr-2" />
               <span className="text-base">{uploadLabel}</span>
@@ -217,9 +224,10 @@ export default function AudioTranscription() {
                 <Button
                   variant="outline"
                   className={cn(
-                    "w-full sm:flex-1 h-14 rounded-xl transition-colors flex items-center justify-center",
-                    theme === "dark" ? "bg-zinc-800 border-zinc-700" : "bg-indigo-50 border-indigo-100 text-indigo-700"
+                    "w-full sm:flex-1 h-14 rounded-xl transition-colors flex items-center justify-center cursor-not-allowed",
+                    "bg-muted/50 border-muted text-muted-foreground hover:bg-muted/50"
                   )}
+                  disabled
                 >
                   <User className="w-6 h-6 mr-2" />
                   <span className="text-base">{selectLanguageLabel}</span>
@@ -227,7 +235,7 @@ export default function AudioTranscription() {
                 </Button>
               </PopoverTrigger>
               <PopoverContent 
-                className="w-64 p-3 rounded-xl"
+                className="w-64 p-3 rounded-xl opacity-50 pointer-events-none"
                 align="end"
               >
                 <div className="space-y-1">
@@ -236,10 +244,10 @@ export default function AudioTranscription() {
                       key={lang.value}
                       variant="ghost"
                       className={cn(
-                        "w-full justify-start text-left font-normal",
+                        "w-full justify-start text-left font-normal cursor-not-allowed",
                         selectedLanguage === lang.value && "bg-indigo-50 text-indigo-700 dark:bg-indigo-900/20 dark:text-indigo-500"
                       )}
-                      onClick={() => setSelectedLanguage(lang.value)}
+                      disabled
                     >
                       {lang.label}
                       {selectedLanguage === lang.value && (
@@ -254,7 +262,7 @@ export default function AudioTranscription() {
             </Popover>
           </div>
           
-          <div className="text-center mt-4 text-xs text-muted-foreground">
+          <div className="text-center mt-4 text-xs text-muted-foreground opacity-50">
             Max 20MB / MP3, WAV, M4A, FLAC
           </div>
         </BlurFade>
@@ -266,6 +274,7 @@ export default function AudioTranscription() {
         accept=".mp3,.wav,.m4a,.flac"
         className="hidden"
         onChange={handleFileChange}
+        disabled
       />
     </motion.div>
   );

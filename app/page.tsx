@@ -1,35 +1,20 @@
 'use client';
 
-import { Suspense } from "react";
-import { BlurFade } from "@/components/magicui/blur-fade";
-import Carousel from "@/components/carousel";
-import GenerateSection from "@/components/generate-section";
-import GallerySection from "@/components/gallery-section";
+import AudioVideoHero from "@/components/audio-video-hero";
+import AudioVideoFeatures from "@/components/audio-video-features";
+import AudioVideoAdvantages from "@/components/audio-video-advantages";
 
-export default function Home() {
+export default function HomePage() {
   return (
-    <section className="max-w-7xl mx-auto">
-      <BlurFade delay={0.25} inView={true}>
-        <div>
-          <Suspense fallback={<div className="h-64 bg-gray-100 animate-pulse rounded-lg" />}>
-            <Carousel />
-          </Suspense>
-        </div>
-      </BlurFade>
-      <BlurFade delay={0.25 + 0.15} inView={true}>
-        <div className="mt-12">
-          <Suspense fallback={<div className="h-32 bg-gray-100 animate-pulse rounded-lg" />}>
-            <GenerateSection />
-          </Suspense>
-        </div>
-      </BlurFade>
-      <BlurFade delay={0.25 + 0.15 + 0.15} inView={true}>
-        <div className="mt-12">
-          <Suspense fallback={<div className="h-64 bg-gray-100 animate-pulse rounded-lg" />}>
-            <GallerySection />
-          </Suspense>
-        </div>
-      </BlurFade>
-    </section>
+    <main className="min-h-screen bg-background">
+      {/* 音视频AI处理平台英雄区域 */}
+      <AudioVideoHero />
+      
+      {/* 核心功能展示区域 */}
+      <AudioVideoFeatures />
+      
+      {/* 平台优势区域 */}
+      <AudioVideoAdvantages />
+    </main>
   );
 }
