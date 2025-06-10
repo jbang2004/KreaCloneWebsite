@@ -7,6 +7,7 @@ import PricingToggle from "@/components/pricing-toggle";
 import PlanCard, { PlanProps } from "@/components/plan-card";
 import FaqAccordion from "@/components/faq-accordion";
 import { useLanguage } from "@/hooks/use-language";
+import WabiSabiBackground from "@/components/wabi-sabi-background";
 
 export default function PricingContent() {
   const [isYearly, setIsYearly] = useState(true);
@@ -99,11 +100,17 @@ export default function PricingContent() {
   };
 
   return (
-    <motion.div
-      initial={{ opacity: 0, y: 10 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.5 }}
-    >
+    <div className="min-h-screen relative overflow-hidden">
+      {/* 统一的诧寂美学背景 */}
+      <WabiSabiBackground />
+      
+      {/* 内容区域 */}
+      <motion.div
+        className="relative z-10 max-w-6xl mx-auto px-4 py-8"
+        initial={{ opacity: 0, y: 10 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.5 }}
+      >
       <div className="text-center mb-8">
         <h1 className="text-3xl font-bold mb-2">{t("voiceForgeAiPlans")}</h1>
         <p className="text-gray-600">{t("upgradeDesc")}</p>
@@ -136,8 +143,9 @@ export default function PricingContent() {
       
       <div className="text-center text-sm text-gray-500">
         {t("needHelp")} 
-        <a href="mailto:support@voiceforge.ai" className="text-blue-500 hover:underline ml-1">support@voiceforge.ai</a>
+        <a href="mailto:support@shengdu.ai" className="text-blue-500 hover:underline ml-1">support@shengdu.ai</a>
       </div>
-    </motion.div>
+      </motion.div>
+    </div>
   );
 } 

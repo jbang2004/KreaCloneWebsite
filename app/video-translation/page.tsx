@@ -18,6 +18,7 @@ import { getTranslations, Language as AppLanguage } from "@/lib/translations";
 import VideoPanel from "@/components/video-translation/VideoPanel";
 import SubtitlesPanel from "@/components/video-translation/SubtitlePanel";
 import { BlurFade } from "@/components/magicui/blur-fade";
+import WabiSabiBackground from "@/components/wabi-sabi-background";
 
 // 新增: 后端 API 基础地址配置
 const BACKEND_URL = process.env.NEXT_PUBLIC_BACKEND_URL as string;
@@ -214,12 +215,17 @@ export default function VideoTranslation() {
   };
 
   return (
-    <motion.div
-      className="container mx-auto px-2 sm:px-4 py-12 overflow-x-hidden"
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-      transition={{ duration: 0.2 }}
-    >
+    <div className="min-h-screen relative overflow-hidden">
+      {/* 统一的诧寂美学背景 */}
+      <WabiSabiBackground />
+      
+      {/* 内容区域 */}
+      <motion.div
+        className="relative z-10 container mx-auto px-2 sm:px-4 py-12 overflow-x-hidden"
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ duration: 0.2 }}
+      >
       <div className={cn(
         "flex flex-wrap justify-center",
         isMobile ? "mx-auto" : "-mx-2 md:-mx-3",
@@ -316,6 +322,7 @@ export default function VideoTranslation() {
         className="hidden"
         onChange={handleFileChange}
       />
-    </motion.div>
+      </motion.div>
+    </div>
   );
 }

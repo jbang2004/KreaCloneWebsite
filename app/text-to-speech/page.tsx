@@ -26,6 +26,7 @@ import {
 } from "@/components/ui/popover";
 import { Badge } from "@/components/ui/badge";
 import { BlurFade } from "@/components/magicui/blur-fade";
+import WabiSabiBackground from "@/components/wabi-sabi-background";
 
 interface Voice {
   id: string;
@@ -90,12 +91,17 @@ export default function TextToSpeech() {
   const comingSoonText = currentLanguage === "zh" ? "即将推出" : "Coming Soon";
 
   return (
-    <motion.div 
-      className="flex flex-col items-center justify-center min-h-[70vh] py-12"
-      initial={{ opacity: 0, y: 10 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.5 }}
-    >
+    <div className="min-h-screen relative overflow-hidden">
+      {/* 统一的诧寂美学背景 */}
+      <WabiSabiBackground />
+      
+      {/* 内容区域 */}
+      <motion.div 
+        className="relative z-10 flex flex-col items-center justify-center min-h-[70vh] py-12"
+        initial={{ opacity: 0, y: 10 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.5 }}
+      >
       <div className="w-full max-w-md mx-auto">
         <BlurFade
           layout
@@ -359,6 +365,7 @@ export default function TextToSpeech() {
           </div>
         </BlurFade>
       </div>
-    </motion.div>
+      </motion.div>
+    </div>
   );
 }

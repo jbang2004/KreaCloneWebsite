@@ -45,6 +45,8 @@ export type TranslationKey =
   | "lightMode"
   
   // Core features
+  | "coreFeatures"
+  | "coreFeaturesDesc"
   | "audioTranscriptionTitle"
   | "audioTranscriptionDesc"
   | "audioTranscriptionFeatures"
@@ -55,8 +57,20 @@ export type TranslationKey =
   | "videoTranslationDesc"
   | "videoTranslationFeatures"
   
+  // Video translation highlights
+  | "realtimeTranslation"
+  | "realtimeTranslationDesc"
+  | "multiSpeakerVoice" 
+  | "multiSpeakerVoiceDesc"
+  | "smoothPacing"
+  | "smoothPacingDesc"
+  | "comingSoon"
+  | "videoShowcase"
+  | "videoShowcaseDesc"
+  | "originalVideo"
+  | "translatedVideo"
+  
   // Features section
-  | "coreFeatures"
   | "whyChooseUs"
   | "featuresDescription"
   | "fastProcessing"
@@ -132,7 +146,7 @@ type Translations = {
 const translations: Record<"en" | "zh", Translations> = {
   en: {
     // Auth page
-    welcomeToKrea: "Welcome to VoiceForge AI",
+    welcomeToKrea: "Welcome to Wave Shift",
     loginOrSignup: "Log in or sign up",
     continueWithGoogle: "Continue with Google",
     continueWithEmail: "Continue with email",
@@ -148,10 +162,10 @@ const translations: Record<"en" | "zh", Translations> = {
     pleaseEnterEmail: "Please enter your email address",
     
     // Site branding and main content
-    siteName: "VoiceForge AI",
-    siteTagline: "Intelligent Audio & Video Processing Platform",
-    heroTitle: "Transform Audio & Video with AI Intelligence",
-    heroSubtitle: "Where Every Voice is Perfectly Conveyed",
+    siteName: "Wave Shift",
+    siteTagline: "Where Sound Travels, the World Connects",
+    heroTitle: "Transform Audio & Video with AI Intelligence", 
+    heroSubtitle: "Where Every Voice is Perfectly Conveyed", 
     heroDescription: "Professional audio transcription, text-to-speech, and video translation powered by cutting-edge AI technology. Break language barriers and enhance communication.",
     getStarted: "Get Started",
     learnMore: "Learn More",
@@ -174,6 +188,8 @@ const translations: Record<"en" | "zh", Translations> = {
     lightMode: "Light Mode",
     
     // Core features
+    coreFeatures: "Core Features",
+    coreFeaturesDesc: "Professional AI-powered audio and video processing services with cutting-edge technology",
     audioTranscriptionTitle: "AI Audio Transcription",
     audioTranscriptionDesc: "Convert speech to text with exceptional accuracy and speed, supporting multiple languages and dialects",
     audioTranscriptionFeatures: "99% accuracy • Real-time processing • Auto punctuation • Speaker identification",
@@ -184,9 +200,22 @@ const translations: Record<"en" | "zh", Translations> = {
     videoTranslationDesc: "AI-powered video translation with lip-sync preservation and voice tone matching",
     videoTranslationFeatures: "Lip synchronization • Voice preservation • Multi-language • Auto subtitles",
     
+    // Video translation highlights
+    realtimeTranslation: "Real-Time Translation",
+    realtimeTranslationDesc: "AI-powered real-time translation for seamless communication",
+    multiSpeakerVoice: "Multi-Speaker Voice",
+    multiSpeakerVoiceDesc: "Support for multiple speakers in a single video",
+    smoothPacing: "Smooth Pacing",
+    smoothPacingDesc: "Natural-sounding translation with smooth pacing",
+    comingSoon: "Coming Soon",
+    videoShowcase: "Video Showcase",
+    videoShowcaseDesc: "Experience the magic of AI video translation while preserving original voice tone and emotion",
+    originalVideo: "Original Video",
+    translatedVideo: "Translated Video",
+    
     // Features section
     coreFeatures: "Core Features",
-    whyChooseUs: "Why Choose VoiceForge AI",
+    whyChooseUs: "Why Choose Wave Shift",
     featuresDescription: "We provide the most advanced AI audio and video processing tools with enterprise-grade security and performance.",
     fastProcessing: "Lightning Fast Processing",
     fastProcessingDesc: "Process audio and video content 10x faster than traditional methods with GPU acceleration",
@@ -211,7 +240,7 @@ const translations: Record<"en" | "zh", Translations> = {
     // Testimonials
     testimonials: "User Reviews",
     userTestimonials: "What Our Users Say",
-    testimonialsDescription: "Hear from content creators, businesses, and professionals who trust VoiceForge AI for their audio and video processing needs.",
+    testimonialsDescription: "Hear from content creators, businesses, and professionals who trust Wave Shift for their audio and video processing needs.",
     userSatisfaction: "User Satisfaction",
     recommendationRate: "Recommendation Rate",
     avgProcessingTime: "Avg Processing Time",
@@ -220,7 +249,7 @@ const translations: Record<"en" | "zh", Translations> = {
     // CTA section
     ctaTitle: "Ready to Transform Your Audio & Video?",
     ctaSubtitle: "Start Your AI Journey Today",
-    ctaDescription: "Join thousands of creators, businesses, and professionals who trust VoiceForge AI for their audio and video processing needs.",
+    ctaDescription: "Join thousands of creators, businesses, and professionals who trust Wave Shift for their audio and video processing needs.",
     startCreating: "Start Processing",
     viewPricing: "View Pricing",
     ctaBenefits: "Why Start Today",
@@ -230,7 +259,7 @@ const translations: Record<"en" | "zh", Translations> = {
     freeTrialNoCreditCard: "Free trial, no credit card required",
     
     // Pricing page
-    voiceForgeAiPlans: "VoiceForge AI Plans",
+    voiceForgeAiPlans: "Wave Shift Plans",
     upgradeDesc: "Upgrade to access advanced features and process more content faster.",
     enterpriseAvailable: "Enterprise and team plans now available",
     monthly: "Monthly",
@@ -242,7 +271,7 @@ const translations: Record<"en" | "zh", Translations> = {
     maxPlan: "Enterprise",
     selectPlan: "Select Plan",
     freeProcessing: "Free daily processing",
-    limitedAccess: "Limited access to VoiceForge tools",
+    limitedAccess: "Limited access to Wave Shift tools",
     commercialLicense: "Commercial license",
     faq: "Frequently Asked Questions",
     processingUnitsQuestion: "What are processing units?",
@@ -255,7 +284,7 @@ const translations: Record<"en" | "zh", Translations> = {
   },
   zh: {
     // Auth page
-    welcomeToKrea: "欢迎来到 VoiceForge AI",
+    welcomeToKrea: "欢迎来到 声渡",
     loginOrSignup: "登录或注册",
     continueWithGoogle: "使用谷歌账号继续",
     continueWithEmail: "使用邮箱继续",
@@ -271,8 +300,8 @@ const translations: Record<"en" | "zh", Translations> = {
     pleaseEnterEmail: "请输入您的邮箱地址",
     
     // Site branding and main content
-    siteName: "VoiceForge AI",
-    siteTagline: "智能音视频处理平台",
+    siteName: "声渡",
+    siteTagline: "声之所至，渡见世界",
     heroTitle: "用AI智能变革音视频处理",
     heroSubtitle: "让每一个声音都被完美传达",
     heroDescription: "基于前沿AI技术的专业音频转录、文本配音和视频翻译服务。打破语言障碍，提升沟通效果。",
@@ -297,6 +326,8 @@ const translations: Record<"en" | "zh", Translations> = {
     lightMode: "浅色模式",
     
     // Core features
+    coreFeatures: "核心功能",
+    coreFeaturesDesc: "基于前沿AI技术，为您提供专业级的音视频处理服务",
     audioTranscriptionTitle: "AI音频转录",
     audioTranscriptionDesc: "以卓越的准确性和速度将语音转换为文字，支持多种语言和方言",
     audioTranscriptionFeatures: "99%准确率 • 实时处理 • 自动标点 • 说话人识别",
@@ -307,9 +338,22 @@ const translations: Record<"en" | "zh", Translations> = {
     videoTranslationDesc: "AI驱动的视频翻译，保持唇形同步和原声音调匹配",
     videoTranslationFeatures: "唇形同步 • 保留语调 • 多语言 • 自动字幕",
     
+    // Video translation highlights
+    realtimeTranslation: "实时翻译",
+    realtimeTranslationDesc: "AI驱动的实时翻译，实现无缝沟通",
+    multiSpeakerVoice: "多声道语音",
+    multiSpeakerVoiceDesc: "支持单个视频中的多个声音",
+    smoothPacing: "流畅节奏",
+    smoothPacingDesc: "自然流畅的翻译，保持流畅节奏",
+    comingSoon: "即将推出",
+    videoShowcase: "视频翻译效果展示",
+    videoShowcaseDesc: "体验AI视频翻译的神奇效果，保持原声音调和情感",
+    originalVideo: "原始视频",
+    translatedVideo: "翻译后的视频",
+    
     // Features section
     coreFeatures: "核心功能",
-    whyChooseUs: "为什么选择 VoiceForge AI",
+    whyChooseUs: "为什么选择 声渡",
     featuresDescription: "我们提供最先进的AI音视频处理工具，具备企业级安全性和性能。",
     fastProcessing: "闪电般处理速度",
     fastProcessingDesc: "采用GPU加速技术，处理速度比传统方法快10倍以上",
@@ -334,7 +378,7 @@ const translations: Record<"en" | "zh", Translations> = {
     // Testimonials
     testimonials: "用户评价",
     userTestimonials: "用户怎么说",
-    testimonialsDescription: "听听信赖VoiceForge AI进行音视频处理的内容创作者、企业和专业人士的声音。",
+    testimonialsDescription: "听听信赖声渡进行音视频处理的内容创作者、企业和专业人士的声音。",
     userSatisfaction: "用户满意度",
     recommendationRate: "推荐率",
     avgProcessingTime: "平均处理时间",
@@ -343,7 +387,7 @@ const translations: Record<"en" | "zh", Translations> = {
     // CTA section
     ctaTitle: "准备好变革您的音视频处理了吗？",
     ctaSubtitle: "今天就开始您的AI之旅",
-    ctaDescription: "加入数千名信赖VoiceForge AI进行音视频处理的创作者、企业和专业人士。",
+    ctaDescription: "加入数千名信赖声渡进行音视频处理的创作者、企业和专业人士。",
     startCreating: "开始处理",
     viewPricing: "查看定价",
     ctaBenefits: "为什么今天开始",
@@ -353,7 +397,7 @@ const translations: Record<"en" | "zh", Translations> = {
     freeTrialNoCreditCard: "免费试用，无需信用卡",
     
     // Pricing page
-    voiceForgeAiPlans: "VoiceForge AI 套餐",
+    voiceForgeAiPlans: "声渡 套餐",
     upgradeDesc: "升级以访问高级功能，更快处理更多内容。",
     enterpriseAvailable: "现已提供企业和团队方案",
     monthly: "月付",
@@ -365,7 +409,7 @@ const translations: Record<"en" | "zh", Translations> = {
     maxPlan: "企业",
     selectPlan: "选择套餐",
     freeProcessing: "每日免费处理",
-    limitedAccess: "有限访问VoiceForge工具",
+    limitedAccess: "有限访问声渡工具",
     commercialLicense: "商业许可",
     faq: "常见问题",
     processingUnitsQuestion: "什么是处理单元？",

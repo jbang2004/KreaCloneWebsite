@@ -11,6 +11,7 @@ import { useToast } from "@/hooks/use-toast";
 import { useLanguage } from "@/hooks/use-language";
 import { useTheme } from "next-themes";
 import { useAuth } from "@/contexts/AuthContext";
+import WabiSabiBackground from "@/components/wabi-sabi-background";
 
 export default function AuthPage() {
   const router = useRouter();
@@ -121,7 +122,12 @@ export default function AuthPage() {
   };
 
   return (
-    <div className="flex min-h-screen px-6 md:px-10 lg:px-16 py-8">
+    <div className="min-h-screen relative overflow-hidden">
+      {/* 统一的诧寂美学背景 */}
+      <WabiSabiBackground />
+      
+      {/* 内容区域 */}
+      <div className="relative z-10 flex min-h-screen px-6 md:px-10 lg:px-16 py-8">
       <div className="flex w-full flex-col md:flex-row md:items-stretch max-w-6xl mx-auto gap-2 md:gap-4 self-center"> 
         {/* Auth Form Section */}
         <motion.div 
@@ -279,6 +285,7 @@ export default function AuthPage() {
             </ul>
           </div>
         </motion.div>
+        </div>
       </div>
     </div>
   );

@@ -9,14 +9,14 @@ const defaultUrl = process.env.VERCEL_URL
 export const metadata: Metadata = {
   metadataBase: new URL(defaultUrl),
   title: {
-    default: "VoiceForge AI - 智能音视频处理平台",
-    template: "%s | VoiceForge AI"
+    default: "声渡 - 声之所至，渡见世界",
+    template: "%s | Wave Shift"
   },
-  description: "专业的AI音视频处理平台，提供音频转录、文本配音、视频翻译等服务。让每一个声音都被完美传达。",
-  keywords: ["AI", "音频转录", "文本配音", "视频翻译", "人工智能", "语音处理", "audio transcription", "text to speech", "video translation"],
-  authors: [{ name: "VoiceForge AI Team" }],
-  creator: "VoiceForge AI",
-  publisher: "VoiceForge AI",
+  description: "专业的AI音视频处理平台，提供音频转录、文本配音、视频翻译等服务。声之所至，渡见世界。",
+  keywords: ["AI", "音频转录", "文本配音", "视频翻译", "人工智能", "语音处理", "声渡", "audio transcription", "text to speech", "video translation"],
+  authors: [{ name: "声渡团队" }],
+  creator: "声渡",
+  publisher: "声渡",
   robots: {
     index: true,
     follow: true,
@@ -32,13 +32,13 @@ export const metadata: Metadata = {
     type: 'website',
     locale: 'zh_CN',
     url: defaultUrl,
-    title: 'VoiceForge AI - 智能音视频处理平台',
+    title: 'Wave Shift - 声之所至，渡见世界',
     description: '专业的AI音视频处理平台，提供音频转录、文本配音、视频翻译等服务',
-    siteName: 'VoiceForge AI',
+    siteName: 'Wave Shift',
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'VoiceForge AI - 智能音视频处理平台',
+    title: 'Wave Shift - 声之所至，渡见世界',
     description: '专业的AI音视频处理平台，提供音频转录、文本配音、视频翻译等服务',
   },
   verification: {

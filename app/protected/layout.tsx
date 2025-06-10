@@ -4,6 +4,7 @@ import { AuthButton } from "@/components/auth-button";
 import { ThemeSwitcher } from "@/components/theme-switcher";
 import { hasEnvVars } from "@/lib/utils";
 import Link from "next/link";
+import WabiSabiBackground from "@/components/wabi-sabi-background";
 
 export default function ProtectedLayout({
   children,
@@ -11,8 +12,13 @@ export default function ProtectedLayout({
   children: React.ReactNode;
 }) {
   return (
-    <main className="min-h-screen flex flex-col items-center">
-      <div className="flex-1 w-full flex flex-col gap-20 items-center">
+    <main className="min-h-screen relative overflow-hidden">
+      {/* 统一的诧寂美学背景 */}
+      <WabiSabiBackground />
+      
+      {/* 内容区域 */}
+      <div className="relative z-10 min-h-screen flex flex-col items-center">
+        <div className="flex-1 w-full flex flex-col gap-20 items-center">
         <nav className="w-full flex justify-center border-b border-b-foreground/10 h-16">
           <div className="w-full max-w-5xl flex justify-between items-center p-3 px-5 text-sm">
             <div className="flex gap-5 items-center font-semibold">
@@ -42,6 +48,7 @@ export default function ProtectedLayout({
           </p>
           <ThemeSwitcher />
         </footer>
+        </div>
       </div>
     </main>
   );
