@@ -7,7 +7,6 @@ import {
   Volume2,
   User,
   Settings,
-  FileText,
   Play,
   Download,
   ChevronDown,
@@ -19,6 +18,7 @@ import { Slider } from "@/components/ui/slider";
 import { useLanguage } from "@/hooks/use-language";
 import { useTheme } from "next-themes";
 import { cn } from "@/lib/utils";
+import Image from "next/image";
 import {
   Popover,
   PopoverContent,
@@ -39,14 +39,14 @@ interface Voice {
 export default function TextToSpeech() {
   const { language: currentLanguage } = useLanguage();
   const { theme } = useTheme();
-  const [text, setText] = useState<string>("");
-  const [selectedVoice, setSelectedVoice] = useState<string | null>(null);
+  const [text] = useState<string>("");
+  const [selectedVoice] = useState<string | null>(null);
   const [speed, setSpeed] = useState<number[]>([1]);
   const [pitch, setPitch] = useState<number[]>([1]);
-  const [isGenerating, setIsGenerating] = useState<boolean>(false);
-  const [isPlaying, setIsPlaying] = useState<boolean>(false);
-  const [generatedAudioUrl, setGeneratedAudioUrl] = useState<string | null>(null);
-  const [showSettings, setShowSettings] = useState<boolean>(false);
+  const [isGenerating] = useState<boolean>(false);
+  const [isPlaying] = useState<boolean>(false);
+  const [generatedAudioUrl] = useState<string | null>(null);
+  const [showSettings] = useState<boolean>(false);
 
   // 示例的语音列表
   const voices: Voice[] = [
@@ -58,18 +58,13 @@ export default function TextToSpeech() {
     { id: "voice6", name: "智能男声", language: "zh-CN", gender: "male", avatar: "https://api.dicebear.com/7.x/thumbs/svg?seed=AI2&eyesColor=0a0a0a" },
   ];
 
-  const handleTextChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+  const handleTextChange = () => {
     // 即将推出功能，禁用文本输入处理
     return;
   };
 
   const generateSpeech = () => {
     // 即将推出功能，禁用语音生成
-    return;
-  };
-
-  const togglePlayback = () => {
-    // 即将推出功能，禁用播放
     return;
   };
 
@@ -87,7 +82,6 @@ export default function TextToSpeech() {
   const speedText = currentLanguage === "zh" ? "速度" : "Speed";
   const pitchText = currentLanguage === "zh" ? "音高" : "Pitch";
   const characterCountText = currentLanguage === "zh" ? "字符数" : "Characters";
-  const settingsText = currentLanguage === "zh" ? "设置" : "Settings";
   const comingSoonText = currentLanguage === "zh" ? "即将推出" : "Coming Soon";
 
   return (
@@ -195,9 +189,11 @@ export default function TextToSpeech() {
                 <div className="flex items-center gap-3">
                   <div className="w-12 h-12 rounded-full overflow-hidden bg-muted">
                     {voices.find(v => v.id === selectedVoice)?.avatar ? (
-                      <img 
-                        src={voices.find(v => v.id === selectedVoice)?.avatar} 
-                        alt={voices.find(v => v.id === selectedVoice)?.name} 
+                      <Image 
+                        src={voices.find(v => v.id === selectedVoice)?.avatar || ''} 
+                        alt={voices.find(v => v.id === selectedVoice)?.name || ''} 
+                        width={48}
+                        height={48}
                         className="w-full h-full object-cover" 
                       />
                     ) : (
@@ -338,7 +334,7 @@ export default function TextToSpeech() {
                       <div className="flex items-center w-full">
                         <div className="w-8 h-8 rounded-full overflow-hidden bg-muted mr-2 flex-shrink-0">
                           {voice.avatar ? (
-                            <img src={voice.avatar} alt={voice.name} className="w-full h-full object-cover" />
+                            <Image src={voice.avatar} alt={voice.name} width={32} height={32} className="w-full h-full object-cover" />
                           ) : (
                             <User className="w-full h-full p-1.5" />
                           )}

@@ -3,7 +3,6 @@ import {
   XMarkIcon,
   ClockIcon,
   PlayIcon,
-  PencilIcon,
   UserIcon,
   GlobeAltIcon
 } from "@heroicons/react/24/solid";
@@ -52,10 +51,10 @@ export default function SubtitlesPanel({
   editingSubtitleId,
   targetLanguage,
   translations: T,
-  isMobile,
+  // isMobile,
   isLoading,
   error,
-  getLanguageLabel,
+  // getLanguageLabel,
   jumpToTime,
   updateSubtitleTranslation,
   toggleEditMode,

@@ -214,7 +214,6 @@ const translations: Record<"en" | "zh", Translations> = {
     translatedVideo: "Translated Video",
     
     // Features section
-    coreFeatures: "Core Features",
     whyChooseUs: "Why Choose Wave Shift",
     featuresDescription: "We provide the most advanced AI audio and video processing tools with enterprise-grade security and performance.",
     fastProcessing: "Lightning Fast Processing",
@@ -352,7 +351,6 @@ const translations: Record<"en" | "zh", Translations> = {
     translatedVideo: "翻译后的视频",
     
     // Features section
-    coreFeatures: "核心功能",
     whyChooseUs: "为什么选择 声渡",
     featuresDescription: "我们提供最先进的AI音视频处理工具，具备企业级安全性和性能。",
     fastProcessing: "闪电般处理速度",

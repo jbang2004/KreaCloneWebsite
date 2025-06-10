@@ -21,9 +21,9 @@ import { BlurFade } from "@/components/magicui/blur-fade";
 import WabiSabiBackground from "@/components/wabi-sabi-background";
 
 // 新增: 后端 API 基础地址配置
-const BACKEND_URL = process.env.NEXT_PUBLIC_BACKEND_URL as string;
-const BACKEND_PORT = process.env.NEXT_PUBLIC_BACKEND_PORT as string;
-const API_BASE_URL = BACKEND_PORT ? `${BACKEND_URL}:${BACKEND_PORT}` : BACKEND_URL;
+// const BACKEND_URL = process.env.NEXT_PUBLIC_BACKEND_URL as string;
+// const BACKEND_PORT = process.env.NEXT_PUBLIC_BACKEND_PORT as string;
+// const API_BASE_URL = BACKEND_PORT ? `${BACKEND_URL}:${BACKEND_PORT}` : BACKEND_URL;
 
 export default function VideoTranslation() {
   const { language: currentInterfaceLanguage } = useLanguage();
@@ -49,7 +49,7 @@ export default function VideoTranslation() {
     isUploading,
     uploadProgress,
     uploadComplete,
-    isProcessing,
+    // isProcessing,
     processingComplete,
     videoPreviewUrl,
     uploadError,
@@ -119,7 +119,7 @@ export default function VideoTranslation() {
     if (processingComplete && displaySubtitlesPanel && taskId) {
       fetchSubtitles(taskId, targetLanguage);
     }
-  }, [processingComplete, displaySubtitlesPanel, taskId, fetchSubtitles]);
+  }, [processingComplete, displaySubtitlesPanel, taskId, targetLanguage, fetchSubtitles]);
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -170,7 +170,7 @@ export default function VideoTranslation() {
       }
     }
     if (userIdForUpload && sessionAccessToken) {
-      await initiateUpload(fileToUpload, { id: userIdForUpload } as any, sessionAccessToken); 
+      await initiateUpload(fileToUpload, currentUser!, sessionAccessToken); 
     }
   };
 

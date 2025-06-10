@@ -8,6 +8,7 @@ import { useMobile } from "@/hooks/use-mobile";
 import { useLanguage, TranslationKey } from "@/hooks/use-language";
 import { useTheme } from "next-themes";
 import { useAuth } from "@/contexts/AuthContext";
+import Image from "next/image";
 import { 
   HomeIcon, 
   MicrophoneIcon, 
@@ -83,9 +84,11 @@ export default function Header() {
             onClick={closeMenu} 
             className="flex items-center justify-center h-11 w-11 bg-white/60 dark:bg-gray-800/60 rounded-xl shadow-sm hover:bg-white/70 dark:hover:bg-gray-700/70 transition-colors backdrop-blur-md"
           >
-            <img 
+            <Image 
               src="/logo.png" 
               alt="声渡" 
+              width={28}
+              height={28}
               className="w-7 h-7 object-contain"
             />
           </Link>

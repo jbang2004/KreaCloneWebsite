@@ -6,15 +6,12 @@ import {
   Plus,
   Mic,
   User,
-  Settings,
   FileText,
-  Play,
-  Download,
   ChevronDown,
   Clock
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Textarea } from "@/components/ui/textarea";
+
 import { useLanguage } from "@/hooks/use-language";
 import { useTheme } from "next-themes";
 import { cn } from "@/lib/utils";
@@ -31,11 +28,11 @@ import WabiSabiBackground from "@/components/wabi-sabi-background";
 export default function AudioTranscription() {
   const { language: currentLanguage } = useLanguage();
   const { theme } = useTheme();
-  const [selectedLanguage, setSelectedLanguage] = useState<string>(currentLanguage === "zh" ? "zh-CN" : "en-US");
-  const [file, setFile] = useState<File | null>(null);
-  const [transcriptionStarted, setTranscriptionStarted] = useState(false);
-  const [progress, setProgress] = useState(0);
-  const [transcriptionResult, setTranscriptionResult] = useState<string[]>([]);
+  const [selectedLanguage] = useState<string>(currentLanguage === "zh" ? "zh-CN" : "en-US");
+  const [file] = useState<File | null>(null);
+  const [transcriptionStarted] = useState(false);
+  const [progress] = useState(0);
+  const [transcriptionResult] = useState<string[]>([]);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   // 语言选项
@@ -54,13 +51,8 @@ export default function AudioTranscription() {
     return;
   };
 
-  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleFileChange = () => {
     // 即将推出功能，禁用文件处理
-    return;
-  };
-
-  // 禁用转录功能
-  const startTranscription = () => {
     return;
   };
 
@@ -76,11 +68,7 @@ export default function AudioTranscription() {
   const transcriptionResultText = currentLanguage === "zh" ? "转录结果" : "Transcription Result";
   const comingSoonText = currentLanguage === "zh" ? "即将推出" : "Coming Soon";
 
-  // 获取语言显示名称
-  const getLanguageLabel = (value: string) => {
-    const option = languageOptions.find(lang => lang.value === value);
-    return option?.label || "";
-  };
+
 
   return (
     <div className="min-h-screen relative overflow-hidden">

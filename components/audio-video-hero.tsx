@@ -5,6 +5,7 @@ import { BlurFade } from "@/components/magicui/blur-fade";
 import { Button } from "@/components/ui/button";
 import { useLanguage } from "@/hooks/use-language";
 import Link from "next/link";
+import Image from "next/image";
 
 export default function AudioVideoHero() {
   const { t } = useLanguage();
@@ -18,10 +19,13 @@ export default function AudioVideoHero() {
           <div className="flex flex-col items-center">
             {/* Logo - 往上移动 */}
             <div className="-mb-4">
-              <img 
+              <Image 
                 src="/logo.png" 
                 alt="WaveShift声渡 Logo" 
+                width={416}
+                height={416}
                 className="w-72 h-72 sm:w-80 sm:h-80 lg:w-96 lg:h-96 xl:w-[26rem] xl:h-[26rem] object-contain"
+                priority
               />
             </div>
             

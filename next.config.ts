@@ -8,7 +8,20 @@ const nextConfig: NextConfig = {
   
   // 图片优化
   images: {
-    domains: ['images.unsplash.com', 'pixabay.com'],
+    remotePatterns: [
+      {
+        protocol: 'https',
+        hostname: 'images.unsplash.com',
+      },
+      {
+        protocol: 'https',
+        hostname: 'pixabay.com',
+      },
+      {
+        protocol: 'https',
+        hostname: 'api.dicebear.com',
+      },
+    ],
     formats: ['image/webp', 'image/avif'],
   },
   

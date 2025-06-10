@@ -6,8 +6,6 @@ export async function updateSession(request: NextRequest) {
   
   // 定义需要认证保护的路由
   const protectedRoutes = [
-    '/audio-transcription',
-    '/text-to-speech', 
     '/video-translation',
     '/protected'
   ];
@@ -48,7 +46,7 @@ export async function updateSession(request: NextRequest) {
         getAll() {
           return request.cookies.getAll();
         },
-        setAll(cookiesToSet: Array<{ name: string; value: string; options?: any }>) {
+        setAll(cookiesToSet: Array<{ name: string; value: string; options?: Record<string, unknown> }>) {
           cookiesToSet.forEach(({ name, value }) =>
             request.cookies.set(name, value),
           );
