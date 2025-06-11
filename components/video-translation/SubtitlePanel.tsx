@@ -1,4 +1,4 @@
-import { motion } from "framer-motion";
+import { MotionProvider, m as motion } from "@/lib/lazy-motion";
 import {
   XMarkIcon,
   ClockIcon,
@@ -305,110 +305,114 @@ export default function SubtitlesPanel({
                 <p>{T.noSubtitlesFoundLabel || "No subtitles. Select language & click Translate."}</p>
               </div>
             )}
-            {!isLoading && !error && subtitles.length > 0 && subtitles.map((subtitle) => (
-              <motion.div 
-                key={subtitle.id}
-                className={cn(
-                  "p-2 sm:p-3 rounded-xl",
-                  theme === "dark" ? "bg-zinc-800" : "bg-gray-100"
-                )}
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.3 }}
-              >
-                <div className="flex flex-wrap sm:flex-nowrap items-center gap-2 sm:gap-0 sm:justify-between mb-3">
-                  <div className="flex flex-wrap sm:flex-nowrap items-center gap-2 sm:gap-4">
-                    <div className="flex items-center space-x-1">
-                      <ClockIcon className="h-4 w-4 text-blue-500" />
-                      <span className="text-xs text-muted-foreground">
-                        {subtitle.startTime} - {subtitle.endTime} 
-                      </span>
-                    </div>
-                    {subtitle.speaker && (
-                      <div className="flex items-center space-x-1">
-                        <UserIcon className="h-4 w-4 text-green-500" />
-                        <span className="text-xs text-muted-foreground">
-                          {subtitle.speaker}
-                        </span>
-                      </div>
+            {!isLoading && !error && subtitles.length > 0 && (
+              <MotionProvider>
+                {subtitles.map((subtitle) => (
+                  <motion.div 
+                    key={subtitle.id}
+                    className={cn(
+                      "p-2 sm:p-3 rounded-xl",
+                      theme === "dark" ? "bg-zinc-800" : "bg-gray-100"
                     )}
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      className="h-7 px-2 text-xs text-blue-600 hover:text-blue-700 hover:bg-blue-50 dark:text-blue-400 dark:hover:bg-blue-900/20"
-                      onClick={() => jumpToTime(subtitle.startTime)}
-                    >
-                      <PlayIcon className="h-3 w-3 mr-1" />
-                      {T.jumpToLabel}
-                    </Button>
-                  </div>
-                </div>
-                
-                <div className="mb-3">
-                  <label className="text-xs font-medium text-muted-foreground mb-1 block">
-                    {T.originalSubtitleLabel}
-                  </label>
-                  <div className={cn(
-                    "p-2 sm:p-3 rounded-lg text-sm",
-                    theme === "dark" ? "bg-zinc-900" : "bg-gray-50"
-                  )}>
-                    {subtitle.text}
-                  </div>
-                </div>
-                
-                <div>
-                  <div className="flex items-center justify-between mb-1">
-                    <label className="text-xs font-medium text-muted-foreground">
-                      {T.translatedSubtitleLabel}
-                    </label>
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      className="h-6 px-2 text-xs"
-                      onClick={() => toggleEditMode(subtitle.id)}
-                      disabled={translationStatus !== 'translated'}
-                    >
-                      {editingSubtitleId === subtitle.id ? T.saveLabel : T.editLabel}
-                    </Button>
-                  </div>
-                  
-                  {editingSubtitleId === subtitle.id ? (
-                    <Textarea
-                      value={subtitle.translation}
-                      onChange={(e) => updateSubtitleTranslation(subtitle.id, e.target.value, true)}
-                      className={cn(
-                        "min-h-[60px] text-sm",
-                        theme === "dark" ? "bg-zinc-800 border-zinc-700" : "bg-white"
-                      )}
-                    />
-                  ) : subtitle.translation ? (
-                    <div className={cn(
-                      "p-2 sm:p-3 rounded-lg text-sm",
-                      theme === "dark" ? "bg-zinc-900 text-blue-400" : "bg-blue-50 text-blue-700"
-                    )}>
-                      {subtitle.translation}
-                    </div>
-                  ) : isTranslating ? (
-                    <SkeletonTheme
-                      baseColor={theme === "dark" ? "#303030" : undefined}
-                      highlightColor={theme === "dark" ? "#4a4a4a" : undefined}
-                    >
-                      <div className="p-2 sm:p-3 rounded-lg">
-                        <Skeleton height={20} width="100%" className="mb-1" />
-                        <Skeleton height={20} width="80%" />
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.3 }}
+                  >
+                    <div className="flex flex-wrap sm:flex-nowrap items-center gap-2 sm:gap-0 sm:justify-between mb-3">
+                      <div className="flex flex-wrap sm:flex-nowrap items-center gap-2 sm:gap-4">
+                        <div className="flex items-center space-x-1">
+                          <ClockIcon className="h-4 w-4 text-blue-500" />
+                          <span className="text-xs text-muted-foreground">
+                            {subtitle.startTime} - {subtitle.endTime} 
+                          </span>
+                        </div>
+                        {subtitle.speaker && (
+                          <div className="flex items-center space-x-1">
+                            <UserIcon className="h-4 w-4 text-green-500" />
+                            <span className="text-xs text-muted-foreground">
+                              {subtitle.speaker}
+                            </span>
+                          </div>
+                        )}
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          className="h-7 px-2 text-xs text-blue-600 hover:text-blue-700 hover:bg-blue-50 dark:text-blue-400 dark:hover:bg-blue-900/20"
+                          onClick={() => jumpToTime(subtitle.startTime)}
+                        >
+                          <PlayIcon className="h-3 w-3 mr-1" />
+                          {T.jumpToLabel}
+                        </Button>
                       </div>
-                    </SkeletonTheme>
-                  ) : (
-                    <div className={cn(
-                      "p-2 sm:p-3 rounded-lg text-sm text-muted-foreground",
-                      theme === "dark" ? "bg-zinc-900" : "bg-gray-50"
-                    )}>
-                      {translationStatus === 'idle' ? "点击翻译按钮开始翻译" : "等待翻译..."}
                     </div>
-                  )}
-                </div>
-              </motion.div>
-            ))}
+                    
+                    <div className="mb-3">
+                      <label className="text-xs font-medium text-muted-foreground mb-1 block">
+                        {T.originalSubtitleLabel}
+                      </label>
+                      <div className={cn(
+                        "p-2 sm:p-3 rounded-lg text-sm",
+                        theme === "dark" ? "bg-zinc-900" : "bg-gray-50"
+                      )}>
+                        {subtitle.text}
+                      </div>
+                    </div>
+                    
+                    <div>
+                      <div className="flex items-center justify-between mb-1">
+                        <label className="text-xs font-medium text-muted-foreground">
+                          {T.translatedSubtitleLabel}
+                        </label>
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          className="h-6 px-2 text-xs"
+                          onClick={() => toggleEditMode(subtitle.id)}
+                          disabled={translationStatus !== 'translated'}
+                        >
+                          {editingSubtitleId === subtitle.id ? T.saveLabel : T.editLabel}
+                        </Button>
+                      </div>
+                      
+                      {editingSubtitleId === subtitle.id ? (
+                        <Textarea
+                          value={subtitle.translation}
+                          onChange={(e) => updateSubtitleTranslation(subtitle.id, e.target.value, true)}
+                          className={cn(
+                            "min-h-[60px] text-sm",
+                            theme === "dark" ? "bg-zinc-800 border-zinc-700" : "bg-white"
+                          )}
+                        />
+                      ) : subtitle.translation ? (
+                        <div className={cn(
+                          "p-2 sm:p-3 rounded-lg text-sm",
+                          theme === "dark" ? "bg-zinc-900 text-blue-400" : "bg-blue-50 text-blue-700"
+                        )}>
+                          {subtitle.translation}
+                        </div>
+                      ) : isTranslating ? (
+                        <SkeletonTheme
+                          baseColor={theme === "dark" ? "#303030" : undefined}
+                          highlightColor={theme === "dark" ? "#4a4a4a" : undefined}
+                        >
+                          <div className="p-2 sm:p-3 rounded-lg">
+                            <Skeleton height={20} width="100%" className="mb-1" />
+                            <Skeleton height={20} width="80%" />
+                          </div>
+                        </SkeletonTheme>
+                      ) : (
+                        <div className={cn(
+                          "p-2 sm:p-3 rounded-lg text-sm text-muted-foreground",
+                          theme === "dark" ? "bg-zinc-900" : "bg-gray-50"
+                        )}>
+                          {translationStatus === 'idle' ? "点击翻译按钮开始翻译" : "等待翻译..."}
+                        </div>
+                      )}
+                    </div>
+                  </motion.div>
+                ))}
+              </MotionProvider>
+            )}
           </div>
         </ScrollArea>
       </div>

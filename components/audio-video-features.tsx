@@ -1,6 +1,6 @@
 "use client";
 
-import { motion } from "framer-motion";
+import { MotionProvider, m as motion } from "@/lib/lazy-motion";
 import { MicrophoneIcon, SpeakerWaveIcon, LanguageIcon, ArrowRightIcon, CheckCircleIcon, ClockIcon } from "@heroicons/react/24/solid";
 import { BlurFade } from "@/components/magicui/blur-fade";
 import { Button } from "@/components/ui/button";
@@ -168,20 +168,22 @@ export default function AudioVideoFeatures() {
   };
 
   return (
-    <Section padding="large">
-      <BlurFade delay={0.25} inView>
-        <SectionHeader 
-          title={t("coreFeatures")}
-          description={t("coreFeaturesDesc")}
-        />
-      </BlurFade>
+    <MotionProvider>
+      <section className="py-20 bg-gradient-to-b from-transparent to-muted/5">
+        <BlurFade delay={0.25} inView>
+          <SectionHeader 
+            title={t("coreFeatures")}
+            description={t("coreFeaturesDesc")}
+          />
+        </BlurFade>
 
-      {/* 功能卡片网格 */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 max-w-5xl mx-auto">
-        {featuresData.map((feature, index) => (
-          <FeatureCard key={feature.title} feature={feature} index={index} />
-        ))}
-      </div>
-    </Section>
+        {/* 功能卡片网格 */}
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 max-w-5xl mx-auto">
+          {featuresData.map((feature, index) => (
+            <FeatureCard key={feature.title} feature={feature} index={index} />
+          ))}
+        </div>
+      </section>
+    </MotionProvider>
   );
 } 

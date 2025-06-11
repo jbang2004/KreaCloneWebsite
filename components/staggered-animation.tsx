@@ -1,5 +1,5 @@
 import { ReactNode, Children, isValidElement } from "react";
-import { motion } from "framer-motion";
+import { MotionProvider, m as motion } from "@/lib/lazy-motion";
 
 interface StaggeredAnimationProps {
   children: ReactNode;
@@ -55,13 +55,15 @@ export default function StaggeredAnimation({
   });
 
   return (
-    <motion.div
-      variants={containerVariants}
-      initial="hidden"
-      animate="show"
-      className="flex flex-col w-full"
-    >
-      {childrenWithAnimations}
-    </motion.div>
+    <MotionProvider>
+      <motion.div
+        variants={containerVariants}
+        initial="hidden"
+        animate="show"
+        className="flex flex-col w-full"
+      >
+        {childrenWithAnimations}
+      </motion.div>
+    </MotionProvider>
   );
 }
