@@ -26,7 +26,11 @@ import {
 } from "@/components/ui/popover";
 import { Badge } from "@/components/ui/badge";
 import { BlurFade } from "@/components/magicui/blur-fade";
-import WabiSabiBackground from "@/components/wabi-sabi-background";
+import dynamic from "next/dynamic";
+
+const WabiSabiBackground = dynamic(() => import("@/components/wabi-sabi-background"), {
+  ssr: false,
+});
 
 interface Voice {
   id: string;

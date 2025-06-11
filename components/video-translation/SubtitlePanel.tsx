@@ -15,7 +15,7 @@ import { Subtitle } from "@/types";
 import { Translations } from "@/lib/translations";
 import { useState, useEffect, useRef } from "react";
 import { createClient } from "@/lib/supabase/client";
-import Skeleton from 'react-loading-skeleton';
+import Skeleton, { SkeletonTheme } from 'react-loading-skeleton';
 import 'react-loading-skeleton/dist/skeleton.css';
 
 // 后端API配置
@@ -272,7 +272,7 @@ export default function SubtitlesPanel({
           <Button
             variant="default"
             size="sm"
-            className="h-8 px-3 text-xs bg-blue-600 hover:bg-blue-700 text-white whitespace-nowrap"
+            className="h-8 px-4 text-sm font-medium whitespace-nowrap"
             onClick={handleTranslate}
             disabled={isLoading || isTranslating || !targetLanguage || !currentTaskId}
           >
@@ -389,10 +389,15 @@ export default function SubtitlesPanel({
                       {subtitle.translation}
                     </div>
                   ) : isTranslating ? (
-                    <div className="p-2 sm:p-3 rounded-lg">
-                      <Skeleton height={20} width="100%" className="mb-1" />
-                      <Skeleton height={20} width="80%" />
-                    </div>
+                    <SkeletonTheme
+                      baseColor={theme === "dark" ? "#303030" : undefined}
+                      highlightColor={theme === "dark" ? "#4a4a4a" : undefined}
+                    >
+                      <div className="p-2 sm:p-3 rounded-lg">
+                        <Skeleton height={20} width="100%" className="mb-1" />
+                        <Skeleton height={20} width="80%" />
+                      </div>
+                    </SkeletonTheme>
                   ) : (
                     <div className={cn(
                       "p-2 sm:p-3 rounded-lg text-sm text-muted-foreground",

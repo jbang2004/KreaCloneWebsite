@@ -13,12 +13,25 @@ import { useHLSPlayer } from "@/hooks/use-hls-player";
 import { cn } from "@/lib/utils";
 import { createClient } from "@/lib/supabase/client";
 import { getTranslations, Language as AppLanguage } from "@/lib/translations";
+import dynamic from "next/dynamic";
 
 // Import the new components
-import VideoPanel from "@/components/video-translation/VideoPanel";
-import SubtitlesPanel from "@/components/video-translation/SubtitlePanel";
 import { BlurFade } from "@/components/magicui/blur-fade";
-import WabiSabiBackground from "@/components/wabi-sabi-background";
+
+// 重型组件懒加载，首屏更快，切换更流畅
+const VideoPanel = dynamic(() => import("@/components/video-translation/VideoPanel"), {
+  loading: () => <div className="h-[280px] w-full" />,
+  ssr: false,
+});
+
+const SubtitlesPanel = dynamic(() => import("@/components/video-translation/SubtitlePanel"), {
+  loading: () => <div className="min-h-[400px] w-full" />,
+  ssr: false,
+});
+
+const WabiSabiBackground = dynamic(() => import("@/components/wabi-sabi-background"), {
+  ssr: false,
+});
 
 // 新增: 后端 API 基础地址配置
 // const BACKEND_URL = process.env.NEXT_PUBLIC_BACKEND_URL as string;
@@ -27,7 +40,7 @@ import WabiSabiBackground from "@/components/wabi-sabi-background";
 
 export default function VideoTranslation() {
   const { language: currentInterfaceLanguage } = useLanguage();
-  const { theme } = useTheme();
+  const { resolvedTheme } = useTheme();
   const T = getTranslations(currentInterfaceLanguage as AppLanguage);
 
   const { user: currentUser, session: currentSession, loading: authLoading } = useAuth();
@@ -242,7 +255,7 @@ export default function VideoTranslation() {
           inView={true}
         >
           <VideoPanel
-            theme={theme}
+            theme={resolvedTheme}
             selectedFile={selectedFile}
             videoPreviewUrl={videoPreviewUrl}
             isUploading={isUploading}
@@ -284,7 +297,7 @@ export default function VideoTranslation() {
               duration={0.5}
             >
               <SubtitlesPanel
-                theme={theme}
+                theme={resolvedTheme}
                 subtitles={subtitles}
                 editingSubtitleId={editingSubtitleId}
                 targetLanguage={targetLanguage}

@@ -10,36 +10,48 @@ interface LanguageSwitchProps {
   className?: string;
 }
 
+/*
+ * 设计：
+ *  ┌───┬───┐
+ *  │ 中 │ EN│  <–– 轻量分段选择器
+ *  └───┴───┘
+ */
 export function LanguageSwitch({ value, onChange, disabled, className }: LanguageSwitchProps) {
-  const isEnglish = value === "en";
-
-  const handleToggle = () => {
-    if (disabled) return;
-    onChange(isEnglish ? "zh" : "en");
+  const handleChange = (lang: string) => {
+    if (disabled || lang === value) return;
+    onChange(lang);
   };
 
   return (
-    <div 
+    <div
       className={cn(
-        "relative inline-flex h-8 w-16 items-center rounded-full transition-colors cursor-pointer",
-        isEnglish ? "bg-blue-600" : "bg-red-600",
+        "inline-flex items-center rounded-md border border-border bg-background p-0.5 shadow-sm",
         disabled && "opacity-50 cursor-not-allowed",
         className
       )}
-      onClick={handleToggle}
     >
-      <div
-        className={cn(
-          "absolute h-6 w-6 rounded-full bg-white shadow-lg transition-transform flex items-center justify-center text-xs font-bold",
-          isEnglish ? "translate-x-9" : "translate-x-1"
-        )}
-      >
-        {isEnglish ? "EN" : "中"}
-      </div>
-      <div className="flex w-full justify-between px-2 text-white text-xs font-medium">
-        <span className={cn("transition-opacity", !isEnglish ? "opacity-100" : "opacity-0")}>中</span>
-        <span className={cn("transition-opacity", isEnglish ? "opacity-100" : "opacity-0")}>EN</span>
-      </div>
+      {[
+        { label: "中", lang: "zh" },
+        { label: "EN", lang: "en" },
+      ].map(({ label, lang }) => {
+        const active = value === lang;
+        return (
+          <button
+            key={lang}
+            className={cn(
+              "px-2 h-7 text-xs font-medium rounded-[0.25rem] transition-colors",
+              active
+                ? "bg-blue-600 text-white shadow"
+                : "text-muted-foreground hover:bg-accent",
+              "focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-1"
+            )}
+            onClick={() => handleChange(lang)}
+            disabled={disabled}
+          >
+            {label}
+          </button>
+        );
+      })}
     </div>
   );
 } 
