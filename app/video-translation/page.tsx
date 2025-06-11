@@ -13,7 +13,7 @@ import { cn } from "@/lib/utils";
 import { createClient } from "@/lib/supabase/client";
 import { getTranslations, Language as AppLanguage } from "@/lib/translations";
 import dynamic from "next/dynamic";
-import { MotionProvider, m as motion } from "@/lib/lazy-motion";
+import { m as motion } from "@/lib/lazy-motion";
 
 // Import the new components
 import { BlurFade } from "@/components/magicui/blur-fade";
@@ -238,111 +238,109 @@ export default function VideoTranslation() {
       <WabiSabiBackground />
       
       {/* 内容区域 */}
-      <MotionProvider>
-        <motion.div
-          className="relative z-10 container mx-auto px-2 sm:px-4 py-12 overflow-x-hidden"
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ duration: 0.2 }}
+      <motion.div
+        className="relative z-10 container mx-auto px-2 sm:px-4 py-12 overflow-x-hidden"
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ duration: 0.2 }}
+      >
+      <div className={cn(
+        "flex flex-wrap justify-center",
+        isMobile ? "mx-auto" : "-mx-2 md:-mx-3",
+        isMobile && displaySubtitlesPanel ? "items-center flex-col" : "items-start"
+      )}>
+        <BlurFade
+          layout
+          className={cn(
+            "px-2 md:px-3 mb-8",
+            isMobile ? "w-full mx-auto max-w-md" :
+              (displaySubtitlesPanel ? "md:mx-0 w-full max-w-md md:shrink-0" : "w-full max-w-md mx-auto")
+          )}
+          delay={0.25}
+          inView={true}
         >
-        <div className={cn(
-          "flex flex-wrap justify-center",
-          isMobile ? "mx-auto" : "-mx-2 md:-mx-3",
-          isMobile && displaySubtitlesPanel ? "items-center flex-col" : "items-start"
-        )}>
-          <BlurFade
-            layout
-            className={cn(
-              "px-2 md:px-3 mb-8",
-              isMobile ? "w-full mx-auto max-w-md" :
-                (displaySubtitlesPanel ? "md:mx-0 w-full max-w-md md:shrink-0" : "w-full max-w-md mx-auto")
-            )}
-            delay={0.25}
-            inView={true}
-          >
-            <VideoPanel
-              theme={resolvedTheme}
-              selectedFile={selectedFile}
-              videoPreviewUrl={videoPreviewUrl}
-              isUploading={isUploading}
-              uploadProgress={uploadProgress}
-              uploadComplete={uploadComplete}
-              processingComplete={processingComplete}
-              processingError={processingError}
-              isPlaying={isPlaying}
-              displaySubtitlesPanel={displaySubtitlesPanel} 
-              translations={T}
-              handleUploadClick={triggerFileInput} 
-              resetUpload={resetFullUploadAndPlayer}
-              togglePlayback={togglePlayback} 
-              handlePreprocessingTrigger={handlePreprocessingTrigger}
-              startGenerating={startGenerating}
-              videoRef={videoRef as React.RefObject<HTMLVideoElement>}
-              fileInputRef={fileInputRef as React.RefObject<HTMLInputElement>}
-              isGenerating={isGenerating}
-              canPlay={canPlay}
-              hlsPlaylistUrl={hlsPlaylistUrl}
-              isTranslating={isTranslating}
-              translationCompleted={translationCompleted}
-              isVideoCompleted={isVideoCompleted}
-            />
-          </BlurFade>
-          
-          <AnimatePresence mode="popLayout">
-            {displaySubtitlesPanel && ( 
-              <BlurFade
-                layout
-                className={cn(
-                  "w-full px-2 md:px-3 mx-auto",
-                  isMobile ? "mt-8 max-w-xl" : "mt-0 md:mx-0 md:basis-[36rem] md:grow md:shrink h-full"
-                )}
-                inView={true}
-                delay={0.1}
-                direction={isMobile ? "up" : "left"}
-                offset={isMobile ? 20 : 50}
-                duration={0.5}
-              >
-                <SubtitlesPanel
-                  theme={resolvedTheme}
-                  subtitles={subtitles}
-                  editingSubtitleId={editingSubtitleId}
-                  targetLanguage={targetLanguage}
-                  translations={T}
-                  isMobile={isMobile}
-                  isLoading={isLoadingSubtitles}
-                  error={subtitleError}
-                  getLanguageLabel={getLanguageLabel}
-                  jumpToTime={jumpToTime}
-                  updateSubtitleTranslation={updateSubtitleTranslation}
-                  toggleEditMode={toggleEditMode}
-                  setTargetLanguage={setTargetLanguage}
-                  fetchSubtitles={fetchSubtitles}
-                  closeSubtitlesPanel={handleCloseSubtitlesPanel}
-                  subtitlesContainerRef={subtitlesContainerRef as React.RefObject<HTMLDivElement>}
-                  currentTaskId={taskId || ""}
-                  onTranslationStart={() => {
-                    setIsTranslating(true);
-                    setTranslationCompleted(false);
-                  }}
-                  onTranslationComplete={() => {
-                    setIsTranslating(false);
-                    setTranslationCompleted(true);
-                  }}
-                />
-              </BlurFade>
-            )}
-          </AnimatePresence>
-        </div>
+          <VideoPanel
+            theme={resolvedTheme}
+            selectedFile={selectedFile}
+            videoPreviewUrl={videoPreviewUrl}
+            isUploading={isUploading}
+            uploadProgress={uploadProgress}
+            uploadComplete={uploadComplete}
+            processingComplete={processingComplete}
+            processingError={processingError}
+            isPlaying={isPlaying}
+            displaySubtitlesPanel={displaySubtitlesPanel} 
+            translations={T}
+            handleUploadClick={triggerFileInput} 
+            resetUpload={resetFullUploadAndPlayer}
+            togglePlayback={togglePlayback} 
+            handlePreprocessingTrigger={handlePreprocessingTrigger}
+            startGenerating={startGenerating}
+            videoRef={videoRef as React.RefObject<HTMLVideoElement>}
+            fileInputRef={fileInputRef as React.RefObject<HTMLInputElement>}
+            isGenerating={isGenerating}
+            canPlay={canPlay}
+            hlsPlaylistUrl={hlsPlaylistUrl}
+            isTranslating={isTranslating}
+            translationCompleted={translationCompleted}
+            isVideoCompleted={isVideoCompleted}
+          />
+        </BlurFade>
         
-        <input
-          ref={fileInputRef}
-          type="file"
-          accept="video/*"
-          className="hidden"
-          onChange={handleFileChange}
-        />
-        </motion.div>
-      </MotionProvider>
+        <AnimatePresence mode="popLayout">
+          {displaySubtitlesPanel && ( 
+            <BlurFade
+              layout
+              className={cn(
+                "w-full px-2 md:px-3 mx-auto",
+                isMobile ? "mt-8 max-w-xl" : "mt-0 md:mx-0 md:basis-[36rem] md:grow md:shrink h-full"
+              )}
+              inView={true}
+              delay={0.1}
+              direction={isMobile ? "up" : "left"}
+              offset={isMobile ? 20 : 50}
+              duration={0.5}
+            >
+              <SubtitlesPanel
+                theme={resolvedTheme}
+                subtitles={subtitles}
+                editingSubtitleId={editingSubtitleId}
+                targetLanguage={targetLanguage}
+                translations={T}
+                isMobile={isMobile}
+                isLoading={isLoadingSubtitles}
+                error={subtitleError}
+                getLanguageLabel={getLanguageLabel}
+                jumpToTime={jumpToTime}
+                updateSubtitleTranslation={updateSubtitleTranslation}
+                toggleEditMode={toggleEditMode}
+                setTargetLanguage={setTargetLanguage}
+                fetchSubtitles={fetchSubtitles}
+                closeSubtitlesPanel={handleCloseSubtitlesPanel}
+                subtitlesContainerRef={subtitlesContainerRef as React.RefObject<HTMLDivElement>}
+                currentTaskId={taskId || ""}
+                onTranslationStart={() => {
+                  setIsTranslating(true);
+                  setTranslationCompleted(false);
+                }}
+                onTranslationComplete={() => {
+                  setIsTranslating(false);
+                  setTranslationCompleted(true);
+                }}
+              />
+            </BlurFade>
+          )}
+        </AnimatePresence>
+      </div>
+      
+      <input
+        ref={fileInputRef}
+        type="file"
+        accept="video/*"
+        className="hidden"
+        onChange={handleFileChange}
+      />
+      </motion.div>
     </div>
   );
 }

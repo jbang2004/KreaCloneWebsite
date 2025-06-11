@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { cn } from "@/lib/utils";
 import { useMobile } from "@/hooks/use-mobile";
 import { useLanguage, TranslationKey } from "@/hooks/use-language";
@@ -62,6 +62,7 @@ const NavItems: NavItem[] = [
 export default function Header() {
   const [isOpen, setIsOpen] = useState(false);
   const pathname = usePathname();
+  const router = useRouter();
   const isMobile = useMobile();
   const { t, language: currentLanguage, setLanguage } = useLanguage();
   const { theme, setTheme } = useTheme();
@@ -74,6 +75,11 @@ export default function Header() {
     await signOut();
   };
 
+  // 预加载路由
+  const handleHoverPrefetch = (path: string) => {
+    router.prefetch(path);
+  };
+
   return (
     <header className="sticky top-0 z-50 bg-transparent w-full py-4">
       <div className="w-full px-2 sm:px-4 md:px-6 flex items-center justify-between h-12">
@@ -81,7 +87,9 @@ export default function Header() {
         <div className="flex items-center">
           <Link 
             href="/" 
+            prefetch
             onClick={closeMenu} 
+            onMouseEnter={() => handleHoverPrefetch("/")}
             className="flex items-center justify-center h-11 w-11 bg-white/60 dark:bg-gray-800/60 rounded-xl shadow-sm hover:bg-white/70 dark:hover:bg-gray-700/70 transition-colors backdrop-blur-md"
           >
             <Image 
@@ -109,7 +117,9 @@ export default function Header() {
             >
               <Link 
                 href={item.path}
+                prefetch
                 onClick={closeMenu}
+                onMouseEnter={() => handleHoverPrefetch(item.path)}
                 className={cn(
                   "flex items-center justify-center transition-colors",
                   pathname === item.path 
@@ -176,6 +186,7 @@ export default function Header() {
           {/* Floating button for Pricing */}
           <Link 
             href="/pricing" 
+            prefetch
             className="hidden lg:block py-2.5 px-6 rounded-xl bg-gray-200/60 dark:bg-gray-700/60 text-sm font-medium hover:bg-gray-300/70 dark:hover:bg-gray-600/70 transition-colors shadow-sm backdrop-blur-md"
           >
             {t("pricing")}
@@ -196,6 +207,7 @@ export default function Header() {
           ) : (
             <Link 
               href="/auth" 
+              prefetch
               className="hidden md:block py-2.5 px-3 sm:px-4 md:px-6 rounded-xl bg-blue-600/90 hover:bg-blue-700/90 text-white text-xs sm:text-sm font-medium transition-colors shadow-sm backdrop-blur-md"
             >
               {t("signUp")}
@@ -211,7 +223,9 @@ export default function Header() {
             <Link 
               key={item.path} 
               href={item.path}
+              prefetch
               onClick={closeMenu}
+              onMouseEnter={() => handleHoverPrefetch(item.path)}
               className={cn(
                 "flex items-center space-x-2 p-2 transition-colors",
                 pathname === item.path 
@@ -228,7 +242,9 @@ export default function Header() {
           <div className="border-t border-white/20 dark:border-gray-700/50 pt-2 mt-2 flex flex-col space-y-2">
             <Link 
               href="/pricing" 
+              prefetch
               onClick={closeMenu} 
+              onMouseEnter={() => handleHoverPrefetch("/pricing")}
               className="flex items-center p-2 rounded-xl hover:bg-white/50 dark:hover:bg-gray-700/50 transition-colors"
             >
               <span className="w-8 h-8 flex items-center justify-center">
@@ -255,7 +271,9 @@ export default function Header() {
             ) : (
               <Link 
                 href="/auth"
+                prefetch
                 onClick={closeMenu}
+                onMouseEnter={() => handleHoverPrefetch("/auth")}
                 className="flex items-center p-2 rounded-xl hover:bg-white/50 dark:hover:bg-gray-700/50 transition-colors"
               >
                 <span className="w-8 h-8 flex items-center justify-center">

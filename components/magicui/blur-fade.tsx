@@ -2,12 +2,12 @@
 
 import {
   AnimatePresence,
-  motion,
   useInView,
   UseInViewOptions,
   Variants,
   MotionProps,
 } from "framer-motion";
+import { m as motion } from "@/lib/lazy-motion";
 import React, { useRef, forwardRef, useImperativeHandle } from "react";
 
 type MarginType = UseInViewOptions["margin"];

@@ -55,7 +55,7 @@ export default function AudioVideoHero() {
         {/* 行动按钮 */}
         <BlurFade delay={0.5} inView>
           <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
-            <Link href="/video-translation">
+            <Link href="/video-translation" prefetch>
               <Button 
                 size="lg" 
                 className="bg-stone-100/80 dark:bg-stone-800/80 backdrop-blur-md border border-stone-300/40 dark:border-stone-600/40 shadow-lg text-stone-800 dark:text-stone-100 hover:bg-stone-700 hover:text-stone-50 dark:hover:bg-stone-600 dark:hover:text-stone-50 hover:border-stone-600/60 px-8 py-4 text-lg font-semibold transition-all duration-300"
@@ -65,7 +65,7 @@ export default function AudioVideoHero() {
               </Button>
             </Link>
             
-            <Link href="/pricing">
+            <Link href="/pricing" prefetch>
               <Button 
                 variant="outline" 
                 size="lg" 

@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
-import { ClientProviders } from "./client-providers";
 import "./globals.css";
+import { ClientProviders } from "./client-providers";
 
 const defaultUrl = process.env.VERCEL_URL
   ? `https://${process.env.VERCEL_URL}`
@@ -58,11 +58,15 @@ export default function RootLayout({
         <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
         <meta name="theme-color" content="#000000" />
         <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5" />
+        <link rel="dns-prefetch" href="//fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
       </head>
       <body className="font-sans antialiased">
         <ClientProviders>
           {children}
         </ClientProviders>
+        
+        
       </body>
     </html>
   );

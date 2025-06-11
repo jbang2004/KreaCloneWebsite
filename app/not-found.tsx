@@ -1,11 +1,15 @@
-'use client';
-
+import { Metadata } from 'next';
 import { Card, CardContent } from "@/components/ui/card";
 import { AlertCircle } from "lucide-react";
 
+export const metadata: Metadata = {
+  title: '页面未找到 - Krea Clone',
+  description: '抱歉，您访问的页面不存在。返回首页继续使用我们的AI服务。',
+};
+
 export default function NotFound() {
   return (
-    <div className="min-h-screen w-full flex items-center justify-center bg-gray-50">
+    <div className="min-h-screen flex flex-col items-center justify-center text-center px-4">
       <Card className="w-full max-w-md mx-4">
         <CardContent className="pt-6">
           <div className="flex mb-4 gap-2">

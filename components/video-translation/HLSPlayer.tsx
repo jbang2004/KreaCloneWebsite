@@ -59,7 +59,9 @@ export default function HLSPlayer({
       hls.attachMedia(video);
 
       hls.on(Hls.Events.MANIFEST_PARSED, () => {
-        console.log('HLS manifest parsed, ready to play');
+        if (process.env.NODE_ENV === 'development') {
+          console.log('HLS manifest parsed, ready to play');
+        }
         if (autoPlay) {
           video.play().catch(console.error);
         }
@@ -72,7 +74,9 @@ export default function HLSPlayer({
         if (!data.fatal) {
           // 特别处理缓冲停滞错误
           if (data.details === 'bufferStalledError') {
-            console.log('Buffer stalled error detected, attempting recovery...');
+            if (process.env.NODE_ENV === 'development') {
+              console.log('Buffer stalled error detected, attempting recovery...');
+            }
             // 尝试跳过小的时间间隔来恢复播放
             const currentTime = video.currentTime;
             if (currentTime > 0) {
@@ -86,15 +90,21 @@ export default function HLSPlayer({
         if (data.fatal) {
           switch (data.type) {
             case Hls.ErrorTypes.NETWORK_ERROR:
-              console.log('Network error, trying to recover...');
+              if (process.env.NODE_ENV === 'development') {
+                console.log('Network error, trying to recover...');
+              }
               hls.startLoad();
               break;
             case Hls.ErrorTypes.MEDIA_ERROR:
-              console.log('Media error, trying to recover...');
+              if (process.env.NODE_ENV === 'development') {
+                console.log('Media error, trying to recover...');
+              }
               hls.recoverMediaError();
               break;
             default:
-              console.log('Fatal error, destroying HLS instance');
+              if (process.env.NODE_ENV === 'development') {
+                console.log('Fatal error, destroying HLS instance');
+              }
               hls.destroy();
               break;
           }
@@ -103,11 +113,15 @@ export default function HLSPlayer({
 
       // 监听缓冲事件
       hls.on(Hls.Events.BUFFER_APPENDED, (event, data) => {
-        console.log('Buffer appended:', data);
+        if (process.env.NODE_ENV === 'development') {
+          console.log('Buffer appended:', data);
+        }
       });
 
       hls.on(Hls.Events.BUFFER_EOS, (event, data) => {
-        console.log('Buffer end of stream:', data);
+        if (process.env.NODE_ENV === 'development') {
+          console.log('Buffer end of stream:', data);
+        }
       });
 
       // 处理视频卡住的情况
@@ -121,7 +135,9 @@ export default function HLSPlayer({
         if (Math.abs(currentTime - lastTime) < 0.1 && !video.paused && !video.ended) {
           if (!stallTimer) {
             stallTimer = setTimeout(() => {
-              console.log('Video appears to be stalled, attempting recovery...');
+              if (process.env.NODE_ENV === 'development') {
+                console.log('Video appears to be stalled, attempting recovery...');
+              }
               // 尝试微调播放位置
               video.currentTime = currentTime + 0.1;
               stallTimer = null;
