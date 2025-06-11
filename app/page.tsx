@@ -1,5 +1,3 @@
-'use client';
-
 import AudioVideoHero from "@/components/audio-video-hero";
 import AudioVideoFeatures from "@/components/audio-video-features";
 import VideoShowcase from "@/components/video-showcase";
