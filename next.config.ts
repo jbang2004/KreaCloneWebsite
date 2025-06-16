@@ -38,3 +38,7 @@ const nextConfig: NextConfig = {
 };
 
 export default nextConfig;
+
+// 初始化OpenNext Cloudflare开发环境
+import { initOpenNextCloudflareForDev } from "@opennextjs/cloudflare";
+initOpenNextCloudflareForDev();

@@ -1,0 +1,15 @@
+NEXTJS_ENV=development
+
+# Supabase配置 - 请替换为你的实际值
+# NEXT_PUBLIC_SUPABASE_URL=https://your-project.supabase.co
+# NEXT_PUBLIC_SUPABASE_ANON_KEY=your-anon-key
+
+# 后端API配置 - 请替换为你的实际值  
+# NEXT_PUBLIC_BACKEND_URL=https://your-api.example.com
+# NEXT_PUBLIC_BACKEND_PORT=
+
+# 如果你有实际的配置，请取消注释并填入真实值
+# 如果暂时没有，我们可以使用占位符进行测试部署
+NEXT_PUBLIC_SUPABASE_URL=https://placeholder.supabase.co
+NEXT_PUBLIC_SUPABASE_ANON_KEY=placeholder-key
+NEXT_PUBLIC_BACKEND_URL=https://placeholder-api.example.com 
