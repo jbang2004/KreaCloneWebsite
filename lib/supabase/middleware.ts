@@ -6,7 +6,6 @@ export async function updateSession(request: NextRequest) {
   
   // 定义需要认证保护的路由
   const protectedRoutes = [
-    '/video-translation',
     '/protected'
   ];
 
