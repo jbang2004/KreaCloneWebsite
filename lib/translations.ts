@@ -34,8 +34,6 @@ export interface Translations {
     selectVideoFirst: string;
     userInfoIncomplete: string;
     userInfoRefreshFailed: string;
-    sessionTokenInvalid: string;
-    authTokenFailed: string;
     uploadFailed: (message: string) => string;
     dbError: (message: string) => string;
     subtitlesTranslated: (language: string) => string;
@@ -79,9 +77,7 @@ const translations: Record<Language, Translations> = {
     alertMessages: {
       selectVideoFirst: "Please select a video file first.",
       userInfoIncomplete: "User info incomplete, attempting to refresh...",
-      userInfoRefreshFailed: "Could not retrieve valid user information or session. Please refresh the page or log in again and try.",
-      sessionTokenInvalid: "User information or session token is invalid, please try again.",
-      authTokenFailed: "Failed to get authorization token, please try again.",
+      userInfoRefreshFailed: "Could not retrieve valid user information. Please refresh the page or log in again and try.",
       uploadFailed: (message: string) => `Upload failed: ${message}`,
       dbError: (message: string) => `Database error: ${message}`,
       subtitlesTranslated: (language: string) => `Subtitles translated to ${language}`,
@@ -126,9 +122,7 @@ const translations: Record<Language, Translations> = {
     alertMessages: {
       selectVideoFirst: "请先选择一个视频文件。",
       userInfoIncomplete: "用户信息不完整，正在尝试重新获取...",
-      userInfoRefreshFailed: "无法获取有效的用户信息或会话，请刷新页面或重新登录后尝试。",
-      sessionTokenInvalid: "用户信息或会话令牌无效，请重试。",
-      authTokenFailed: "无法获取授权令牌，请重试。",
+      userInfoRefreshFailed: "无法获取有效的用户信息，请刷新页面或重新登录后尝试。",
       uploadFailed: (message: string) => `上传失败: ${message}`,
       dbError: (message: string) => `数据库错误: ${message}`,
       subtitlesTranslated: (language: string) => `字幕已翻译为${language}`,

@@ -170,25 +170,22 @@ export default function VideoTranslation() {
       return;
     }
     let userIdForUpload = currentUser?.id;
-    let sessionAccessToken = currentSession?.access_token;
-    if (!userIdForUpload || !sessionAccessToken) {
+    if (!userIdForUpload) {
       alert(T.alertMessages.userInfoIncomplete);
-      const { data: { session: newSession }, error: sessionError } = await supabase.auth.getSession();
       const { data: { user: newUser }, error: userError } = await supabase.auth.getUser();
-      if (sessionError || userError || !newSession || !newUser) {
+      if (userError || !newUser) {
         alert(T.alertMessages.userInfoRefreshFailed);
         return;
       }
-      if (newUser?.id && newSession?.access_token) {
+      if (newUser?.id) {
         userIdForUpload = newUser.id;
-        sessionAccessToken = newSession.access_token;
       } else {
-        alert(T.alertMessages.sessionTokenInvalid);
+        alert(T.alertMessages.userInfoIncomplete);
         return;
       }
     }
-    if (userIdForUpload && sessionAccessToken) {
-      await initiateUpload(fileToUpload, currentUser!, sessionAccessToken); 
+    if (userIdForUpload) {
+      await initiateUpload(fileToUpload, currentUser!); 
     }
   };
 

@@ -133,7 +133,7 @@ async function sendS3Request(
 
 export async function POST(request: NextRequest) {
   const body = await request.json();
-  const { action, objectName, contentType, uploadId, partNumber, parts } = body;
+  const { action, objectName, uploadId, partNumber, parts } = body;
 
   if (!objectName) {
     return NextResponse.json({ error: 'objectName is required' }, { status: 400 });
@@ -258,18 +258,10 @@ ${partsXml}
       }
 
       default: {
-        // 兼容旧的单一上传方式
-        const uploadUrl = await generatePresignedUrl(
-          accessKeyId,
-          secretAccessKey,
-          endpoint,
-          bucketName,
-          objectName,
-          'PUT',
-          3600,
-          region
-        );
-        return NextResponse.json({ uploadUrl });
+        return NextResponse.json({ 
+          error: '不支持的操作类型。请使用分块上传。', 
+          supportedActions: ['initiate', 'getPartUrl', 'complete', 'abort']
+        }, { status: 400 });
       }
     }
   } catch (err: any) {

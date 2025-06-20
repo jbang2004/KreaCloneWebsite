@@ -15,7 +15,7 @@ interface VideoUploadState {
 }
 
 interface VideoUploadActions {
-  initiateUpload: (fileToUpload: File, user: User, token: string) => Promise<void>;
+  initiateUpload: (fileToUpload: File, user: User) => Promise<void>;
   resetUploadState: () => void;
 }
 
@@ -140,8 +140,7 @@ export function useVideoUpload(): VideoUploadState & VideoUploadActions {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           action: 'initiate',
-          objectName,
-          contentType: file.type
+          objectName
         }),
       });
 
@@ -228,7 +227,7 @@ export function useVideoUpload(): VideoUploadState & VideoUploadActions {
     }
   };
 
-  const initiateUpload = async (fileToUpload: File, user: User, _token: string) => {
+  const initiateUpload = async (fileToUpload: File, user: User) => {
     resetUploadState();
     setIsUploading(true);
 
