@@ -68,7 +68,7 @@ export default function Header() {
   const isMobile = useMobile();
   const { t, language: currentLanguage, setLanguage } = useLanguage();
   const { theme, setTheme } = useTheme();
-  const { data: session, status, update } = useSession();
+  const { data: session, status } = useSession();
   const user = session?.user;
   const authLoading = status === 'loading';
 

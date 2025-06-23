@@ -1,7 +1,6 @@
 'use server';
 
 import { signIn, signOut, auth } from '@/auth';
-import { redirect } from 'next/navigation';
 import { createDb } from '@/db/drizzle';
 import { videos, tasks, sentences } from '@/db/schema';
 import { eq, desc } from 'drizzle-orm';
