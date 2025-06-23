@@ -146,7 +146,7 @@ type Translations = {
 const translations: Record<"en" | "zh", Translations> = {
   en: {
     // Auth page
-    welcomeToKrea: "Welcome to Wave Shift",
+    welcomeToKrea: "Welcome to WaveShift",
     loginOrSignup: "Log in or sign up",
     continueWithGoogle: "Continue with Google",
     continueWithEmail: "Continue with email",
@@ -283,7 +283,7 @@ const translations: Record<"en" | "zh", Translations> = {
   },
   zh: {
     // Auth page
-    welcomeToKrea: "欢迎来到 声渡",
+    welcomeToKrea: "欢迎来到 WaveShift",
     loginOrSignup: "登录或注册",
     continueWithGoogle: "使用谷歌账号继续",
     continueWithEmail: "使用邮箱继续",

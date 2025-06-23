@@ -132,7 +132,7 @@ async function sendS3Request(
 }
 
 export async function POST(request: NextRequest) {
-  const body = await request.json();
+  const body = await request.json() as any;
   const { action, objectName, uploadId, partNumber, parts } = body;
 
   if (!objectName) {

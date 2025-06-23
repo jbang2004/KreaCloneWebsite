@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef, useCallback } from 'react';
 import { Subtitle } from '@/types';
-import { createClient } from '@/lib/supabase/client'; // Ensure this path is correct
+import useSWR from 'swr';
 
 // Helper function to convert milliseconds to HH:MM:SS string
 const formatTime = (ms: number): string => {
@@ -10,6 +10,14 @@ const formatTime = (ms: number): string => {
   const seconds = totalSeconds % 60;
   return `${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
 };
+
+// SWR fetcher function
+const fetcher = (url: string) => fetch(url).then(res => {
+  if (!res.ok) {
+    throw new Error('Failed to fetch');
+  }
+  return res.json();
+});
 
 interface UseSubtitlesProps {
   loadCondition: boolean; 
@@ -25,55 +33,67 @@ export function useSubtitles({ loadCondition, initialTaskId }: UseSubtitlesProps
   const [editingSubtitleId, setEditingSubtitleId] = useState<string | null>(null);
   const [isLoadingSubtitles, setIsLoadingSubtitles] = useState<boolean>(false);
   const [subtitleError, setSubtitleError] = useState<string | null>(null);
+  const [currentTaskId, setCurrentTaskId] = useState<string | null>(null);
   const panelClosedByUserRef = useRef<boolean>(false);
+
+  // 使用 SWR 进行数据获取
+  const { data, error, isLoading, mutate } = useSWR(
+    currentTaskId ? `/api/subtitles/${currentTaskId}` : null,
+    fetcher,
+    {
+      revalidateOnFocus: false,
+      revalidateOnReconnect: false,
+    }
+  );
+
+  // 当数据变化时更新本地状态
+  useEffect(() => {
+    const dataArray = (data as any)?.sentences || data;
+    if (dataArray && Array.isArray(dataArray)) {
+      const formattedSubtitles: Subtitle[] = dataArray.map((row: any) => ({
+        id: row.id.toString(),
+        startTime: formatTime(row.startMs),
+        endTime: formatTime(row.endMs),
+        text: row.rawText,
+        translation: row.transText || "",
+        speaker: `说话人 ${row.speakerId}`, // 格式化说话人信息
+      }));
+
+      setSubtitles(formattedSubtitles);
+      setShowSubtitles(true);
+      panelClosedByUserRef.current = false;
+    } else if (dataArray && dataArray.length === 0) {
+      setSubtitles([]);
+      setShowSubtitles(true);
+      setSubtitleError("No subtitles found for this task.");
+    }
+  }, [data]);
+
+  // 处理错误
+  useEffect(() => {
+    if (error) {
+      setSubtitleError(`Error fetching subtitles: ${error.message}`);
+      setShowSubtitles(false);
+    } else {
+      setSubtitleError(null);
+    }
+  }, [error]);
+
+  // 处理加载状态
+  useEffect(() => {
+    setIsLoadingSubtitles(isLoading);
+  }, [isLoading]);
 
   const fetchSubtitles = useCallback(async (taskId: string, targetLanguageCode: string) => {
     if (!taskId) {
       setSubtitleError("Task ID is required to fetch subtitles.");
       return;
     }
-    setIsLoadingSubtitles(true);
+    
+    setCurrentTaskId(taskId);
     setSubtitleError(null);
-    // setSubtitles([]); // Keep existing subtitles during translation fetch
-
-    try {
-      const { data, error } = await createClient()
-        .from('sentences')
-        .select('id, sentence_index, raw_text, start_ms, end_ms, trans_text, speaker_id')
-        .eq('task_id', taskId)
-        // .eq('language', targetLanguageCode) // Assuming 'trans_text' is already for the target lang OR we'd need a lang column
-                                          // If trans_text is always the target language of the task, no need for this.
-                                          // If 'sentences' stores multiple languages, then we need a language column
-        .order('sentence_index', { ascending: true });
-
-      if (error) {
-        throw error;
-      }
-
-      if (data) {
-        const formattedSubtitles: Subtitle[] = data.map((row) => ({
-          id: row.id.toString(),
-          startTime: formatTime(row.start_ms),
-          endTime: formatTime(row.end_ms),
-          text: row.raw_text,
-          translation: row.trans_text || "",
-          speaker: `说话人 ${row.speaker_id}`, // 格式化说话人信息
-        }));
-
-        setSubtitles(formattedSubtitles);
-        setShowSubtitles(true); // Show panel once data is fetched
-        panelClosedByUserRef.current = false; // Reset closed by user flag
-      } else {
-        setSubtitles([]);
-        setShowSubtitles(true); // Show panel but it will be empty
-        setSubtitleError("No subtitles found for this task.");
-      }
-    } catch (error) {
-      setSubtitleError(`Error fetching subtitles: ${(error as Error).message}`);
-      setShowSubtitles(false);
-    } finally {
-      setIsLoadingSubtitles(false);
-    }
+    
+    // SWR 会自动处理数据获取
   }, []);
   
   // Optional: Load initial subtitles if taskId is provided and conditions met
@@ -85,7 +105,6 @@ export function useSubtitles({ loadCondition, initialTaskId }: UseSubtitlesProps
     }
   }, [loadCondition, initialTaskId, showSubtitles, subtitles.length]);
 
-
   const updateSubtitleTranslation = async (id: string, newTranslation: string, syncToDatabase: boolean = true) => {
     // 立即更新UI
     setSubtitles(prevSubtitles =>
@@ -95,18 +114,33 @@ export function useSubtitles({ loadCondition, initialTaskId }: UseSubtitlesProps
     );
     
     // 根据参数决定是否同步更新数据库
-    if (syncToDatabase) {
+    if (syncToDatabase && currentTaskId) {
       try {
-        const { error } = await createClient()
-          .from('sentences')
-          .update({ trans_text: newTranslation })
-          .eq('id', id);
-        
-        if (error) {
-          console.error('更新字幕翻译到数据库失败:', error);
+        const response = await fetch(`/api/subtitles/${currentTaskId}`, {
+          method: 'PATCH',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            sentenceId: parseInt(id),
+            newTranslation,
+          }),
+        });
+
+        if (!response.ok) {
+          throw new Error('Failed to update subtitle');
         }
+
+        // 可选：重新验证数据
+        mutate();
       } catch (err) {
         console.error('数据库更新异常:', err);
+        // 回滚 UI 更新
+        setSubtitles(prevSubtitles =>
+          prevSubtitles.map(sub =>
+            sub.id === id ? { ...sub, translation: sub.translation } : sub
+          )
+        );
       }
     }
   };
@@ -126,14 +160,13 @@ export function useSubtitles({ loadCondition, initialTaskId }: UseSubtitlesProps
     setEditingSubtitleId(null);
     setIsLoadingSubtitles(false);
     setSubtitleError(null);
+    setCurrentTaskId(null);
     panelClosedByUserRef.current = false;
   }
 
   return {
     subtitles,
-    // setSubtitles, // Not exposing directly anymore
     showSubtitles,
-    // setShowSubtitles, // Not exposing directly
     editingSubtitleId,
     isLoadingSubtitles,
     subtitleError,
@@ -142,6 +175,5 @@ export function useSubtitles({ loadCondition, initialTaskId }: UseSubtitlesProps
     toggleEditMode,
     closeSubtitlesPanel,
     resetSubtitlesState, // Expose the reset function
-    // panelClosedByUserRef // Internal ref, probably not needed outside
   };
 } 

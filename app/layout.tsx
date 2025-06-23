@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import "./globals.css";
-import { ClientProviders } from "./client-providers";
+import ClientProviders from "./client-providers";
+import { auth } from "@/auth";
 
 const defaultUrl = process.env.VERCEL_URL
   ? `https://${process.env.VERCEL_URL}`
@@ -46,11 +47,13 @@ export const metadata: Metadata = {
   },
 };
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const session = await auth();
+
   return (
     <html lang="zh-CN" suppressHydrationWarning>
       <head>
@@ -62,11 +65,9 @@ export default function RootLayout({
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
       </head>
       <body className="font-sans antialiased">
-        <ClientProviders>
+        <ClientProviders session={session}>
           {children}
         </ClientProviders>
-        
-        
       </body>
     </html>
   );

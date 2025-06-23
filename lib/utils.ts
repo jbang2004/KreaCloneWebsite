@@ -9,11 +9,11 @@ export function cn(...inputs: ClassValue[]) {
 }
 
 /**
- * Check if required Supabase environment variables are set
+ * Check if required NextAuth.js environment variables are set
  */
 export const hasEnvVars = 
-  process.env.NEXT_PUBLIC_SUPABASE_URL && 
-  process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+  process.env.NEXTAUTH_SECRET &&
+  process.env.NEXTAUTH_URL;
 
 /**
  * Format price with currency and optional decimal places

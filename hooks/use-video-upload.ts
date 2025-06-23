@@ -1,6 +1,6 @@
 import { useState } from 'react';
-import { createClient } from '@/lib/supabase/client';
-import { User } from '@supabase/supabase-js';
+import { useSession } from 'next-auth/react';
+import { createVideoRecord } from '@/app/actions';
 
 interface VideoUploadState {
   isUploading: boolean;
@@ -15,7 +15,7 @@ interface VideoUploadState {
 }
 
 interface VideoUploadActions {
-  initiateUpload: (fileToUpload: File, user: User) => Promise<void>;
+  initiateUpload: (fileToUpload: File) => Promise<void>;
   resetUploadState: () => void;
 }
 
@@ -42,6 +42,7 @@ const R2_CUSTOM_DOMAIN = process.env.NEXT_PUBLIC_R2_CUSTOM_DOMAIN as string;
 const MULTIPART_API_PATH = '/api/r2-presigned-url';
 
 export function useVideoUpload(): VideoUploadState & VideoUploadActions {
+  const { data: session } = useSession();
   const [isUploading, setIsUploading] = useState<boolean>(false);
   const [uploadProgress, setUploadProgress] = useState<number>(0);
   const [uploadComplete, setUploadComplete] = useState<boolean>(false);
@@ -51,8 +52,6 @@ export function useVideoUpload(): VideoUploadState & VideoUploadActions {
   const [uploadError, setUploadError] = useState<Error | null>(null);
   const [processingError, setProcessingError] = useState<Error | null>(null);
   const [taskId, setTaskId] = useState<string | null>(null);
-
-  const supabase = createClient();
 
   const resetUploadState = () => {
     setIsUploading(false);
@@ -91,7 +90,7 @@ export function useVideoUpload(): VideoUploadState & VideoUploadActions {
         throw new Error(`获取分块上传URL失败: ${urlResponse.statusText}`);
       }
 
-      const { partUrl } = await urlResponse.json();
+      const { partUrl } = await urlResponse.json() as any;
 
       // 上传分块
       const uploadResponse = await fetch(partUrl, {
@@ -148,7 +147,7 @@ export function useVideoUpload(): VideoUploadState & VideoUploadActions {
         throw new Error('初始化分块上传失败');
       }
 
-      const { uploadId: newUploadId } = await initiateResponse.json();
+      const { uploadId: newUploadId } = await initiateResponse.json() as any;
       uploadId = newUploadId;
 
       // 2. 分割文件为块
@@ -227,12 +226,17 @@ export function useVideoUpload(): VideoUploadState & VideoUploadActions {
     }
   };
 
-  const initiateUpload = async (fileToUpload: File, user: User) => {
+  const initiateUpload = async (fileToUpload: File) => {
+    if (!session?.user?.id) {
+      setUploadError(new Error('User not authenticated'));
+      return;
+    }
+
     resetUploadState();
     setIsUploading(true);
 
     const fileExt = fileToUpload.name.split('.').pop();
-    const objectName = `${user.id}_${Date.now()}.${fileExt}`;
+    const objectName = `${session.user.id}_${Date.now()}.${fileExt}`;
     const bucketName = R2_BUCKET_NAME;
 
     try {
@@ -253,30 +257,23 @@ export function useVideoUpload(): VideoUploadState & VideoUploadActions {
       const height = tmpVideo.videoHeight;
       URL.revokeObjectURL(metadataUrl);
 
-      // 插入视频记录到数据库
-      const videoDataToInsert = {
-        user_id: user.id,
-        file_name: fileToUpload.name,
-        storage_path: objectName,
-        bucket_name: bucketName,
-        status: 'pending',
-        video_width: width,
-        video_height: height,
-      };
+      // 使用 Server Action 插入视频记录到数据库
+      const result = await createVideoRecord({
+        fileName: fileToUpload.name,
+        storagePath: objectName,
+        bucketName: bucketName,
+        videoWidth: width,
+        videoHeight: height,
+      });
 
-      const { data: insertedData, error: dbError } = await supabase
-        .from('videos')
-        .insert([videoDataToInsert])
-        .select('id');
-
-      if (dbError) {
-        console.error("数据库插入失败:", dbError);
-        setUploadError(new Error(dbError.message));
+      if (result.error) {
+        console.error("数据库插入失败:", result.error);
+        setUploadError(new Error(result.error));
         setIsUploading(false);
         return;
       }
 
-      const videoId = insertedData?.[0]?.id;
+      const videoId = result.videoId;
       if (videoId) {
         // 上传完成，进入预处理阶段
         setIsUploading(false);
@@ -306,7 +303,7 @@ export function useVideoUpload(): VideoUploadState & VideoUploadActions {
             throw new Error(errMsg);
           }
 
-          const respJson = await res.json();
+          const respJson = await res.json() as any;
           const newTaskId = respJson.task_id;
           setTaskId(newTaskId);
 
@@ -314,16 +311,16 @@ export function useVideoUpload(): VideoUploadState & VideoUploadActions {
           let status = '';
           while (status !== 'preprocessed' && status !== 'error') {
             await new Promise(r => setTimeout(r, 3000));
-            const { data: taskData, error: taskError } = await supabase
-              .from('tasks')
-              .select('status')
-              .eq('task_id', newTaskId)
-              .single();
-            if (taskError) {
-              console.error("轮询任务状态失败:", taskError);
+            
+            // 使用新的 API 路由查询状态
+            const statusRes = await fetch(`/api/tasks/${newTaskId}/status`);
+            if (statusRes.ok) {
+              const taskData = await statusRes.json() as any;
+              status = taskData.status;
+            } else {
+              console.error("轮询任务状态失败:", statusRes.statusText);
               continue;
             }
-            status = taskData.status;
           }
 
           if (status === 'preprocessed') {

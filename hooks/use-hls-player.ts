@@ -1,5 +1,4 @@
 import { useState, useEffect, useRef } from 'react';
-import { createClient } from '@/lib/supabase/client';
 
 interface HLSPlayerState {
   isGenerating: boolean;
@@ -59,27 +58,24 @@ export function useHLSPlayer(): HLSPlayerState & HLSPlayerActions {
       });
 
       if (!response.ok) {
-        const errorData = await response.json();
+        const errorData = await response.json() as any;
         throw new Error(errorData.detail || 'TTS 请求失败');
       }
 
       // 开始轮询任务状态，检查HLS播放列表是否可用
       pollIntervalRef.current = setInterval(async () => {
         try {
-          const { data: taskData, error: taskError } = await createClient()
-            .from('tasks')
-            .select('status, hls_playlist_url')
-            .eq('task_id', taskId)
-            .single();
-
-          if (taskError) {
-            console.error("轮询任务状态失败:", taskError);
+          const response = await fetch(`/api/tasks/${taskId}/status`);
+          if (!response.ok) {
+            console.error("轮询任务状态失败:", response.statusText);
             return;
           }
 
+          const taskData = await response.json() as any;
+
           // 检查是否有HLS播放列表URL
-          if (taskData.hls_playlist_url && !canPlay) {
-            setHlsPlaylistUrl(taskData.hls_playlist_url);
+          if (taskData.hlsPlaylistUrl && !canPlay) {
+            setHlsPlaylistUrl(taskData.hlsPlaylistUrl);
             setCanPlay(true);
             // 注意：这里不设置 isGenerating 为 false，保持生成中状态
           }

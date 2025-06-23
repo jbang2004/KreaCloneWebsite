@@ -7,7 +7,7 @@ import { cn } from "@/lib/utils";
 import { useMobile } from "@/hooks/use-mobile";
 import { useLanguage, TranslationKey } from "@/hooks/use-language";
 import { useTheme } from "next-themes";
-import { useAuth } from "@/contexts/AuthContext";
+import { useSession, signOut } from "next-auth/react";
 import Image from "next/image";
 import { 
   HomeIcon, 
@@ -21,13 +21,15 @@ import {
   XMarkIcon, 
   UserIcon,
   WalletIcon,
-  ArrowRightOnRectangleIcon
+  ArrowRightOnRectangleIcon,
+  ChevronDownIcon
 } from "@heroicons/react/24/solid";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
+  DropdownMenuSeparator,
 } from "@/components/ui/dropdown-menu";
 
 type NavItem = {
@@ -66,18 +68,41 @@ export default function Header() {
   const isMobile = useMobile();
   const { t, language: currentLanguage, setLanguage } = useLanguage();
   const { theme, setTheme } = useTheme();
-  const { user, signOut, loading: authLoading } = useAuth();
+  const { data: session, status, update } = useSession();
+  const user = session?.user;
+  const authLoading = status === 'loading';
 
   const toggleMenu = () => setIsOpen(!isOpen);
   const closeMenu = () => setIsOpen(false);
   
   const handleLogout = async () => {
-    await signOut();
+    try {
+      await signOut({ 
+        callbackUrl: '/',
+        redirect: true 
+      });
+      closeMenu();
+    } catch (error) {
+      console.error('Logout error:', error);
+      closeMenu();
+    }
   };
 
   // 预加载路由
   const handleHoverPrefetch = (path: string) => {
     router.prefetch(path);
+  };
+
+  // 获取用户显示名称
+  const getUserDisplayName = () => {
+    if (!user) return '';
+    return user.name || user.email || 'User';
+  };
+
+  // 获取用户头像
+  const getUserAvatar = () => {
+    if (user?.image) return user.image;
+    return null;
   };
 
   return (
@@ -102,7 +127,7 @@ export default function Header() {
           </Link>
         </div>
 
-        {/* Navigation - Floating center menu like Krea.ai */}
+        {/* Navigation - Floating center menu */}
         <div 
           className="hidden md:flex items-center bg-gray-100/90 dark:bg-gray-800/80 rounded-2xl px-3 py-2 absolute left-1/2 transform -translate-x-1/2 shadow-sm backdrop-blur-md"
         >
@@ -150,8 +175,9 @@ export default function Header() {
           </button>
         )}
 
-        {/* Right side menu - Floating buttons like Krea.ai */}
-        <div className="flex items-center space-x-4">
+        {/* Right side menu - Floating buttons */}
+        <div className="flex items-center space-x-2 sm:space-x-3 md:space-x-4">
+          {/* Theme toggle */}
           <button
             onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
             className="hidden xl:flex h-11 w-11 items-center justify-center rounded-xl bg-white/60 dark:bg-gray-800/60 hover:bg-white/70 dark:hover:bg-gray-700/70 transition-colors shadow-sm backdrop-blur-md"
@@ -160,6 +186,7 @@ export default function Header() {
             {theme === "dark" ? <SunIcon className="h-5 w-5" /> : <MoonIcon className="h-5 w-5" />}
           </button>
 
+          {/* Language switch */}
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <button 
@@ -183,42 +210,74 @@ export default function Header() {
             </DropdownMenuContent>
           </DropdownMenu>
 
-          {/* Floating button for Pricing */}
+          {/* Pricing link */}
           <Link 
             href="/pricing" 
             prefetch
-            className="hidden lg:block py-2.5 px-6 rounded-xl bg-gray-200/60 dark:bg-gray-700/60 text-sm font-medium hover:bg-gray-300/70 dark:hover:bg-gray-600/70 transition-colors shadow-sm backdrop-blur-md"
+            className="hidden lg:block py-2.5 px-4 sm:px-6 rounded-xl bg-gray-200/60 dark:bg-gray-700/60 text-sm font-medium hover:bg-gray-300/70 dark:hover:bg-gray-600/70 transition-colors shadow-sm backdrop-blur-md"
           >
             {t("pricing")}
           </Link>
           
-          {/* 用户未登录时显示登录/注册按钮，已登录时显示退出按钮 */}
+          {/* User authentication section */}
           {authLoading ? (
-            <div className="h-8 w-20 bg-gray-200 dark:bg-gray-700 animate-pulse rounded-xl"></div>
+            <div className="h-11 w-24 bg-gray-200 dark:bg-gray-700 animate-pulse rounded-xl"></div>
           ) : user ? (
-            <button
-              onClick={handleLogout}
-              className="hidden md:flex items-center py-2.5 px-3 sm:px-4 md:px-6 rounded-xl bg-red-600/90 hover:bg-red-700/90 text-white text-xs sm:text-sm font-medium transition-colors shadow-sm backdrop-blur-md"
-              disabled={authLoading}
-            >
-              <ArrowRightOnRectangleIcon className="h-5 w-5 mr-1" />
-              <span>{t("logout")}</span>
-            </button>
+            // 已登录用户 - 显示用户菜单
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <button className="hidden md:flex items-center py-2 px-3 rounded-xl bg-white/60 dark:bg-gray-800/60 hover:bg-white/70 dark:hover:bg-gray-700/70 transition-colors shadow-sm backdrop-blur-md">
+                  {getUserAvatar() ? (
+                    <Image
+                      src={getUserAvatar()!}
+                      alt={getUserDisplayName()}
+                      width={24}
+                      height={24}
+                      className="w-6 h-6 rounded-full mr-2"
+                    />
+                  ) : (
+                    <UserIcon className="h-5 w-5 mr-2" />
+                  )}
+                  <span className="text-sm font-medium max-w-20 truncate">
+                    {getUserDisplayName()}
+                  </span>
+                  <ChevronDownIcon className="h-4 w-4 ml-1" />
+                </button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end" className="w-48">
+                <div className="px-3 py-2 text-sm text-gray-700 dark:text-gray-300">
+                  <div className="font-medium truncate">{getUserDisplayName()}</div>
+                  {user.email && (
+                    <div className="text-xs text-gray-500 dark:text-gray-400 truncate">
+                      {user.email}
+                    </div>
+                  )}
+                </div>
+                <DropdownMenuSeparator />
+                <DropdownMenuItem onClick={handleLogout} className="text-red-600 dark:text-red-400">
+                  <ArrowRightOnRectangleIcon className="h-4 w-4 mr-2" />
+                  {t("logout")}
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
           ) : (
+            // 未登录用户 - 显示登录按钮
             <Link 
               href="/auth" 
               prefetch
-              className="hidden md:block py-2.5 px-3 sm:px-4 md:px-6 rounded-xl bg-blue-600/90 hover:bg-blue-700/90 text-white text-xs sm:text-sm font-medium transition-colors shadow-sm backdrop-blur-md"
+              className="hidden md:flex items-center py-2.5 px-3 sm:px-4 md:px-6 rounded-xl bg-blue-600/90 hover:bg-blue-700/90 text-white text-xs sm:text-sm font-medium transition-colors shadow-sm backdrop-blur-md"
             >
-              {t("signUp")}
+              <UserIcon className="h-4 w-4 mr-1 sm:mr-2" />
+              <span>{t("signUp")}</span>
             </Link>
           )}
         </div>
       </div>
 
-      {/* Mobile Menu - 简化为与原项目一致的样式 */}
+      {/* Mobile Menu */}
       {isMobile && isOpen && (
-        <div className="md:hidden absolute top-20 left-2 right-2 sm:left-4 sm:right-4 bg-white/70 dark:bg-gray-800/70 backdrop-blur-xl rounded-xl shadow-lg p-3 sm:p-4 space-y-2 z-50">
+        <div className="md:hidden absolute top-20 left-2 right-2 sm:left-4 sm:right-4 bg-white/90 dark:bg-gray-800/90 backdrop-blur-xl rounded-xl shadow-lg p-3 sm:p-4 space-y-2 z-50">
+          {/* Navigation items */}
           {NavItems.map((item) => (
             <Link 
               key={item.path} 
@@ -227,58 +286,103 @@ export default function Header() {
               onClick={closeMenu}
               onMouseEnter={() => handleHoverPrefetch(item.path)}
               className={cn(
-                "flex items-center space-x-2 p-2 transition-colors",
+                "flex items-center space-x-3 p-3 transition-colors rounded-xl",
                 pathname === item.path 
-                  ? "bg-white/80 dark:bg-gray-700/80 backdrop-blur-sm rounded-xl px-4" 
-                  : "hover:bg-white/50 dark:hover:bg-gray-700/50 rounded-xl"
+                  ? "bg-white/80 dark:bg-gray-700/80 shadow-sm" 
+                  : "hover:bg-white/60 dark:hover:bg-gray-700/60"
               )}
             >
-              <span className="w-8 h-8 flex items-center justify-center">
-                <item.icon className="h-5 w-5" />
-              </span>
+              <item.icon className="h-5 w-5" />
               <span className="font-medium">{t(item.labelKey)}</span>
             </Link>
           ))}
-          <div className="border-t border-white/20 dark:border-gray-700/50 pt-2 mt-2 flex flex-col space-y-2">
+          
+          {/* Divider */}
+          <div className="border-t border-gray-200/50 dark:border-gray-700/50 pt-2 mt-2 space-y-2">
+            {/* Pricing */}
             <Link 
               href="/pricing" 
               prefetch
               onClick={closeMenu} 
               onMouseEnter={() => handleHoverPrefetch("/pricing")}
-              className="flex items-center p-2 rounded-xl hover:bg-white/50 dark:hover:bg-gray-700/50 transition-colors"
+              className="flex items-center space-x-3 p-3 rounded-xl hover:bg-white/60 dark:hover:bg-gray-700/60 transition-colors"
             >
-              <span className="w-8 h-8 flex items-center justify-center">
-                <WalletIcon className="h-5 w-5" />
-              </span>
+              <WalletIcon className="h-5 w-5" />
               <span className="font-medium">{t("pricing")}</span>
             </Link>
             
+            {/* Theme toggle on mobile */}
+            <button
+              onClick={() => {
+                setTheme(theme === "dark" ? "light" : "dark");
+                closeMenu();
+              }}
+              className="flex items-center space-x-3 p-3 rounded-xl hover:bg-white/60 dark:hover:bg-gray-700/60 transition-colors w-full"
+            >
+              {theme === "dark" ? <SunIcon className="h-5 w-5" /> : <MoonIcon className="h-5 w-5" />}
+              <span className="font-medium">{theme === "dark" ? t("lightMode") : t("darkMode")}</span>
+            </button>
+            
+            {/* Language switch on mobile */}
+            <button
+              onClick={() => {
+                setLanguage(currentLanguage === "en" ? "zh" : "en");
+                closeMenu();
+              }}
+              className="flex items-center space-x-3 p-3 rounded-xl hover:bg-white/60 dark:hover:bg-gray-700/60 transition-colors w-full"
+            >
+              <GlobeAltIcon className="h-5 w-5" />
+              <span className="font-medium">
+                {currentLanguage === "en" ? t("chinese") : t("english")}
+              </span>
+            </button>
+            
+            {/* User section */}
             {authLoading ? (
-                <div className="h-10 bg-gray-200 dark:bg-gray-700 animate-pulse rounded-xl mx-2"></div>
+              <div className="h-12 bg-gray-200 dark:bg-gray-700 animate-pulse rounded-xl mx-1"></div>
             ) : user ? (
-              <button
-                onClick={() => {
-                  handleLogout();
-                  closeMenu();
-                }}
-                className="flex items-center p-2 rounded-xl hover:bg-white/50 dark:hover:bg-gray-700/50 transition-colors text-red-600"
-              >
-                <span className="w-8 h-8 flex items-center justify-center">
+              <div className="space-y-2">
+                {/* User info */}
+                <div className="flex items-center space-x-3 p-3 bg-gray-100/60 dark:bg-gray-700/60 rounded-xl">
+                  {getUserAvatar() ? (
+                    <Image
+                      src={getUserAvatar()!}
+                      alt={getUserDisplayName()}
+                      width={32}
+                      height={32}
+                      className="w-8 h-8 rounded-full"
+                    />
+                  ) : (
+                    <UserIcon className="h-8 w-8 p-1 bg-gray-200 dark:bg-gray-600 rounded-full" />
+                  )}
+                  <div className="flex-1 min-w-0">
+                    <div className="font-medium text-sm truncate">{getUserDisplayName()}</div>
+                    {user.email && (
+                      <div className="text-xs text-gray-500 dark:text-gray-400 truncate">
+                        {user.email}
+                      </div>
+                    )}
+                  </div>
+                </div>
+                
+                {/* Logout button */}
+                <button
+                  onClick={handleLogout}
+                  className="flex items-center space-x-3 p-3 rounded-xl hover:bg-red-50 dark:hover:bg-red-900/20 transition-colors text-red-600 dark:text-red-400 w-full"
+                >
                   <ArrowRightOnRectangleIcon className="h-5 w-5" />
-                </span>
-                <span className="font-medium">{t("logout")}</span>
-              </button>
+                  <span className="font-medium">{t("logout")}</span>
+                </button>
+              </div>
             ) : (
               <Link 
                 href="/auth"
                 prefetch
                 onClick={closeMenu}
                 onMouseEnter={() => handleHoverPrefetch("/auth")}
-                className="flex items-center p-2 rounded-xl hover:bg-white/50 dark:hover:bg-gray-700/50 transition-colors"
+                className="flex items-center space-x-3 p-3 rounded-xl bg-blue-600/90 hover:bg-blue-700/90 text-white transition-colors"
               >
-                <span className="w-8 h-8 flex items-center justify-center">
-                  <UserIcon className="h-5 w-5" />
-                </span>
+                <UserIcon className="h-5 w-5" />
                 <span className="font-medium">{t("signUp")}</span>
               </Link>
             )}

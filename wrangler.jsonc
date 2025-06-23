@@ -11,6 +11,13 @@
     "directory": ".open-next/assets",
     "binding": "ASSETS"
   },
+  "d1_databases": [
+    {
+      "binding": "DB",
+      "database_name": "waveshfit-database",
+      "database_id": "d470dd8b-cd07-468a-8090-706b152f56dd"
+    }
+  ],
   "services": [
     {
       "binding": "WORKER_SELF_REFERENCE",
@@ -18,6 +25,7 @@
     }
   ],
   "vars": {
-    "NEXTJS_ENV": "production"
+    "NEXTJS_ENV": "production",
+    "NEXTAUTH_URL": "https://www.waveshift.net"
   }
 } 

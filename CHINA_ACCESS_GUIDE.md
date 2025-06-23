@@ -6,7 +6,8 @@
 
 ### 当前状态
 - **部署平台**: Cloudflare Workers (全球分布式)
-- **访问域名**: https://krea-clone-website.jbang20042004.workers.dev
+- **访问域名**: https://www.waveshift.net (主域名)
+- **Worker域名**: https://krea-clone-website.jbang20042004.workers.dev
 - **IP地址**: 192.133.77.191 (美国西雅图)
 - **实际处理节点**: 新加坡 (SIN) - 根据CF-Ray头信息
 
@@ -74,11 +75,11 @@ s deploy
 
 ### 立即可行的解决方案
 
-1. **购买域名** (如 krea-clone.com)
+1. **购买域名** (如 waveshift.com)
 2. **配置Cloudflare DNS**:
    ```
    A记录: @ -> 192.0.2.1 (Cloudflare代理)
-   CNAME记录: www -> krea-clone-website.jbang20042004.workers.dev
+   CNAME记录: www -> waveshfit-website.jbang20042004.workers.dev
    ```
 3. **更新Workers配置**
 4. **测试访问**

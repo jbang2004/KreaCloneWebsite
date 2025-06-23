@@ -3,7 +3,7 @@ import dynamic from "next/dynamic";
 import { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "定价方案 - Krea Clone",
+  title: "定价方案 - WaveShift",
   description: "选择适合您需求的AI视频翻译和语音转换服务方案",
   keywords: ["AI翻译", "视频翻译", "语音转换", "定价", "订阅"],
 };

@@ -1,270 +1,157 @@
-<a href="https://demo-nextjs-with-supabase.vercel.app/">
-  <img alt="Next.js and Supabase Starter Kit - the fastest way to build apps with Next.js and Supabase" src="https://demo-nextjs-with-supabase.vercel.app/opengraph-image.png">
-  <h1 align="center">Next.js and Supabase Starter Kit</h1>
-</a>
+# 声渡 (WaveShift) - AI音视频处理平台
 
-<p align="center">
- The fastest way to build apps with Next.js and Supabase
-</p>
+专业的AI音视频处理平台，提供音频转录、文本配音、视频翻译等服务。声之所至，渡见世界。
 
-<p align="center">
-  <a href="#features"><strong>Features</strong></a> ·
-  <a href="#demo"><strong>Demo</strong></a> ·
-  <a href="#deploy-to-vercel"><strong>Deploy to Vercel</strong></a> ·
-  <a href="#clone-and-run-locally"><strong>Clone and run locally</strong></a> ·
-  <a href="#feedback-and-issues"><strong>Feedback and issues</strong></a>
-  <a href="#more-supabase-examples"><strong>More Examples</strong></a>
-</p>
-<br/>
+## ✨ 特性
 
-## Features
+- 🎵 **音频转录** - 高精度语音转文字
+- 🗣️ **文本配音** - 自然语音合成
+- 🎬 **视频翻译** - 多语言视频翻译
+- 🔐 **用户认证** - 支持邮箱和Google登录
+- 🌍 **多语言** - 中英文界面支持
+- 🎨 **现代UI** - 诧寂美学设计风格
 
-- Works across the entire [Next.js](https://nextjs.org) stack
-  - App Router
-  - Pages Router
-  - Middleware
-  - Client
-  - Server
-  - It just works!
-- supabase-ssr. A package to configure Supabase Auth to use cookies
-- Password-based authentication block installed via the [Supabase UI Library](https://supabase.com/ui/docs/nextjs/password-based-auth)
-- Styling with [Tailwind CSS](https://tailwindcss.com)
-- Components with [shadcn/ui](https://ui.shadcn.com/)
-- Optional deployment with [Supabase Vercel Integration and Vercel deploy](#deploy-your-own)
-  - Environment variables automatically assigned to Vercel project
+## 🛠️ 技术栈
 
-## Demo
+- **框架**: Next.js 15 (App Router)
+- **认证**: NextAuth.js v5 (JWT策略)
+- **数据库**: Cloudflare D1 + Drizzle ORM
+- **存储**: Cloudflare R2
+- **部署**: Cloudflare Workers
+- **样式**: Tailwind CSS + shadcn/ui
+- **语言**: TypeScript
 
-You can view a fully working demo at [demo-nextjs-with-supabase.vercel.app](https://demo-nextjs-with-supabase.vercel.app/).
+## 🚀 快速开始
 
-## Deploy to Vercel
+### 环境要求
 
-Vercel deployment will guide you through creating a Supabase account and project.
+- Node.js 18+
+- npm 或 pnpm
+- Cloudflare 账户
 
-After installation of the Supabase integration, all relevant environment variables will be assigned to the project so the deployment is fully functioning.
+### 本地开发
 
-[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https%3A%2F%2Fgithub.com%2Fvercel%2Fnext.js%2Ftree%2Fcanary%2Fexamples%2Fwith-supabase&project-name=nextjs-with-supabase&repository-name=nextjs-with-supabase&demo-title=nextjs-with-supabase&demo-description=This+starter+configures+Supabase+Auth+to+use+cookies%2C+making+the+user%27s+session+available+throughout+the+entire+Next.js+app+-+Client+Components%2C+Server+Components%2C+Route+Handlers%2C+Server+Actions+and+Middleware.&demo-url=https%3A%2F%2Fdemo-nextjs-with-supabase.vercel.app%2F&external-id=https%3A%2F%2Fgithub.com%2Fvercel%2Fnext.js%2Ftree%2Fcanary%2Fexamples%2Fwith-supabase&demo-image=https%3A%2F%2Fdemo-nextjs-with-supabase.vercel.app%2Fopengraph-image.png)
+1. **克隆项目**
+```bash
+git clone <repository-url>
+cd KreaCloneWebsite
+```
 
-The above will also clone the Starter kit to your GitHub, you can clone that locally and develop locally.
-
-If you wish to just develop locally and not deploy to Vercel, [follow the steps below](#clone-and-run-locally).
-
-## Clone and run locally
-
-1. You'll first need a Supabase project which can be made [via the Supabase dashboard](https://database.new)
-
-2. Create a Next.js app using the Supabase Starter template npx command
-
-   ```bash
-   npx create-next-app --example with-supabase with-supabase-app
-   ```
-
-   ```bash
-   yarn create next-app --example with-supabase with-supabase-app
-   ```
-
-   ```bash
-   pnpm create next-app --example with-supabase with-supabase-app
-   ```
-
-3. Use `cd` to change into the app's directory
-
-   ```bash
-   cd with-supabase-app
-   ```
-
-4. Rename `.env.example` to `.env.local` and update the following:
-
-   ```
-   NEXT_PUBLIC_SUPABASE_URL=[INSERT SUPABASE PROJECT URL]
-   NEXT_PUBLIC_SUPABASE_ANON_KEY=[INSERT SUPABASE PROJECT API ANON KEY]
-   ```
-
-   Both `NEXT_PUBLIC_SUPABASE_URL` and `NEXT_PUBLIC_SUPABASE_ANON_KEY` can be found in [your Supabase project's API settings](https://supabase.com/dashboard/project/_?showConnect=true)
-
-5. You can now run the Next.js local development server:
-
-   ```bash
-   npm run dev
-   ```
-
-   The starter kit should now be running on [localhost:3000](http://localhost:3000/).
-
-6. This template comes with the default shadcn/ui style initialized. If you instead want other ui.shadcn styles, delete `components.json` and [re-install shadcn/ui](https://ui.shadcn.com/docs/installation/next)
-
-> Check out [the docs for Local Development](https://supabase.com/docs/guides/getting-started/local-development) to also run Supabase locally.
-
-## Feedback and issues
-
-Please file feedback and issues over on the [Supabase GitHub org](https://github.com/supabase/supabase/issues/new/choose).
-
-## More Supabase examples
-
-- [Next.js Subscription Payments Starter](https://github.com/vercel/nextjs-subscription-payments)
-- [Cookie-based Auth and the Next.js 13 App Router (free course)](https://youtube.com/playlist?list=PL5S4mPUpp4OtMhpnp93EFSo42iQ40XjbF)
-- [Supabase Auth and the Next.js App Router](https://github.com/supabase/supabase/tree/master/examples/auth/nextjs)
-
-# KreaClone Website
-
-一个基于 Next.js 15 的现代化视频翻译和处理平台，现已配置为使用 OpenNext 部署到 Cloudflare Workers。
-
-## 🚀 技术栈
-
-- **前端框架**: Next.js 15 (App Router)
-- **UI 组件**: React 19 + Radix UI + TailwindCSS
-- **动画**: Framer Motion (LazyMotion 优化)
-- **状态管理**: React Query + Context API
-- **认证**: Supabase Auth
-- **数据库**: Supabase
-- **部署**: Cloudflare Workers (OpenNext)
-- **样式**: TailwindCSS + CSS Modules
-
-## 📦 项目特性
-
-- ✅ 视频上传和处理
-- ✅ 多语言字幕翻译
-- ✅ 文本转语音 (TTS)
-- ✅ 音频转录
-- ✅ 用户认证和授权
-- ✅ 响应式设计
-- ✅ 深色/浅色主题切换
-- ✅ 国际化支持
-- ✅ 性能优化 (SSG + 懒加载)
-
-## 🛠 开发环境设置
-
-### 前置要求
-
-- Node.js v20.0.0 或更高版本
-- npm 或 yarn
-- Cloudflare 账户（用于部署）
-
-### 安装依赖
-
+2. **安装依赖**
 ```bash
 npm install
 ```
 
-### 环境变量配置
-
-1. 复制环境变量模板：
+3. **配置环境变量**
 ```bash
-cp .dev.vars .dev.vars.local
+cp env.example .dev.vars
+# 编辑 .dev.vars 文件，填入必要的环境变量
 ```
 
-2. 编辑 `.dev.vars.local` 文件，填入你的配置：
+4. **初始化数据库**
 ```bash
-NEXTJS_ENV=development
-NEXT_PUBLIC_SUPABASE_URL=your-supabase-url
-NEXT_PUBLIC_SUPABASE_ANON_KEY=your-supabase-anon-key
-NEXT_PUBLIC_BACKEND_URL=your-backend-url
-```
-
-### 本地开发
-
-```bash
-# 启动 Next.js 开发服务器
 npm run dev
-
-# 在 Cloudflare Workers 环境中预览
-npm run preview
+# 访问 http://localhost:3001/api/setup 初始化数据库
 ```
 
-## 🚀 部署到 Cloudflare Workers
-
-### 1. 登录 Cloudflare
-
+5. **启动开发服务器**
 ```bash
-npx wrangler login
+npm run dev
 ```
 
-### 2. 配置生产环境变量
-
-在 Cloudflare Dashboard 中设置环境变量，或使用命令行：
-
-```bash
-npx wrangler secret put NEXT_PUBLIC_SUPABASE_URL
-npx wrangler secret put NEXT_PUBLIC_SUPABASE_ANON_KEY
-npx wrangler secret put NEXT_PUBLIC_BACKEND_URL
-```
-
-### 3. 部署
-
-```bash
-# 构建并部署
-npm run deploy
-
-# 或者只上传新版本（不立即发布）
-npm run upload
-```
+访问 [http://localhost:3001](http://localhost:3001) 查看应用。
 
 ## 📁 项目结构
 
 ```
-├── app/                    # Next.js App Router 页面
-├── components/             # React 组件
-├── hooks/                  # 自定义 Hooks
-├── lib/                    # 工具库和配置
-├── contexts/               # React Context
-├── types/                  # TypeScript 类型定义
-├── public/                 # 静态资源
-├── wrangler.jsonc          # Cloudflare Workers 配置
-├── open-next.config.ts     # OpenNext 配置
-└── .dev.vars               # 开发环境变量模板
+KreaCloneWebsite/
+├── app/                    # Next.js App Router
+│   ├── api/               # API 路由
+│   ├── auth/              # 认证相关页面
+│   ├── actions.ts         # Server Actions
+│   └── ...
+├── components/            # React 组件
+│   ├── ui/               # shadcn/ui 组件
+│   └── ...
+├── db/                   # 数据库相关
+│   ├── schema.ts         # 数据库模式
+│   └── migrations/       # 数据库迁移
+├── hooks/                # 自定义 Hooks
+├── lib/                  # 工具函数
+├── auth.ts              # NextAuth 配置
+└── wrangler.jsonc       # Cloudflare Workers 配置
 ```
 
-## 🎯 性能优化
+## 🌐 部署
 
-项目已实现多项性能优化：
+### Cloudflare Workers 部署
 
-- **代码分割**: 动态导入重型组件
-- **图片优化**: WebP/AVIF 格式支持
-- **静态生成**: 大部分页面预渲染
-- **懒加载**: Framer Motion LazyMotion
-- **缓存策略**: 静态资源长期缓存
-- **包体积优化**: 首屏 JS 仅 102KB
-
-## 🔧 配置文件说明
-
-- `wrangler.jsonc`: Cloudflare Workers 配置
-- `open-next.config.ts`: OpenNext 适配器配置
-- `next.config.ts`: Next.js 配置
-- `tailwind.config.ts`: TailwindCSS 配置
-- `public/_headers`: 静态资源缓存配置
-
-## 📊 构建信息
-
-- **First Load JS**: 102 KB (优化后)
-- **Worker 大小**: ~1.5 MB (gzip 压缩后)
-- **支持的 Next.js 特性**: SSG, SSR, Middleware, Image Optimization
-- **兼容性**: Cloudflare Workers Node.js Runtime
-
-## 🐛 故障排除
-
-### Node.js 版本问题
-确保使用 Node.js v20+：
+1. **构建项目**
 ```bash
-node --version  # 应该 >= v20.0.0
+npm run build
 ```
 
-### Worker 大小限制
-- 免费计划: 3 MiB (压缩后)
-- 付费计划: 10 MiB (压缩后)
+2. **部署到 Cloudflare**
+```bash
+npm run deploy
+```
 
-### 环境变量
-确保在 Cloudflare Dashboard 中正确设置所有环境变量。
+3. **设置环境变量**
+在 Cloudflare Workers 控制台中设置所需的环境变量。
 
-## 📚 相关文档
+### 环境变量配置
 
-- [部署指南](./DEPLOYMENT.md)
-- [Next.js 文档](https://nextjs.org/docs)
-- [OpenNext 文档](https://opennext.js.org/cloudflare)
-- [Cloudflare Workers 文档](https://developers.cloudflare.com/workers/)
+```bash
+# NextAuth.js 配置
+NEXTAUTH_SECRET=your-secret-key
+NEXTAUTH_URL=https://your-domain.com
+
+# Google OAuth (可选)
+GOOGLE_CLIENT_ID=your-google-client-id
+GOOGLE_CLIENT_SECRET=your-google-client-secret
+
+# Cloudflare R2 配置
+NEXT_PUBLIC_R2_CUSTOM_DOMAIN=your-r2-domain
+NEXT_PUBLIC_R2_BUCKET_NAME=your-bucket-name
+
+# 后端服务配置
+NEXT_PUBLIC_BACKEND_URL=your-backend-url
+NEXT_PUBLIC_BACKEND_PORT=your-backend-port
+```
+
+## 🔧 开发指南
+
+### 数据库操作
+
+```bash
+# 查看数据库状态
+npx wrangler d1 execute DB --local --command="SELECT * FROM users"
+
+# 重建数据库
+npm run db:rebuild
+```
+
+### 认证系统
+
+- 使用 NextAuth.js v5 的 JWT 策略
+- 支持邮箱/密码和 Google OAuth 登录
+- 用户数据存储在 Cloudflare D1 数据库
+
+### API 路由
+
+- `/api/auth/*` - NextAuth.js 认证路由
+- `/api/setup` - 数据库初始化
+- `/api/tasks/*` - 任务管理
+- `/api/subtitles/*` - 字幕处理
+
+## 📝 许可证
+
+MIT License
 
 ## 🤝 贡献
 
 欢迎提交 Issue 和 Pull Request！
 
-## �� 许可证
+---
 
-MIT License
+**声渡团队** - 声之所至，渡见世界

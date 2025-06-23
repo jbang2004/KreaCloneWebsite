@@ -1,9 +1,4 @@
-import { updateSession } from "@/lib/supabase/middleware";
-import { type NextRequest } from "next/server";
-
-export async function middleware(request: NextRequest) {
-  return await updateSession(request);
-}
+export { auth as middleware } from '@/auth';
 
 export const config = {
   matcher: [
@@ -13,8 +8,9 @@ export const config = {
      * - _next/image (image optimization files)
      * - favicon.ico (favicon file)
      * - images - .svg, .png, .jpg, .jpeg, .gif, .webp
+     * - api/setup (database setup endpoint)
      * Feel free to modify this pattern to include more paths.
      */
-    "/((?!_next/static|_next/image|favicon.ico|.*\\.(?:svg|png|jpg|jpeg|gif|webp)$).*)",
+    "/((?!_next/static|_next/image|favicon.ico|api/setup|.*\\.(?:svg|png|jpg|jpeg|gif|webp)$).*)",
   ],
 };

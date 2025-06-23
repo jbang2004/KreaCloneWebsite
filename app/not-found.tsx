@@ -3,7 +3,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { AlertCircle } from "lucide-react";
 
 export const metadata: Metadata = {
-  title: '页面未找到 - Krea Clone',
+  title: '页面未找到 - WaveShift',
   description: '抱歉，您访问的页面不存在。返回首页继续使用我们的AI服务。',
 };
 

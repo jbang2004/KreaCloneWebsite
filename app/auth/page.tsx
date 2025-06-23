@@ -1,7 +1,8 @@
 'use client';
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useTransition, useRef } from "react";
 import { useRouter } from "next/navigation";
+import { useSession } from "next-auth/react";
 import { m as motion } from "@/lib/lazy-motion";
 import { Mail, Lock } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -10,36 +11,59 @@ import { Separator } from "@/components/ui/separator";
 import { useToast } from "@/hooks/use-toast";
 import { useLanguage } from "@/hooks/use-language";
 import { useTheme } from "next-themes";
-import { useAuth } from "@/contexts/AuthContext";
 import WabiSabiBackground from "@/components/wabi-sabi-background";
+import { signInWithGoogle, signInWithCredentials, signUpWithCredentials } from "@/app/actions";
 
 export default function AuthPage() {
   const router = useRouter();
+  const { data: session, status, update } = useSession();
   const [isRegistering, setIsRegistering] = useState(false);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
+  const [isPending, startTransition] = useTransition();
   const { toast } = useToast();
   const { t, language } = useLanguage();
   const { theme } = useTheme();
-  const { user, signIn, signUp, loading, error: authError } = useAuth();
+  const redirectTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
   useEffect(() => {
-    if (user) {
-      router.push("/");
+    if (redirectTimeoutRef.current) {
+      clearTimeout(redirectTimeoutRef.current);
     }
-  }, [user, router]);
+
+    if (status === 'authenticated' && session?.user?.email) {
+      redirectTimeoutRef.current = setTimeout(() => {
+        router.push("/");
+      }, 100);
+    }
+
+    return () => {
+      if (redirectTimeoutRef.current) {
+        clearTimeout(redirectTimeoutRef.current);
+      }
+    };
+  }, [session, status, router]);
 
   const handleGoogleLogin = () => {
-    toast({
-      title: t("googleLoginNotAvailable"),
-      description: t("featureNotImplemented") + " (Supabase)",
-      variant: "destructive",
+    startTransition(async () => {
+      try {
+        await signInWithGoogle();
+      } catch (error) {
+        toast({
+          title: "Google Login Failed",
+          description: "请稍后再试",
+          variant: "destructive",
+        });
+      }
     });
   };
 
   const handleToggleMode = () => {
     setIsRegistering(!isRegistering);
+    setEmail("");
+    setPassword("");
+    setConfirmPassword("");
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -88,38 +112,100 @@ export default function AuthPage() {
       return;
     }
 
-    let opError = null;
-    if (isRegistering) {
-      const { error } = await signUp({ email, password });
-      opError = error;
-      if (!error) {
+    startTransition(async () => {
+      try {
+        if (isRegistering) {
+          toast({
+            title: "注册中...",
+            description: "正在创建您的账户",
+          });
+          
+          const result = await signUpWithCredentials(email, password);
+          
+          // 如果result为undefined，说明重定向成功
+          if (result === undefined) {
+            toast({
+              title: "注册成功！",
+              description: "正在重定向到首页...",
+            });
+            // 强制更新session状态
+            await update();
+            return;
+          }
+          
+          // 如果有result且不成功，显示错误
+          if (result && !result.success) {
+            toast({
+              title: "注册失败",
+              description: result.error || "请检查您的信息并重试",
+              variant: "destructive",
+            });
+            return;
+          }
+          
+        } else {
+          toast({
+            title: "登录中...",
+            description: "正在验证您的账户",
+          });
+          
+          const result = await signInWithCredentials(email, password);
+          
+          // 如果result为undefined，说明重定向成功
+          if (result === undefined) {
+            toast({
+              title: "登录成功！",
+              description: "正在重定向到首页...",
+            });
+            // 强制更新session状态
+            await update();
+            return;
+          }
+          
+          // 如果有result且不成功，显示错误
+          if (result && !result.success) {
+            toast({
+              title: "登录失败",
+              description: result.error || "请检查您的信息并重试",
+              variant: "destructive",
+            });
+            return;
+          }
+        }
+        
+      } catch (error: any) {
+        console.error('Auth error:', error);
+        
         toast({
-          title: "Registration Successful",
-          description: "Please check your email for verification (if enabled), then log in.",
+          title: isRegistering ? "注册失败" : "登录失败",
+          description: error?.message || "请检查您的信息并重试",
+          variant: "destructive",
         });
-        setIsRegistering(false);
-        setEmail("");
-        setPassword("");
-        setConfirmPassword("");
       }
-    } else {
-      const { error } = await signIn({ email, password });
-      opError = error;
-      if (!error) {
-        toast({
-            title: "Login Successful",
-        });
-      } 
-    }
-
-    if (opError) {
-      toast({
-        title: isRegistering ? "Registration Failed" : "Login Failed",
-        description: opError.message,
-        variant: "destructive",
-      });
-    }
+    });
   };
+
+  if (status === 'loading') {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto mb-4"></div>
+          <p className="text-muted-foreground">Loading...</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (status === 'authenticated' && session?.user?.email) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto mb-4"></div>
+          <p className="text-muted-foreground">Already logged in, redirecting...</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen relative overflow-hidden">
@@ -137,7 +223,7 @@ export default function AuthPage() {
           className="w-full md:w-[45%]"
         >
           <div className={`p-4 h-full rounded-3xl ${theme === "dark" ? "bg-zinc-900" : "bg-gray-100"}`}>
-            {/* 内容上部区域 - Krea Logo 与欢迎文字 */}
+            {/* 内容上部区域 - WaveShift Logo 与欢迎文字 */}
             <div className="h-[170px] mb-6 flex flex-col items-center justify-center">
               <div className="mb-4">
                 <svg width="56" height="56" viewBox="0 0 56 56" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -157,6 +243,7 @@ export default function AuthPage() {
                 variant="outline" 
                 className="w-full flex items-center justify-center gap-2 py-5 border-border rounded-xl"
                 onClick={handleGoogleLogin}
+                disabled={isPending}
               >
                 <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
                   <path d="M19.1 10.2C19.1 9.31 19.02 8.66 18.86 7.98H10V11.34H15.24C15.11 12.2 14.54 13.47 13.32 14.31L13.31 14.41L16.12 16.63L16.31 16.64C18.11 15 19.1 12.82 19.1 10.2Z" fill="#4285F4"/>
@@ -178,114 +265,123 @@ export default function AuthPage() {
                 </div>
               </div>
 
-              <form onSubmit={handleSubmit}>
-                <div className="space-y-4">
+              <form onSubmit={handleSubmit} className="space-y-4">
+                <div className="space-y-2">
                   <div className="relative">
+                    <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
                     <Input
                       type="email"
-                      placeholder={language === "zh" ? "邮箱" : "Email"}
-                      className="pl-10 py-5"
+                      placeholder={language === "zh" ? "邮箱地址" : "Email address"}
                       value={email}
-                      onChange={(e: React.ChangeEvent<HTMLInputElement>) => setEmail(e.target.value)}
-                      autoComplete="email"
+                      onChange={(e) => setEmail(e.target.value)}
+                      className="pl-10 h-12 rounded-xl border-border bg-background"
+                      disabled={isPending}
                     />
-                    <Mail className="h-5 w-5 absolute left-3 top-2.5 text-muted-foreground/60" />
                   </div>
-                  
+                </div>
+
+                <div className="space-y-2">
                   <div className="relative">
+                    <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
                     <Input
                       type="password"
                       placeholder={language === "zh" ? "密码" : "Password"}
-                      className="pl-10 py-5"
                       value={password}
-                      onChange={(e: React.ChangeEvent<HTMLInputElement>) => setPassword(e.target.value)}
-                      autoComplete={isRegistering ? "new-password" : "current-password"}
+                      onChange={(e) => setPassword(e.target.value)}
+                      className="pl-10 h-12 rounded-xl border-border bg-background"
+                      disabled={isPending}
                     />
-                    <Lock className="h-5 w-5 absolute left-3 top-2.5 text-muted-foreground/60" />
-                  </div>
-
-                  {isRegistering && (
-                    <div className="relative">
-                      <Input
-                        type="password"
-                        placeholder={language === "zh" ? "确认密码" : "Confirm Password"}
-                        className="pl-10 py-5"
-                        value={confirmPassword}
-                        onChange={(e: React.ChangeEvent<HTMLInputElement>) => setConfirmPassword(e.target.value)}
-                        autoComplete="new-password"
-                      />
-                      <Lock className="h-5 w-5 absolute left-3 top-2.5 text-muted-foreground/60" />
-                    </div>
-                  )}
-                  
-                  {authError && (
-                    <p className="text-sm text-red-500 text-center">{authError.message}</p>
-                  )}
-
-                  <Button 
-                    type="submit" 
-                    className="w-full bg-primary hover:bg-primary/90 text-primary-foreground py-5 rounded-xl"
-                    disabled={loading}
-                  >
-                    {loading 
-                        ? (language === "zh" ? "处理中..." : "Processing...") 
-                        : isRegistering 
-                            ? (language === "zh" ? "注册" : "Sign Up") 
-                            : (language === "zh" ? "登录" : "Login")}
-                    {loading && (
-                      <svg className="animate-spin ml-2 h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle><path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
-                    )}
-                  </Button>
-
-                  <div className="text-center text-sm">
-                    <span className="text-muted-foreground">
-                      {isRegistering 
-                        ? (language === "zh" ? "已有账户？" : "Already have an account?") 
-                        : (language === "zh" ? "还没有账户？" : "Don't have an account?")}
-                    </span>
-                    <button
-                      type="button"
-                      className="text-primary ml-1 hover:underline"
-                      onClick={handleToggleMode}
-                    >
-                      {isRegistering 
-                        ? (language === "zh" ? "登录" : "Login") 
-                        : (language === "zh" ? "注册" : "Sign up")}
-                    </button>
                   </div>
                 </div>
-              </form>
 
-              <p className="text-xs text-center text-muted-foreground mt-6">
-                {t("bySigningUp")} <a href="#" className="text-primary hover:underline">{t("termsOfService")}</a> &{" "}
-                <a href="#" className="text-primary hover:underline">{t("privacyPolicy")}</a>.
-              </p>
+                {isRegistering && (
+                  <div className="space-y-2">
+                    <div className="relative">
+                      <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                      <Input
+                        type="password"
+                        placeholder={language === "zh" ? "确认密码" : "Confirm password"}
+                        value={confirmPassword}
+                        onChange={(e) => setConfirmPassword(e.target.value)}
+                        className="pl-10 h-12 rounded-xl border-border bg-background"
+                        disabled={isPending}
+                      />
+                    </div>
+                  </div>
+                )}
+
+                <Button 
+                  type="submit" 
+                  className="w-full bg-primary hover:bg-primary/90 text-primary-foreground py-5 rounded-xl"
+                  disabled={isPending}
+                >
+                  {isPending 
+                      ? (language === "zh" ? "处理中..." : "Processing...") 
+                      : isRegistering 
+                          ? (language === "zh" ? "注册" : "Sign Up") 
+                          : (language === "zh" ? "登录" : "Login")}
+                  {isPending && (
+                    <svg className="animate-spin ml-2 h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle><path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
+                  )}
+                </Button>
+
+                <div className="text-center text-sm">
+                  <span className="text-muted-foreground">
+                    {isRegistering 
+                      ? (language === "zh" ? "已有账户？" : "Already have an account?") 
+                      : (language === "zh" ? "还没有账户？" : "Don't have an account?")}
+                  </span>
+                  <button
+                    type="button"
+                    className="text-primary ml-1 hover:underline"
+                    onClick={handleToggleMode}
+                    disabled={isPending}
+                  >
+                    {isRegistering 
+                      ? (language === "zh" ? "登录" : "Login") 
+                      : (language === "zh" ? "注册" : "Sign up")}
+                  </button>
+                </div>
+              </form>
             </div>
           </div>
         </motion.div>
-        
-        {/* Hero section - 蓝色卡片 */}
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ duration: 0.5, delay: 0.3 }}
-          className="hidden md:block md:w-[55%]"
+
+        {/* Feature Preview Section */}
+        <motion.div 
+          initial={{ opacity: 0, x: 20 }}
+          animate={{ opacity: 1, x: 0 }}
+          transition={{ duration: 0.5, delay: 0.2 }}
+          className="hidden md:flex md:w-[55%] items-center justify-center"
         >
-          <div className="bg-blue-600 rounded-3xl text-white p-8 w-full h-full flex flex-col justify-center">
-            <h2 className="text-3xl font-bold mb-4">{language === "zh" ? "创意无限，AI助力" : "Unlimited Creativity with AI"}</h2>
-            <p className="text-lg opacity-90 mb-6">
-              {language === "zh" 
-                ? "使用我们强大的AI工具，轻松实现音频转录、文本转语音和视频翻译。" 
-                : "Transform your content with our powerful AI tools for audio transcription, text-to-speech, and video translation."}
-            </p>
-            <ul className="space-y-4">
-              <li className="flex items-center"><svg className="h-5 w-5 mr-3 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" /></svg>{language === "zh" ? "专业音频转文字" : "Professional Audio Transcription"}</li>
-              <li className="flex items-center"><svg className="h-5 w-5 mr-3 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" /></svg>{language === "zh" ? "逼真的AI语音合成" : "Realistic AI Voice Synthesis"}</li>
-              <li className="flex items-center"><svg className="h-5 w-5 mr-3 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" /></svg>{language === "zh" ? "视频字幕翻译" : "Video Subtitle Translation"}</li>
-            </ul>
+          <div className={`p-8 w-full h-full rounded-3xl ${theme === "dark" ? "bg-zinc-900" : "bg-gray-100"}`}>
+            <div className="h-full flex flex-col justify-center">
+              <h2 className="text-3xl font-bold mb-4">
+                {language === "zh" ? "AI音视频处理平台" : "AI Audio & Video Platform"}
+              </h2>
+              <p className="text-muted-foreground mb-6">
+                {language === "zh" 
+                  ? "体验最先进的AI技术，轻松处理音频转录、文本配音、视频翻译等任务。" 
+                  : "Experience cutting-edge AI technology for audio transcription, text-to-speech, video translation and more."}
+              </p>
+              <div className="space-y-3">
+                <div className="flex items-center space-x-3">
+                  <div className="w-2 h-2 bg-green-500 rounded-full"></div>
+                  <span>{language === "zh" ? "实时音频转录" : "Real-time Audio Transcription"}</span>
+                </div>
+                <div className="flex items-center space-x-3">
+                  <div className="w-2 h-2 bg-blue-500 rounded-full"></div>
+                  <span>{language === "zh" ? "多语言文本配音" : "Multi-language Text-to-Speech"}</span>
+                </div>
+                <div className="flex items-center space-x-3">
+                  <div className="w-2 h-2 bg-purple-500 rounded-full"></div>
+                  <span>{language === "zh" ? "智能视频翻译" : "Intelligent Video Translation"}</span>
+                </div>
+              </div>
+            </div>
           </div>
         </motion.div>
-        </div>
+      </div>
       </div>
     </div>
   );

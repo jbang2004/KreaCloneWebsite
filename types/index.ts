@@ -1,3 +1,6 @@
+// 导入Cloudflare Workers的类型
+/// <reference types="@cloudflare/workers-types" />
+
 export interface Subtitle {
   id: string;
   startTime: string;
@@ -18,4 +21,15 @@ export interface AudioVideoFeature {
   buttonLink: string;
   icon: string;
   status: 'available' | 'coming-soon';
+}
+
+// Cloudflare环境变量类型定义
+export interface CloudflareEnv {
+  DB: D1Database;
+  NEXTAUTH_SECRET?: string;
+  AUTH_SECRET?: string;
+  GOOGLE_CLIENT_ID?: string;
+  GOOGLE_CLIENT_SECRET?: string;
+  // 添加其他环境变量
+  [key: string]: any;
 } 

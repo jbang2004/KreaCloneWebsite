@@ -3,14 +3,13 @@
 import { useState, useRef, useEffect } from "react";
 import { useLanguage } from "@/hooks/use-language";
 import { useTheme } from "next-themes";
-import { useAuth } from "@/contexts/AuthContext";
+import { useSession } from "next-auth/react";
 import { useMediaQuery } from "@/hooks/use-media-query";
 import { useVideoUpload } from "@/hooks/use-video-upload";
 import { useSubtitles } from "@/hooks/use-subtitles";
 import { useVideoPlayer } from "@/hooks/use-video-player";
 import { useHLSPlayer } from "@/hooks/use-hls-player";
 import { cn } from "@/lib/utils";
-import { createClient } from "@/lib/supabase/client";
 import { getTranslations, Language as AppLanguage } from "@/lib/translations";
 import dynamic from "next/dynamic";
 import { m as motion } from "@/lib/lazy-motion";
@@ -48,7 +47,9 @@ export default function VideoTranslation() {
   const { resolvedTheme } = useTheme();
   const T = getTranslations(currentInterfaceLanguage as AppLanguage);
 
-  const { user: currentUser, session: currentSession, loading: authLoading } = useAuth();
+  const { data: session, status } = useSession();
+  const currentUser = session?.user;
+  const authLoading = status === 'loading';
   const isMobile = useMediaQuery('(max-width: 767px)');
   
   const [targetLanguage, setTargetLanguage] = useState<string>("en");
@@ -61,7 +62,7 @@ export default function VideoTranslation() {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const subtitlesContainerRef = useRef<HTMLDivElement>(null);
 
-  const supabase = createClient();
+  // NextAuth.js 用户会话管理
 
   const {
     isUploading,
@@ -169,23 +170,13 @@ export default function VideoTranslation() {
       alert("Auth loading, please wait...");
       return;
     }
-    let userIdForUpload = currentUser?.id;
+    const userIdForUpload = currentUser?.id;
     if (!userIdForUpload) {
       alert(T.alertMessages.userInfoIncomplete);
-      const { data: { user: newUser }, error: userError } = await supabase.auth.getUser();
-      if (userError || !newUser) {
-        alert(T.alertMessages.userInfoRefreshFailed);
-        return;
-      }
-      if (newUser?.id) {
-        userIdForUpload = newUser.id;
-      } else {
-        alert(T.alertMessages.userInfoIncomplete);
-        return;
-      }
+      return;
     }
     if (userIdForUpload) {
-      await initiateUpload(fileToUpload, currentUser!); 
+      await initiateUpload(fileToUpload); 
     }
   };
 

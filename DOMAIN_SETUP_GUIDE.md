@@ -2,8 +2,17 @@
 
 ## 当前状态
 - ✅ Worker 已成功部署到: https://krea-clone-website.jbang20042004.workers.dev
+- ✅ 自定义域名已配置: https://www.waveshift.net
 - 🎯 目标域名: www.futureai.click (AWS Route53)
 - 📍 需要配置: DNS 记录指向 Cloudflare Workers
+
+## 域名配置状态
+
+### 当前配置
+- **Worker名称**: `krea-clone-website`
+- **Worker域名**: `krea-clone-website.jbang20042004.workers.dev`  
+- **自定义域名**: `www.waveshift.net`
+- **数据库**: `waveshfit-database` (D1)
 
 ## 配置方案
 
@@ -158,7 +167,7 @@ RRSet of type CNAME with DNS name www.futureai.click. is not permitted as it con
 4. **添加CNAME记录**：
    - 记录名称：`www`
    - 记录类型：`CNAME`
-   - 值：`your-app-name.your-subdomain.workers.dev`
+   - 值：`krea-clone-website.jbang20042004.workers.dev`
    - TTL：300秒（5分钟）
 
 #### 选项2：转移到Cloudflare DNS管理（推荐用于完整控制）
@@ -182,7 +191,7 @@ RRSet of type CNAME with DNS name www.futureai.click. is not permitted as it con
 
 4. **在Cloudflare中配置DNS**：
    - A记录：@ -> Cloudflare Workers IP
-   - CNAME记录：www -> your-worker-domain.workers.dev
+   - CNAME记录：www -> krea-clone-website.jbang20042004.workers.dev
 
 #### 选项3：保留现有配置，使用子域名
 
@@ -198,7 +207,7 @@ RRSet of type CNAME with DNS name www.futureai.click. is not permitted as it con
    ```
    记录名称: app
    记录类型: CNAME  
-   值: your-worker-domain.workers.dev
+   值: krea-clone-website.jbang20042004.workers.dev
    ```
 
 ### 推荐配置流程
@@ -209,7 +218,7 @@ dig www.futureai.click
 dig futureai.click
 
 # 2. 测试Cloudflare Workers访问
-curl -I https://your-worker-domain.workers.dev
+curl -I https://krea-clone-website.jbang20042004.workers.dev
 
 # 3. 配置完成后验证
 dig www.futureai.click
@@ -229,7 +238,7 @@ curl -I https://www.futureai.click
 nslookup www.futureai.click
 
 # 检查HTTP响应
-curl -H "Host: www.futureai.click" https://your-worker-domain.workers.dev
+curl -H "Host: www.futureai.click" https://krea-clone-website.jbang20042004.workers.dev
 
 # 检查SSL证书
 openssl s_client -connect www.futureai.click:443 -servername www.futureai.click
@@ -271,7 +280,7 @@ Cloudflare会提供两种选项：
 
 #### 选项B：如果域名在其他DNS提供商（如Route53）
 - 显示需要添加的CNAME记录
-- 目标通常为：`your-worker-name.your-subdomain.workers.dev`
+- 目标通常为：`krea-clone-website.jbang20042004.workers.dev`
 
 ### 步骤3：在Route53中配置DNS
 

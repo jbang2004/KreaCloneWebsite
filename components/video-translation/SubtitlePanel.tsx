@@ -14,7 +14,7 @@ import { cn } from "@/lib/utils";
 import { Subtitle } from "@/types";
 import { Translations } from "@/lib/translations";
 import { useState, useEffect, useRef } from "react";
-import { createClient } from "@/lib/supabase/client";
+// NextAuth.js + D1 数据库架构，通过 API 路由访问数据
 import Skeleton, { SkeletonTheme } from 'react-loading-skeleton';
 import 'react-loading-skeleton/dist/skeleton.css';
 
@@ -82,37 +82,34 @@ export default function SubtitlesPanel({
     }
   };
 
-  // 轮询Supabase中的翻译数据
+  // 轮询 D1 数据库中的翻译数据
   const pollTranslationProgress = async () => {
     if (!currentTaskId) return;
     
     try {
-      const { data, error } = await createClient()
-        .from('sentences')
-        .select('id, sentence_index, trans_text')
-        .eq('task_id', currentTaskId)
-        .order('sentence_index', { ascending: true });
-
-      if (error) {
-        console.error('轮询翻译数据失败:', error);
+      const response = await fetch(`/api/subtitles/${currentTaskId}`);
+      if (!response.ok) {
+        console.error('轮询翻译数据失败:', response.statusText);
         return;
       }
 
-      if (data) {
+      const data = await response.json() as any;
+
+      if (data && data.sentences) {
         // 检查翻译进度
         let hasAnyTranslation = false;
         let allTranslated = true;
         let translatedCount = 0;
-        const totalCount = data.length;
+        const totalCount = data.sentences.length;
 
         // 更新每个句子的翻译状态
-        data.forEach((sentence: { id: number; sentence_index: number; trans_text: string | null }) => {
-          const hasTranslation = sentence.trans_text && sentence.trans_text.trim() !== '';
-          if (hasTranslation && sentence.trans_text) {
+        data.sentences.forEach((sentence: { id: number; sentenceIndex: number; transText: string | null }) => {
+          const hasTranslation = sentence.transText && sentence.transText.trim() !== '';
+          if (hasTranslation && sentence.transText) {
             hasAnyTranslation = true;
             translatedCount++;
             // 实时更新UI中的翻译内容，但不同步数据库（因为数据已经在数据库中了）
-            updateSubtitleTranslation(sentence.id.toString(), sentence.trans_text, false);
+            updateSubtitleTranslation(sentence.id.toString(), sentence.transText, false);
           } else {
             allTranslated = false;
           }
@@ -176,13 +173,14 @@ export default function SubtitlesPanel({
       subtitles.forEach(s => updateSubtitleTranslation(s.id, "", false));
       
       // 无论是否有现有翻译，都清空数据库中的翻译内容，确保轮询不会获取到旧数据
-      const { error: clearError } = await createClient()
-        .from('sentences')
-        .update({ trans_text: null })
-        .eq('task_id', currentTaskId);
+      const clearResponse = await fetch(`/api/subtitles/${currentTaskId}`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ action: 'clear' })
+      });
         
-      if (clearError) {
-        console.error('清空数据库翻译内容失败:', clearError);
+      if (!clearResponse.ok) {
+        console.error('清空数据库翻译内容失败:', clearResponse.statusText);
         throw new Error('清空现有翻译失败');
       }
       
@@ -204,7 +202,7 @@ export default function SubtitlesPanel({
       });
 
       if (!response.ok) {
-        const errorData = await response.json();
+        const errorData = await response.json() as any;
         throw new Error(errorData.detail || '翻译请求失败');
       }
 
