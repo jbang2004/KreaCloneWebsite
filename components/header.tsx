@@ -72,33 +72,24 @@ export default function Header() {
   const user = session?.user;
   const authLoading = status === 'loading';
 
-  // 确保在页面加载和路径变化时刷新session状态
+  // 检查认证成功标记，如果存在则更新session
   useEffect(() => {
-    // 在首次加载时刷新session
-    if (status === 'unauthenticated') {
-      const timer = setTimeout(() => {
-        update();
-      }, 1000);
-      
-      return () => clearTimeout(timer);
-    }
-  }, [status, update]);
-
-  // 监听路径变化，如果是从认证页面跳转回来，强制刷新session
-  useEffect(() => {
-    if (pathname === '/' && typeof window !== 'undefined') {
-      const isFromAuth = document.referrer.includes('/auth') || 
-                        sessionStorage.getItem('authSuccess') === 'true';
-      
-      if (isFromAuth) {
+    if (typeof window !== 'undefined') {
+      const authSuccess = sessionStorage.getItem('authSuccess');
+      if (authSuccess === 'true') {
         sessionStorage.removeItem('authSuccess');
-        // 延迟刷新确保认证状态已更新
+        console.log('Auth success detected, updating session...');
+        // 延迟一下再更新，确保认证状态已经完全同步
         setTimeout(() => {
-          update();
-        }, 500);
+          update().then(() => {
+            console.log('Session updated successfully');
+          }).catch((error) => {
+            console.log('Session update completed with redirect:', error);
+          });
+        }, 100);
       }
     }
-  }, [pathname, update]);
+  }, [update]); // 移除pathname依赖，避免不必要的更新
 
   const toggleMenu = () => setIsOpen(!isOpen);
   const closeMenu = () => setIsOpen(false);

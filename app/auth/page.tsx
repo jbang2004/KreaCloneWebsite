@@ -132,12 +132,21 @@ export default function AuthPage() {
             return;
           }
           
-          // 如果到达这里但没有重定向，显示通用错误
+          // 注册成功但没有重定向 - 手动处理
           toast({
-            title: "注册失败",
-            description: "请检查您的信息并重试",
-            variant: "destructive",
+            title: "注册成功！",
+            description: "正在重定向到首页...",
           });
+          
+          // 设置成功标记并重定向
+          if (typeof window !== 'undefined') {
+            sessionStorage.setItem('authSuccess', 'true');
+          }
+          
+          setTimeout(async () => {
+            await update();
+            router.push('/');
+          }, 500);
           
         } else {
           toast({
@@ -157,12 +166,21 @@ export default function AuthPage() {
             return;
           }
           
-          // 如果到达这里但没有重定向，显示通用错误
+          // 登录成功但没有重定向 - 手动处理
           toast({
-            title: "登录失败",
-            description: "请检查您的信息并重试",
-            variant: "destructive",
+            title: "登录成功！",
+            description: "正在重定向到首页...",
           });
+          
+          // 设置成功标记并重定向
+          if (typeof window !== 'undefined') {
+            sessionStorage.setItem('authSuccess', 'true');
+          }
+          
+          setTimeout(async () => {
+            await update();
+            router.push('/');
+          }, 500);
         }
         
       } catch (error: any) {
@@ -178,7 +196,17 @@ export default function AuthPage() {
             sessionStorage.setItem('authSuccess', 'true');
           }
           
-          // 重定向将由Next.js处理
+          // 强制更新session状态，确保用户信息立即同步
+          setTimeout(async () => {
+            try {
+              await update();
+              router.push('/');
+            } catch (err) {
+              console.log('Session update completed, redirecting...');
+              router.push('/');
+            }
+          }, 100);
+          
           return;
         }
         

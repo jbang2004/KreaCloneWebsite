@@ -20,7 +20,12 @@ export default function ClientProviders({
   session: any;
 }) {
   return (
-    <SessionProvider session={session}>
+    <SessionProvider 
+      session={session}
+      refetchInterval={0} // 禁用自动刷新，依赖JWT过期机制
+      refetchOnWindowFocus={true} // 窗口获得焦点时刷新session
+      refetchWhenOffline={false} // 离线时不刷新
+    >
       <QueryClientProvider client={queryClient}>
         <LanguageProvider>
           <ThemeProvider

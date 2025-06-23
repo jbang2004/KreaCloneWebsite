@@ -210,7 +210,7 @@ export default function SubtitlesPanel({
         console.log('翻译请求已发送，开始轮询结果...');
       }
       
-      // 开始轮询Supabase中的翻译数据
+      // 开始轮询后端API中的翻译数据
       pollIntervalRef.current = setInterval(pollTranslationProgress, 1000); // 每1秒轮询一次
 
     } catch (err) {
