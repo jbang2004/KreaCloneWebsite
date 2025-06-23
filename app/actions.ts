@@ -4,6 +4,7 @@ import { signIn, signOut, auth } from '@/auth';
 import { createDb } from '@/db/drizzle';
 import { videos, tasks, sentences } from '@/db/schema';
 import { eq, desc } from 'drizzle-orm';
+import { redirect } from 'next/navigation';
 
 // NextAuth.js Server Actions for authentication and data operations
 
@@ -42,18 +43,31 @@ export async function doSignOut() {
 
 export async function signInWithCredentials(email: string, password: string) {
   try {
-    await signIn('credentials', {
+    const result = await signIn('credentials', {
       email,
       password,
       action: 'login',
-      redirectTo: '/',
+      redirect: false, // 禁用自动重定向，手动处理
     });
+    
+    // 检查认证是否成功
+    if (result?.error) {
+      return { 
+        success: false, 
+        error: result.error === 'CredentialsSignin' ? 'Invalid email or password' : result.error 
+      };
+    }
+    
+    // 认证成功，手动重定向
+    if (result?.ok) {
+      redirect('/');
+    }
     
     return { success: false, error: 'Invalid credentials' };
   } catch (error: any) {
     // 如果是NextAuth的重定向，这是成功的情况
     if (error?.digest?.includes('NEXT_REDIRECT')) {
-      return;
+      throw error; // 重新抛出重定向错误，让Next.js处理
     }
     
     // 处理具体的认证错误
@@ -73,18 +87,46 @@ export async function signInWithCredentials(email: string, password: string) {
 
 export async function signUpWithCredentials(email: string, password: string) {
   try {
-    await signIn('credentials', {
+    const result = await signIn('credentials', {
       email,
       password,
       action: 'register',
-      redirectTo: '/',
+      redirect: false, // 禁用自动重定向，手动处理
     });
+    
+    // 检查认证是否成功
+    if (result?.error) {
+      // 处理具体的注册错误
+      if (result.error.includes('User with this email already exists') || 
+          result.error.includes('already exists')) {
+        return { 
+          success: false, 
+          error: 'An account with this email already exists' 
+        };
+      }
+      if (result.error.includes('Password must be at least')) {
+        return { 
+          success: false, 
+          error: 'Password must be at least 6 characters long' 
+        };
+      }
+      
+      return { 
+        success: false, 
+        error: result.error 
+      };
+    }
+    
+    // 注册成功，手动重定向
+    if (result?.ok) {
+      redirect('/');
+    }
     
     return { success: false, error: 'Registration failed' };
   } catch (error: any) {
     // 如果是NextAuth的重定向，这是成功的情况
     if (error?.digest?.includes('NEXT_REDIRECT')) {
-      return;
+      throw error; // 重新抛出重定向错误，让Next.js处理
     }
     
     // 处理具体的注册错误

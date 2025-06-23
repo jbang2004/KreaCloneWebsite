@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { cn } from "@/lib/utils";
@@ -68,9 +68,37 @@ export default function Header() {
   const isMobile = useMobile();
   const { t, language: currentLanguage, setLanguage } = useLanguage();
   const { theme, setTheme } = useTheme();
-  const { data: session, status } = useSession();
+  const { data: session, status, update } = useSession();
   const user = session?.user;
   const authLoading = status === 'loading';
+
+  // 确保在页面加载和路径变化时刷新session状态
+  useEffect(() => {
+    // 在首次加载时刷新session
+    if (status === 'unauthenticated') {
+      const timer = setTimeout(() => {
+        update();
+      }, 1000);
+      
+      return () => clearTimeout(timer);
+    }
+  }, [status, update]);
+
+  // 监听路径变化，如果是从认证页面跳转回来，强制刷新session
+  useEffect(() => {
+    if (pathname === '/' && typeof window !== 'undefined') {
+      const isFromAuth = document.referrer.includes('/auth') || 
+                        sessionStorage.getItem('authSuccess') === 'true';
+      
+      if (isFromAuth) {
+        sessionStorage.removeItem('authSuccess');
+        // 延迟刷新确保认证状态已更新
+        setTimeout(() => {
+          update();
+        }, 500);
+      }
+    }
+  }, [pathname, update]);
 
   const toggleMenu = () => setIsOpen(!isOpen);
   const closeMenu = () => setIsOpen(false);

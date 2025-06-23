@@ -120,27 +120,73 @@ export default function AuthPage() {
             description: "正在创建您的账户",
           });
           
-          const result = await signUpWithCredentials(email, password);
-          
-          // 如果result为undefined，说明重定向成功
-          if (result === undefined) {
+          try {
+            const result = await signUpWithCredentials(email, password);
+            
+            // 如果result为undefined，说明重定向成功
+            if (result === undefined) {
+              toast({
+                title: "注册成功！",
+                description: "正在重定向到首页...",
+              });
+              // 设置成功标记
+              if (typeof window !== 'undefined') {
+                sessionStorage.setItem('authSuccess', 'true');
+              }
+              // 强制更新session状态
+              await update();
+              return;
+            }
+            
+            // 如果有result且不成功，显示错误
+            if (result && !result.success) {
+              toast({
+                title: "注册失败",
+                description: result.error || "请检查您的信息并重试",
+                variant: "destructive",
+              });
+              return;
+            }
+            
+            // 如果到达这里，说明注册成功但没有重定向
+            toast({
+              title: "注册成功！",
+              description: "正在更新状态...",
+            });
+            
+            // 设置成功标记
+            if (typeof window !== 'undefined') {
+              sessionStorage.setItem('authSuccess', 'true');
+            }
+            
+            // 强制更新session状态
+            await update();
+            
+            // 延迟一下再手动重定向
+            setTimeout(() => {
+              window.location.href = '/';
+            }, 1000);
+            
+          } catch (redirectError) {
+            // 如果捕获到重定向错误，这实际上是成功的
             toast({
               title: "注册成功！",
               description: "正在重定向到首页...",
             });
+            
+            // 设置成功标记
+            if (typeof window !== 'undefined') {
+              sessionStorage.setItem('authSuccess', 'true');
+            }
+            
             // 强制更新session状态
             await update();
-            return;
-          }
-          
-          // 如果有result且不成功，显示错误
-          if (result && !result.success) {
-            toast({
-              title: "注册失败",
-              description: result.error || "请检查您的信息并重试",
-              variant: "destructive",
-            });
-            return;
+            
+            // 重定向将由Next.js处理，但我们可以确保状态更新
+            setTimeout(async () => {
+              await update();
+              window.location.href = '/';
+            }, 500);
           }
           
         } else {
@@ -149,27 +195,73 @@ export default function AuthPage() {
             description: "正在验证您的账户",
           });
           
-          const result = await signInWithCredentials(email, password);
-          
-          // 如果result为undefined，说明重定向成功
-          if (result === undefined) {
+          try {
+            const result = await signInWithCredentials(email, password);
+            
+            // 如果result为undefined，说明重定向成功
+            if (result === undefined) {
+              toast({
+                title: "登录成功！",
+                description: "正在重定向到首页...",
+              });
+              // 设置成功标记
+              if (typeof window !== 'undefined') {
+                sessionStorage.setItem('authSuccess', 'true');
+              }
+              // 强制更新session状态
+              await update();
+              return;
+            }
+            
+            // 如果有result且不成功，显示错误
+            if (result && !result.success) {
+              toast({
+                title: "登录失败",
+                description: result.error || "请检查您的信息并重试",
+                variant: "destructive",
+              });
+              return;
+            }
+            
+            // 如果到达这里，说明登录成功但没有重定向
+            toast({
+              title: "登录成功！",
+              description: "正在更新状态...",
+            });
+            
+            // 设置成功标记
+            if (typeof window !== 'undefined') {
+              sessionStorage.setItem('authSuccess', 'true');
+            }
+            
+            // 强制更新session状态
+            await update();
+            
+            // 延迟一下再手动重定向
+            setTimeout(() => {
+              window.location.href = '/';
+            }, 1000);
+            
+          } catch (redirectError) {
+            // 如果捕获到重定向错误，这实际上是成功的
             toast({
               title: "登录成功！",
               description: "正在重定向到首页...",
             });
+            
+            // 设置成功标记
+            if (typeof window !== 'undefined') {
+              sessionStorage.setItem('authSuccess', 'true');
+            }
+            
             // 强制更新session状态
             await update();
-            return;
-          }
-          
-          // 如果有result且不成功，显示错误
-          if (result && !result.success) {
-            toast({
-              title: "登录失败",
-              description: result.error || "请检查您的信息并重试",
-              variant: "destructive",
-            });
-            return;
+            
+            // 重定向将由Next.js处理，但我们可以确保状态更新
+            setTimeout(async () => {
+              await update();
+              window.location.href = '/';
+            }, 500);
           }
         }
         
