@@ -9,11 +9,11 @@ export function cn(...inputs: ClassValue[]) {
 }
 
 /**
- * Check if required NextAuth.js environment variables are set
+ * Check if required JWT authentication environment variables are set
  */
 export const hasEnvVars = 
-  process.env.NEXTAUTH_SECRET &&
-  process.env.NEXTAUTH_URL;
+  process.env.JWT_SECRET &&
+  process.env.DATABASE_URL;
 
 /**
  * Format price with currency and optional decimal places

@@ -3,7 +3,7 @@
 import { useState, useRef, useEffect } from "react";
 import { useLanguage } from "@/hooks/use-language";
 import { useTheme } from "next-themes";
-import { useSession } from "next-auth/react";
+import { useAuth } from '@/contexts/auth-context';
 import { useMediaQuery } from "@/hooks/use-media-query";
 import { useVideoUpload } from "@/hooks/use-video-upload";
 import { useSubtitles } from "@/hooks/use-subtitles";
@@ -47,9 +47,9 @@ export default function VideoTranslation() {
   const { resolvedTheme } = useTheme();
   const T = getTranslations(currentInterfaceLanguage as AppLanguage);
 
-  const { data: session, status } = useSession();
-  const currentUser = session?.user;
-  const authLoading = status === 'loading';
+  const { user, isLoading } = useAuth();
+  const currentUser = user;
+  const authLoading = isLoading;
   const isMobile = useMediaQuery('(max-width: 767px)');
   
   const [targetLanguage, setTargetLanguage] = useState<string>("en");
@@ -139,6 +139,18 @@ export default function VideoTranslation() {
       fetchSubtitles(taskId, targetLanguage);
     }
   }, [processingComplete, displaySubtitlesPanel, taskId, targetLanguage, fetchSubtitles]);
+
+  // 简化的加载状态检查  
+  if (isLoading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto mb-4"></div>
+          <p className="text-muted-foreground">Loading...</p>
+        </div>
+      </div>
+    );
+  }
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];

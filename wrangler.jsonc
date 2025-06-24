@@ -25,6 +25,8 @@
     }
   ],
   "vars": {
-    "NEXTJS_ENV": "production"
+    "NEXTJS_ENV": "production",
+    "NODE_ENV": "production",
+    "JWT_SECRET": "your-jwt-secret-key-change-this-in-production"
   }
 } 

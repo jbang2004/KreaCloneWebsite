@@ -1,14 +1,14 @@
 'use client';
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { cn } from "@/lib/utils";
 import { useMobile } from "@/hooks/use-mobile";
 import { useLanguage, TranslationKey } from "@/hooks/use-language";
 import { useTheme } from "next-themes";
-import { useSession, signOut } from "next-auth/react";
 import Image from "next/image";
+import { useAuth } from "@/contexts/auth-context";
 import { 
   HomeIcon, 
   MicrophoneIcon, 
@@ -68,38 +68,16 @@ export default function Header() {
   const isMobile = useMobile();
   const { t, language: currentLanguage, setLanguage } = useLanguage();
   const { theme, setTheme } = useTheme();
-  const { data: session, status, update } = useSession();
-  const user = session?.user;
-  const authLoading = status === 'loading';
+  const { user, isLoading: authLoading, logout } = useAuth();
 
-  // 检查认证成功标记，如果存在则更新session
-  useEffect(() => {
-    if (typeof window !== 'undefined') {
-      const authSuccess = sessionStorage.getItem('authSuccess');
-      if (authSuccess === 'true') {
-        sessionStorage.removeItem('authSuccess');
-        console.log('Auth success detected, updating session...');
-        // 延迟一下再更新，确保认证状态已经完全同步
-        setTimeout(() => {
-          update().then(() => {
-            console.log('Session updated successfully');
-          }).catch((error) => {
-            console.log('Session update completed with redirect:', error);
-          });
-        }, 100);
-      }
-    }
-  }, [update]); // 移除pathname依赖，避免不必要的更新
+  // 移除认证成功标记相关逻辑，新的认证系统不需要这个
 
   const toggleMenu = () => setIsOpen(!isOpen);
   const closeMenu = () => setIsOpen(false);
   
   const handleLogout = async () => {
     try {
-      await signOut({ 
-        callbackUrl: '/',
-        redirect: true 
-      });
+      await logout();
       closeMenu();
     } catch (error) {
       console.error('Logout error:', error);
@@ -110,6 +88,20 @@ export default function Header() {
   // 预加载路由
   const handleHoverPrefetch = (path: string) => {
     router.prefetch(path);
+  };
+
+  // 处理受保护页面的导航
+  const handleProtectedNavigation = (path: string, e: React.MouseEvent) => {
+    const protectedPaths = ['/audio-transcription', '/text-to-speech', '/video-translation'];
+    
+    // 只有当用户未登录且试图访问受保护路径时才拦截
+    if (protectedPaths.includes(path) && !user) {
+      e.preventDefault();
+      router.push('/auth');
+      return;
+    }
+    
+    // 其他情况（包括用户已登录）都允许正常导航，不做任何处理
   };
 
   // 获取用户显示名称
@@ -162,7 +154,9 @@ export default function Header() {
               <Link 
                 href={item.path}
                 prefetch
-                onClick={closeMenu}
+                onClick={(e) => {
+                  handleProtectedNavigation(item.path, e);
+                }}
                 onMouseEnter={() => handleHoverPrefetch(item.path)}
                 className={cn(
                   "flex items-center justify-center transition-colors",
@@ -302,7 +296,10 @@ export default function Header() {
               key={item.path} 
               href={item.path}
               prefetch
-              onClick={closeMenu}
+              onClick={(e) => {
+                handleProtectedNavigation(item.path, e);
+                closeMenu();
+              }}
               onMouseEnter={() => handleHoverPrefetch(item.path)}
               className={cn(
                 "flex items-center space-x-3 p-3 transition-colors rounded-xl",

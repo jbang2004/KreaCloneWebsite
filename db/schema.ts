@@ -1,7 +1,6 @@
-import { integer, text, primaryKey, sqliteTable } from 'drizzle-orm/sqlite-core';
-import type { AdapterAccount } from 'next-auth/adapters';
+import { integer, text, sqliteTable } from 'drizzle-orm/sqlite-core';
 
-// 1. NextAuth.js v5 Adapter 需要的表结构
+// 用户表
 export const users = sqliteTable('users', {
   id: text('id').notNull().primaryKey(),
   name: text('name'),
@@ -9,39 +8,11 @@ export const users = sqliteTable('users', {
   emailVerified: integer('emailVerified', { mode: 'timestamp_ms' }),
   image: text('image'),
   hashedPassword: text('hashedPassword'), // 用于邮箱/密码登录
+  createdAt: integer('createdAt', { mode: 'timestamp_ms' }).notNull(),
+  updatedAt: integer('updatedAt', { mode: 'timestamp_ms' }).notNull(),
 });
 
-export const accounts = sqliteTable('accounts', {
-  userId: text('userId').notNull().references(() => users.id, { onDelete: 'cascade' }),
-  type: text('type').$type<AdapterAccount['type']>().notNull(),
-  provider: text('provider').notNull(),
-  providerAccountId: text('providerAccountId').notNull(),
-  refresh_token: text('refresh_token'),
-  access_token: text('access_token'),
-  expires_at: integer('expires_at'),
-  token_type: text('token_type'),
-  scope: text('scope'),
-  id_token: text('id_token'),
-  session_state: text('session_state'),
-}, (account) => ({
-  compoundKey: primaryKey({ columns: [account.provider, account.providerAccountId] }),
-}));
-
-export const sessions = sqliteTable('sessions', {
-  sessionToken: text('sessionToken').notNull().primaryKey(),
-  userId: text('userId').notNull().references(() => users.id, { onDelete: 'cascade' }),
-  expires: integer('expires', { mode: 'timestamp_ms' }).notNull(),
-});
-
-export const verificationTokens = sqliteTable('verification_tokens', {
-  identifier: text('identifier').notNull(),
-  token: text('token').notNull(),
-  expires: integer('expires', { mode: 'timestamp_ms' }).notNull(),
-}, (vt) => ({
-  compoundKey: primaryKey({ columns: [vt.identifier, vt.token] }),
-}));
-
-// 2. 业务数据表
+// 业务数据表
 export const videos = sqliteTable('videos', {
   id: integer('id').primaryKey({ autoIncrement: true }),
   userId: text('userId').notNull().references(() => users.id, { onDelete: 'cascade' }),

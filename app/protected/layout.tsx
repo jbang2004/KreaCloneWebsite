@@ -1,17 +1,52 @@
+'use client';
+
 import { DeployButton } from "@/components/deploy-button";
 import { ThemeSwitcher } from "@/components/theme-switcher";
 import Link from "next/link";
 import WabiSabiBackground from "@/components/wabi-sabi-background";
-import { auth } from "@/auth";
-import { doSignOut } from "@/app/actions";
+import { useAuth } from "@/contexts/auth-context";
 import { Button } from "@/components/ui/button";
+import { useEffect } from "react";
+import { useRouter } from "next/navigation";
 
-export default async function ProtectedLayout({
+export default function ProtectedLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
-  const session = await auth();
+  const { user, isLoading, logout } = useAuth();
+  const router = useRouter();
+
+  // 如果用户未登录，重定向到登录页面
+  useEffect(() => {
+    if (!isLoading && !user) {
+      router.push('/auth');
+    }
+  }, [user, isLoading, router]);
+
+  // 显示加载状态
+  if (isLoading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto mb-4"></div>
+          <p className="text-muted-foreground">Loading...</p>
+        </div>
+      </div>
+    );
+  }
+
+  // 如果用户未登录，显示重定向中
+  if (!user) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto mb-4"></div>
+          <p className="text-muted-foreground">Redirecting to login...</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <main className="min-h-screen relative overflow-hidden">
@@ -29,12 +64,10 @@ export default async function ProtectedLayout({
                 <DeployButton />
               </div>
             </div>
-            {session?.user ? (
+            {user ? (
               <div className="flex items-center gap-4">
-                <span className="text-sm">Hey, {session.user.email}!</span>
-                <form action={doSignOut}>
-                  <Button type="submit" size="sm">Logout</Button>
-                </form>
+                <span className="text-sm">Hey, {user.email}!</span>
+                <Button onClick={logout} size="sm">Logout</Button>
               </div>
             ) : (
               <div className="flex gap-2">
@@ -65,12 +98,12 @@ export default async function ProtectedLayout({
             </a>
             {" & "}
             <a
-              href="https://next-auth.js.org/"
+              href="https://developers.cloudflare.com/"
               target="_blank"
               className="font-bold hover:underline"
               rel="noreferrer"
             >
-              NextAuth.js
+              Cloudflare Workers
             </a>
           </p>
           <ThemeSwitcher />

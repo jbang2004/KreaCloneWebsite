@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useRef } from "react";
+import { useAuth } from "@/contexts/auth-context";
 import { m as motion } from "@/lib/lazy-motion";
 import { 
   Plus,
@@ -30,6 +31,7 @@ const WabiSabiBackground = dynamic(() => import("@/components/wabi-sabi-backgrou
 });
 
 export default function AudioTranscription() {
+  const { isLoading } = useAuth();
   const { language: currentLanguage } = useLanguage();
   const { theme } = useTheme();
   const [selectedLanguage] = useState<string>(currentLanguage === "zh" ? "zh-CN" : "en-US");
@@ -38,6 +40,18 @@ export default function AudioTranscription() {
   const [progress] = useState(0);
   const [transcriptionResult] = useState<string[]>([]);
   const fileInputRef = useRef<HTMLInputElement>(null);
+
+  // 简化的加载状态检查
+  if (isLoading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto mb-4"></div>
+          <p className="text-muted-foreground">Loading...</p>
+        </div>
+      </div>
+    );
+  }
 
   // 语言选项
   const languageOptions = [

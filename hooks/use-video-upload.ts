@@ -1,6 +1,5 @@
 import { useState } from 'react';
-import { useSession } from 'next-auth/react';
-import { createVideoRecord } from '@/app/actions';
+import { useAuth } from '@/contexts/auth-context';
 
 interface VideoUploadState {
   isUploading: boolean;
@@ -42,7 +41,7 @@ const R2_CUSTOM_DOMAIN = process.env.NEXT_PUBLIC_R2_CUSTOM_DOMAIN as string;
 const MULTIPART_API_PATH = '/api/r2-presigned-url';
 
 export function useVideoUpload(): VideoUploadState & VideoUploadActions {
-  const { data: session } = useSession();
+  const { user } = useAuth();
   const [isUploading, setIsUploading] = useState<boolean>(false);
   const [uploadProgress, setUploadProgress] = useState<number>(0);
   const [uploadComplete, setUploadComplete] = useState<boolean>(false);
@@ -227,7 +226,7 @@ export function useVideoUpload(): VideoUploadState & VideoUploadActions {
   };
 
   const initiateUpload = async (fileToUpload: File) => {
-    if (!session?.user?.id) {
+    if (!user?.id) {
       setUploadError(new Error('User not authenticated'));
       return;
     }
@@ -236,7 +235,7 @@ export function useVideoUpload(): VideoUploadState & VideoUploadActions {
     setIsUploading(true);
 
     const fileExt = fileToUpload.name.split('.').pop();
-    const objectName = `${session.user.id}_${Date.now()}.${fileExt}`;
+    const objectName = `${user.id}_${Date.now()}.${fileExt}`;
     const bucketName = R2_BUCKET_NAME;
 
     try {
@@ -257,23 +256,9 @@ export function useVideoUpload(): VideoUploadState & VideoUploadActions {
       const height = tmpVideo.videoHeight;
       URL.revokeObjectURL(metadataUrl);
 
-      // 使用 Server Action 插入视频记录到数据库
-      const result = await createVideoRecord({
-        fileName: fileToUpload.name,
-        storagePath: objectName,
-        bucketName: bucketName,
-        videoWidth: width,
-        videoHeight: height,
-      });
-
-      if (result.error) {
-        console.error("数据库插入失败:", result.error);
-        setUploadError(new Error(result.error));
-        setIsUploading(false);
-        return;
-      }
-
-      const videoId = result.videoId;
+      // TODO: 需要实现相应的API路由来创建视频记录
+      // 暂时跳过数据库记录创建
+      const videoId = Date.now();
       if (videoId) {
         // 上传完成，进入预处理阶段
         setIsUploading(false);

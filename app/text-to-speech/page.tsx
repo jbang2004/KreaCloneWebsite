@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from "react";
+import { useAuth } from "@/contexts/auth-context";
 import { m as motion } from "@/lib/lazy-motion";
 import { 
   Plus,
@@ -41,6 +42,7 @@ interface Voice {
 }
 
 export default function TextToSpeech() {
+  const { isLoading } = useAuth();
   const { language: currentLanguage } = useLanguage();
   const { theme } = useTheme();
   const [text] = useState<string>("");
@@ -51,6 +53,18 @@ export default function TextToSpeech() {
   const [isPlaying] = useState<boolean>(false);
   const [generatedAudioUrl] = useState<string | null>(null);
   const [showSettings] = useState<boolean>(false);
+
+  // 简化的加载状态检查
+  if (isLoading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto mb-4"></div>
+          <p className="text-muted-foreground">Loading...</p>
+        </div>
+      </div>
+    );
+  }
 
   // 示例的语音列表
   const voices: Voice[] = [

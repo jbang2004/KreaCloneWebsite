@@ -1,10 +1,10 @@
 'use client';
 
-import { useState, useEffect, useTransition, useRef } from "react";
+import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
-import { useSession } from "next-auth/react";
+import { useAuth } from "@/contexts/auth-context";
 import { m as motion } from "@/lib/lazy-motion";
-import { Mail, Lock } from "lucide-react";
+import { Mail, Lock, User } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Separator } from "@/components/ui/separator";
@@ -12,216 +12,113 @@ import { useToast } from "@/hooks/use-toast";
 import { useLanguage } from "@/hooks/use-language";
 import { useTheme } from "next-themes";
 import WabiSabiBackground from "@/components/wabi-sabi-background";
-import { signInWithGoogle, signInWithCredentials, signUpWithCredentials } from "@/app/actions";
 
 export default function AuthPage() {
   const router = useRouter();
-  const { data: session, status, update } = useSession();
+  const { user, isLoading, login, register } = useAuth();
   const [isRegistering, setIsRegistering] = useState(false);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [name, setName] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
-  const [isPending, startTransition] = useTransition();
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const { toast } = useToast();
   const { t, language } = useLanguage();
   const { theme } = useTheme();
-  const redirectTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
+  // 如果用户已登录，重定向到首页
   useEffect(() => {
-    if (redirectTimeoutRef.current) {
-      clearTimeout(redirectTimeoutRef.current);
+    if (user && !isLoading) {
+      router.push("/");
     }
-
-    if (status === 'authenticated' && session?.user?.email) {
-      redirectTimeoutRef.current = setTimeout(() => {
-        router.push("/");
-      }, 100);
-    }
-
-    return () => {
-      if (redirectTimeoutRef.current) {
-        clearTimeout(redirectTimeoutRef.current);
-      }
-    };
-  }, [session, status, router]);
-
-  const handleGoogleLogin = () => {
-    startTransition(async () => {
-      try {
-        await signInWithGoogle();
-      } catch (error) {
-        toast({
-          title: "Google Login Failed",
-          description: "请稍后再试",
-          variant: "destructive",
-        });
-      }
-    });
-  };
+  }, [user, isLoading, router]);
 
   const handleToggleMode = () => {
     setIsRegistering(!isRegistering);
     setEmail("");
     setPassword("");
+    setName("");
     setConfirmPassword("");
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
+    // 验证输入
     if (!email.trim()) {
       toast({
-        title: "Email required",
-        description: "Please enter your email",
+        title: language === "zh" ? "请输入邮箱" : "Email required",
+        description: language === "zh" ? "请输入您的邮箱地址" : "Please enter your email",
         variant: "destructive",
       });
       return;
     }
+    
     if (!/\S+@\S+\.\S+/.test(email)) {
-        toast({
-            title: "Invalid email format",
-            description: "Please enter a valid email address",
-            variant: "destructive",
-        });
-        return;
+      toast({
+        title: language === "zh" ? "邮箱格式无效" : "Invalid email format",
+        description: language === "zh" ? "请输入有效的邮箱地址" : "Please enter a valid email address",
+        variant: "destructive",
+      });
+      return;
     }
 
     if (!password) {
       toast({
-        title: "Password required",
-        description: "Please enter your password",
+        title: language === "zh" ? "请输入密码" : "Password required",
+        description: language === "zh" ? "请输入您的密码" : "Please enter your password",
         variant: "destructive",
       });
       return;
     }
+    
     if (password.length < 6) {
-        toast({
-            title: "Password too short",
-            description: "Password should be at least 6 characters long",
-            variant: "destructive",
-        });
-        return;
-    }
-
-    if (isRegistering && password !== confirmPassword) {
       toast({
-        title: "Passwords do not match",
-        description: "Please make sure your passwords match",
+        title: language === "zh" ? "密码太短" : "Password too short",
+        description: language === "zh" ? "密码至少需要6个字符" : "Password should be at least 6 characters long",
         variant: "destructive",
       });
       return;
     }
 
-    startTransition(async () => {
-      try {
-        if (isRegistering) {
-          toast({
-            title: "注册中...",
-            description: "正在创建您的账户",
-          });
-          
-          const result = await signUpWithCredentials(email, password);
-          
-          // 如果有result，说明注册失败
-          if (result && !result.success) {
-            toast({
-              title: "注册失败",
-              description: result.error || "请检查您的信息并重试",
-              variant: "destructive",
-            });
-            return;
-          }
-          
-          // 注册成功但没有重定向 - 手动处理
-          toast({
-            title: "注册成功！",
-            description: "正在重定向到首页...",
-          });
-          
-          // 设置成功标记并重定向
-          if (typeof window !== 'undefined') {
-            sessionStorage.setItem('authSuccess', 'true');
-          }
-          
-          setTimeout(async () => {
-            await update();
-            router.push('/');
-          }, 500);
-          
-        } else {
-          toast({
-            title: "登录中...",
-            description: "正在验证您的账户",
-          });
-          
-          const result = await signInWithCredentials(email, password);
-          
-          // 如果有result，说明登录失败
-          if (result && !result.success) {
-            toast({
-              title: "登录失败",
-              description: result.error || "请检查您的信息并重试",
-              variant: "destructive",
-            });
-            return;
-          }
-          
-          // 登录成功但没有重定向 - 手动处理
-          toast({
-            title: "登录成功！",
-            description: "正在重定向到首页...",
-          });
-          
-          // 设置成功标记并重定向
-          if (typeof window !== 'undefined') {
-            sessionStorage.setItem('authSuccess', 'true');
-          }
-          
-          setTimeout(async () => {
-            await update();
-            router.push('/');
-          }, 500);
-        }
-        
-      } catch (error: any) {
-        // 如果捕获到重定向错误，这实际上是成功的
-        if (error?.digest?.includes('NEXT_REDIRECT') || error?.name === 'NEXT_REDIRECT') {
-          toast({
-            title: isRegistering ? "注册成功！" : "登录成功！",
-            description: "正在重定向到首页...",
-          });
-          
-          // 设置成功标记
-          if (typeof window !== 'undefined') {
-            sessionStorage.setItem('authSuccess', 'true');
-          }
-          
-          // 强制更新session状态，确保用户信息立即同步
-          setTimeout(async () => {
-            try {
-              await update();
-              router.push('/');
-            } catch (err) {
-              console.log('Session update completed, redirecting...');
-              router.push('/');
-            }
-          }, 100);
-          
-          return;
-        }
-        
-        // 其他错误
-        console.error('Auth error:', error);
+    if (isRegistering) {
+      if (!name.trim()) {
         toast({
-          title: isRegistering ? "注册失败" : "登录失败",
-          description: error?.message || "请检查您的信息并重试",
+          title: language === "zh" ? "请输入姓名" : "Name required",
+          description: language === "zh" ? "请输入您的姓名" : "Please enter your name",
           variant: "destructive",
         });
+        return;
       }
-    });
+
+      if (password !== confirmPassword) {
+        toast({
+          title: language === "zh" ? "密码不匹配" : "Passwords do not match",
+          description: language === "zh" ? "请确保两次输入的密码相同" : "Please make sure your passwords match",
+          variant: "destructive",
+        });
+        return;
+      }
+    }
+
+    setIsSubmitting(true);
+    try {
+      if (isRegistering) {
+        await register(email, password, name);
+      } else {
+        await login(email, password);
+      }
+      // 成功后AuthContext会自动处理重定向
+    } catch (error) {
+      // 错误已在AuthContext中通过toast显示
+      console.error('Auth error:', error);
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
-  if (status === 'loading') {
+  // 显示加载状态
+  if (isLoading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
         <div className="text-center">
@@ -232,7 +129,8 @@ export default function AuthPage() {
     );
   }
 
-  if (status === 'authenticated' && session?.user?.email) {
+  // 如果用户已登录，显示重定向中
+  if (user) {
     return (
       <div className="min-h-screen flex items-center justify-center">
         <div className="text-center">
@@ -275,33 +173,23 @@ export default function AuthPage() {
             </div>
 
             <div className="space-y-4">
-              <Button 
-                variant="outline" 
-                className="w-full flex items-center justify-center gap-2 py-5 border-border rounded-xl"
-                onClick={handleGoogleLogin}
-                disabled={isPending}
-              >
-                <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
-                  <path d="M19.1 10.2C19.1 9.31 19.02 8.66 18.86 7.98H10V11.34H15.24C15.11 12.2 14.54 13.47 13.32 14.31L13.31 14.41L16.12 16.63L16.31 16.64C18.11 15 19.1 12.82 19.1 10.2Z" fill="#4285F4"/>
-                  <path d="M10.0002 19.1C12.4302 19.1 14.4602 18.29 16.0002 16.82L13.3102 14.49C12.5202 15.04 11.4502 15.42 10.0002 15.42C7.5402 15.42 5.4602 13.8 4.7202 11.59L4.6302 11.59L1.7102 13.89L1.6602 13.98C3.1902 17.07 6.3602 19.1 10.0002 19.1Z" fill="#34A853"/>
-                  <path d="M4.72 11.59C4.51 11.01 4.39 10.38 4.39 9.73C4.39 9.08 4.51 8.45 4.71 7.87L4.7 7.77L1.73 5.43L1.66 5.48C0.94 6.74 0.5 8.19 0.5 9.73C0.5 11.27 0.94 12.72 1.66 13.98L4.72 11.59Z" fill="#FBBC05"/>
-                  <path d="M10.0002 4.04C11.7202 4.04 12.9402 4.74 13.6702 5.4L16.0702 3.08C14.4602 1.58 12.4302 0.73 10.0002 0.73C6.3602 0.73 3.1902 2.76 1.6602 5.85L4.7102 8.24C5.4602 6.03 7.5402 4.04 10.0002 4.04Z" fill="#EA4335"/>
-                </svg>
-                {t("continueWithGoogle")}
-              </Button>
-
-              <div className="relative">
-                <div className="absolute inset-0 flex items-center">
-                  <Separator />
-                </div>
-                <div className="relative flex justify-center text-xs uppercase">
-                  <span className={`${theme === 'dark' ? 'bg-zinc-900' : 'bg-gray-100'} px-2 text-muted-foreground`}>
-                    {t("or")}
-                  </span>
-                </div>
-              </div>
-
               <form onSubmit={handleSubmit} className="space-y-4">
+                {isRegistering && (
+                  <div className="space-y-2">
+                    <div className="relative">
+                      <User className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                      <Input
+                        type="text"
+                        placeholder={language === "zh" ? "姓名" : "Name"}
+                        value={name}
+                        onChange={(e) => setName(e.target.value)}
+                        className="pl-10 h-12 rounded-xl border-border bg-background"
+                        disabled={isSubmitting}
+                      />
+                    </div>
+                  </div>
+                )}
+
                 <div className="space-y-2">
                   <div className="relative">
                     <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
@@ -311,7 +199,7 @@ export default function AuthPage() {
                       value={email}
                       onChange={(e) => setEmail(e.target.value)}
                       className="pl-10 h-12 rounded-xl border-border bg-background"
-                      disabled={isPending}
+                      disabled={isSubmitting}
                     />
                   </div>
                 </div>
@@ -325,7 +213,7 @@ export default function AuthPage() {
                       value={password}
                       onChange={(e) => setPassword(e.target.value)}
                       className="pl-10 h-12 rounded-xl border-border bg-background"
-                      disabled={isPending}
+                      disabled={isSubmitting}
                     />
                   </div>
                 </div>
@@ -340,7 +228,7 @@ export default function AuthPage() {
                         value={confirmPassword}
                         onChange={(e) => setConfirmPassword(e.target.value)}
                         className="pl-10 h-12 rounded-xl border-border bg-background"
-                        disabled={isPending}
+                        disabled={isSubmitting}
                       />
                     </div>
                   </div>
@@ -349,14 +237,14 @@ export default function AuthPage() {
                 <Button 
                   type="submit" 
                   className="w-full bg-primary hover:bg-primary/90 text-primary-foreground py-5 rounded-xl"
-                  disabled={isPending}
+                  disabled={isSubmitting}
                 >
-                  {isPending 
+                  {isSubmitting 
                       ? (language === "zh" ? "处理中..." : "Processing...") 
                       : isRegistering 
                           ? (language === "zh" ? "注册" : "Sign Up") 
                           : (language === "zh" ? "登录" : "Login")}
-                  {isPending && (
+                  {isSubmitting && (
                     <svg className="animate-spin ml-2 h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle><path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
                   )}
                 </Button>
@@ -371,7 +259,7 @@ export default function AuthPage() {
                     type="button"
                     className="text-primary ml-1 hover:underline"
                     onClick={handleToggleMode}
-                    disabled={isPending}
+                    disabled={isSubmitting}
                   >
                     {isRegistering 
                       ? (language === "zh" ? "登录" : "Login") 
@@ -421,4 +309,4 @@ export default function AuthPage() {
       </div>
     </div>
   );
-} 
+}

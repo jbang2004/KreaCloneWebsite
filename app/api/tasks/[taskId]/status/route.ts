@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { createDb } from '@/db/drizzle';
 import { tasks } from '@/db/schema';
 import { eq } from 'drizzle-orm';
-import { auth } from '@/auth';
+import { verifyAuth } from '@/lib/auth/verify-request';
 
 function getDb() {
   if (typeof globalThis.process === 'undefined') {
@@ -17,8 +17,8 @@ export async function GET(
   { params }: { params: Promise<{ taskId: string }> }
 ) {
   try {
-    const session = await auth();
-    if (!session?.user?.id) {
+    const payload = await verifyAuth(request);
+    if (!payload) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 

@@ -1,10 +1,31 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { auth } from '@/auth';
+import { getCloudflareContext } from '@opennextjs/cloudflare';
+import { AuthTokens } from '@/lib/auth/jwt';
 
 export async function GET(request: NextRequest) {
   try {
-    // 获取当前session
-    const session = await auth();
+    // 获取Cloudflare环境
+    const context = await getCloudflareContext({ async: true });
+    const env = context.env as any;
+    
+    // 获取当前认证状态
+    const token = request.cookies.get('access_token')?.value;
+    let authInfo = null;
+    
+    if (token) {
+      const jwtSecret = env.JWT_SECRET || env.AUTH_SECRET;
+      if (jwtSecret) {
+        const payload = await AuthTokens.verifyAccessToken(token, jwtSecret);
+        if (payload) {
+          authInfo = {
+            id: payload.sub,
+            email: payload.email,
+            name: payload.name,
+            image: payload.image,
+          };
+        }
+      }
+    }
     
     // 获取请求headers
     const headers = Object.fromEntries(request.headers.entries());
@@ -17,15 +38,9 @@ export async function GET(request: NextRequest) {
     
     return NextResponse.json({
       timestamp: new Date().toISOString(),
-      session: session,
-      hasSession: !!session,
-      hasUser: !!session?.user,
-      userInfo: session?.user ? {
-        id: session.user.id,
-        email: session.user.email,
-        name: session.user.name,
-        image: session.user.image,
-      } : null,
+      authInfo: authInfo,
+      hasAuth: !!authInfo,
+      hasToken: !!token,
       request: {
         url: url.href,
         origin: url.origin,
@@ -45,6 +60,7 @@ export async function GET(request: NextRequest) {
       environment: {
         nodeEnv: process.env.NODE_ENV,
         nextjsEnv: process.env.NEXTJS_ENV,
+        hasJwtSecret: !!(env.JWT_SECRET || env.AUTH_SECRET),
       }
     });
   } catch (error: any) {

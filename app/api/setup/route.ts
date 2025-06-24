@@ -1,4 +1,4 @@
-import { up } from '@auth/d1-adapter';
+// Database setup for JWT-based authentication
 import { NextRequest, NextResponse } from 'next/server';
 import { getCloudflareContext } from '@opennextjs/cloudflare';
 
@@ -12,8 +12,9 @@ export async function GET(request: NextRequest) {
       throw new Error('D1 Database binding not found');
     }
 
-    // 创建简化的用户表，支持JWT session
+    // 创建JWT认证系统的数据库表
     try {
+      // 用户表
       await env.DB.prepare(`
         CREATE TABLE IF NOT EXISTS users (
           id TEXT PRIMARY KEY,
@@ -21,19 +22,68 @@ export async function GET(request: NextRequest) {
           name TEXT,
           image TEXT,
           hashedPassword TEXT,
-          emailVerified DATETIME,
-          createdAt DATETIME DEFAULT CURRENT_TIMESTAMP,
-          updatedAt DATETIME DEFAULT CURRENT_TIMESTAMP
+          emailVerified INTEGER,
+          createdAt INTEGER NOT NULL,
+          updatedAt INTEGER NOT NULL
         );
       `).run();
-      console.log('Created users table');
+
+      // 视频表
+      await env.DB.prepare(`
+        CREATE TABLE IF NOT EXISTS videos (
+          id INTEGER PRIMARY KEY AUTOINCREMENT,
+          userId TEXT NOT NULL,
+          fileName TEXT NOT NULL,
+          storagePath TEXT NOT NULL,
+          bucketName TEXT NOT NULL,
+          status TEXT NOT NULL,
+          videoWidth INTEGER,
+          videoHeight INTEGER,
+          createdAt INTEGER NOT NULL,
+          updatedAt INTEGER NOT NULL,
+          FOREIGN KEY (userId) REFERENCES users(id) ON DELETE CASCADE
+        );
+      `).run();
+
+      // 任务表
+      await env.DB.prepare(`
+        CREATE TABLE IF NOT EXISTS tasks (
+          id INTEGER PRIMARY KEY AUTOINCREMENT,
+          taskId TEXT NOT NULL UNIQUE,
+          videoId INTEGER NOT NULL,
+          status TEXT NOT NULL,
+          hlsPlaylistUrl TEXT,
+          createdAt INTEGER NOT NULL,
+          updatedAt INTEGER NOT NULL,
+          FOREIGN KEY (videoId) REFERENCES videos(id) ON DELETE CASCADE
+        );
+      `).run();
+
+      // 字幕表
+      await env.DB.prepare(`
+        CREATE TABLE IF NOT EXISTS sentences (
+          id INTEGER PRIMARY KEY AUTOINCREMENT,
+          taskId TEXT NOT NULL,
+          sentenceIndex INTEGER NOT NULL,
+          rawText TEXT NOT NULL,
+          transText TEXT,
+          startMs INTEGER NOT NULL,
+          endMs INTEGER NOT NULL,
+          speakerId INTEGER,
+          createdAt INTEGER NOT NULL,
+          updatedAt INTEGER NOT NULL,
+          FOREIGN KEY (taskId) REFERENCES tasks(taskId) ON DELETE CASCADE
+        );
+      `).run();
+
+      console.log('Created JWT authentication database tables');
     } catch (error) {
-      console.log('Error creating users table:', error);
+      console.log('Error creating database tables:', error);
     }
 
     return NextResponse.json({ 
       message: 'Database migration completed successfully (JWT Session)',
-      tables: ['users'],
+      tables: ['users', 'videos', 'tasks', 'sentences'],
       note: 'Using JWT sessions - no session tables needed'
     });
   } catch (error: any) {
