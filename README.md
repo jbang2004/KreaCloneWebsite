@@ -14,7 +14,7 @@
 ## 🛠️ 技术栈
 
 - **框架**: Next.js 15 (App Router)
-- **认证**: NextAuth.js v5 (JWT策略)
+- **认证**: 自定义 JWT 认证系统
 - **数据库**: Cloudflare D1 + Drizzle ORM
 - **存储**: Cloudflare R2
 - **部署**: Cloudflare Workers
@@ -133,14 +133,16 @@ npm run db:rebuild
 
 ### 认证系统
 
-- 使用 NextAuth.js v5 的 JWT 策略
-- 支持邮箱/密码和 Google OAuth 登录
+- 使用自定义 JWT 认证策略
+- 支持邮箱/密码登录注册
 - 用户数据存储在 Cloudflare D1 数据库
+- JWT tokens 通过 HttpOnly cookies 管理
 
 ### API 路由
 
-- `/api/auth/*` - NextAuth.js 认证路由
+- `/api/auth/*` - 自定义认证路由 (login, register, logout, me)
 - `/api/setup` - 数据库初始化
+- `/api/r2-presigned-url` - R2 存储分块上传
 - `/api/tasks/*` - 任务管理
 - `/api/subtitles/*` - 字幕处理
 

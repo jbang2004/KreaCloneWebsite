@@ -85,7 +85,6 @@
   },
   "keywords": [
     "nextjs",
-    "nextauth",
     "cloudflare",
     "workers",
     "d1",
