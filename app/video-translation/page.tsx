@@ -5,7 +5,7 @@ import { useLanguage } from "@/hooks/use-language";
 import { useTheme } from "next-themes";
 import { useAuth } from '@/contexts/auth-context';
 import { useMediaQuery } from "@/hooks/use-media-query";
-import { useVideoUpload } from "@/hooks/use-video-upload";
+import { useMediaWorkflow } from "@/hooks/use-media-workflow";
 import { useSubtitles } from "@/hooks/use-subtitles";
 import { useVideoPlayer } from "@/hooks/use-video-player";
 import { useHLSPlayer } from "@/hooks/use-hls-player";
@@ -64,15 +64,14 @@ export default function VideoTranslation() {
     isUploading,
     uploadProgress,
     uploadComplete,
-    // isProcessing,
     processingComplete,
     videoPreviewUrl,
     uploadError,
     processingError,
     taskId,
-    initiateUpload,
-    resetUploadState: resetVideoUploadHookState
-  } = useVideoUpload();
+    createAndUploadTask,
+    resetWorkflow: resetVideoUploadHookState
+  } = useMediaWorkflow();
 
   const {
     isPlaying,
@@ -184,7 +183,7 @@ export default function VideoTranslation() {
       return;
     }
     if (userIdForUpload) {
-      await initiateUpload(fileToUpload, {
+      await createAndUploadTask(fileToUpload, {
         targetLanguage: targetLanguage === "en" ? "english" : "chinese",
         style: "normal"
       }); 

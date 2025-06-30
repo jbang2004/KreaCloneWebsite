@@ -1,11 +1,19 @@
-import { NextRequest, NextResponse } from 'next/server';
-import { getCloudflareContext } from '@opennextjs/cloudflare';
-import { drizzle } from 'drizzle-orm/d1';
+import { NextRequest } from 'next/server';
 import { users } from '@/db/schema';
 import { eq } from 'drizzle-orm';
 import { Password } from '@/lib/auth/password';
 import { AuthTokens } from '@/lib/auth/jwt';
 import { z } from 'zod';
+import {
+  getCloudflareDB,
+  getJWTSecret,
+  withApiHandler,
+  validateRequestData,
+  setJWTCookies,
+  createSuccessResponse,
+  generateUserId,
+  ApiError
+} from '@/lib/api/common';
 
 // 验证注册输入
 const registerSchema = z.object({
@@ -14,142 +22,81 @@ const registerSchema = z.object({
   name: z.string().min(1, 'Name is required'),
 });
 
-export async function POST(request: NextRequest) {
-  try {
-    // 获取Cloudflare环境
-    const context = await getCloudflareContext({ async: true });
-    const env = context.env as any;
-    
-    if (!env.DB) {
-      return NextResponse.json(
-        { error: 'Database configuration error' },
-        { status: 500 }
-      );
-    }
+async function handleRegister(request: NextRequest) {
+  // 获取 Cloudflare 环境和数据库
+  const { env, db } = await getCloudflareDB();
+  
+  // 解析和验证请求数据
+  const body = await request.json();
+  const { email, password, name } = validateRequestData(body, registerSchema);
 
-    // 解析请求数据
-    const body = await request.json();
-    console.log('Request body received:', body);
-    
-    // 验证输入
-    const validation = registerSchema.safeParse(body);
-    if (!validation.success) {
-      console.log('Validation failed:', validation.error.errors);
-      return NextResponse.json(
-        { error: validation.error.errors[0].message },
-        { status: 400 }
-      );
-    }
+  // 检查用户是否已存在
+  const existingUser = await db
+    .select()
+    .from(users)
+    .where(eq(users.email, email))
+    .get();
 
-    const { email, password, name } = validation.data;
+  if (existingUser) {
+    throw new ApiError(409, 'User with this email already exists');
+  }
 
-    // 初始化数据库
-    const db = drizzle(env.DB);
+  // 验证密码强度
+  const passwordValidation = Password.isValid(password);
+  if (!passwordValidation.valid) {
+    throw new ApiError(400, passwordValidation.message || 'Invalid password');
+  }
 
-    // 检查用户是否已存在
-    const existingUser = await db
-      .select()
-      .from(users)
-      .where(eq(users.email, email))
-      .get();
+  // 生成用户 ID 和加密密码
+  const userId = generateUserId();
+  const hashedPassword = await Password.hash(password);
 
-    if (existingUser) {
-      return NextResponse.json(
-        { error: 'User with this email already exists' },
-        { status: 409 }
-      );
-    }
+  // 创建用户记录
+  const now = new Date();
+  const newUser = {
+    id: userId,
+    email,
+    name,
+    hashedPassword,
+    emailVerified: null,
+    image: null,
+    createdAt: now,
+    updatedAt: now,
+  };
 
-    // 验证密码强度
-    const passwordValidation = Password.isValid(password);
-    if (!passwordValidation.valid) {
-      return NextResponse.json(
-        { error: passwordValidation.message },
-        { status: 400 }
-      );
-    }
+  await db.insert(users).values(newUser).run();
 
-    // 加密密码
-    const hashedPassword = await Password.hash(password);
-
-    // 生成用户ID
-    const userId = crypto.randomUUID();
-
-    // 创建用户
-    const now = new Date();
-    const newUser = {
-      id: userId,
+  // 获取 JWT 密钥并生成令牌
+  const jwtSecret = getJWTSecret(env);
+  const accessToken = await AuthTokens.generateAccessToken(
+    {
+      sub: userId,
       email,
       name,
-      hashedPassword,
-      emailVerified: null,
-      image: null,
-      createdAt: now,
-      updatedAt: now,
-    };
+    },
+    jwtSecret
+  );
 
-    await db.insert(users).values(newUser).run();
+  const refreshToken = await AuthTokens.generateRefreshToken(userId, jwtSecret);
 
-    // 获取JWT密钥
-    const jwtSecret = env.JWT_SECRET || env.AUTH_SECRET;
-    if (!jwtSecret) {
-      console.error('JWT_SECRET not configured');
-      return NextResponse.json(
-        { error: 'Server configuration error' },
-        { status: 500 }
-      );
-    }
-
-    // 生成JWT令牌
-    const accessToken = await AuthTokens.generateAccessToken(
-      {
-        sub: userId,
+  // 创建成功响应
+  const response = createSuccessResponse(
+    {
+      user: {
+        id: userId,
         email,
         name,
       },
-      jwtSecret
-    );
+      accessToken,
+    },
+    'User registered successfully',
+    201
+  );
 
-    const refreshToken = await AuthTokens.generateRefreshToken(userId, jwtSecret);
+  // 设置认证 Cookies
+  setJWTCookies(response, accessToken, refreshToken);
 
-    // 返回成功响应
-    const response = NextResponse.json(
-      {
-        message: 'User registered successfully',
-        user: {
-          id: userId,
-          email,
-          name,
-        },
-        accessToken,
-      },
-      { status: 201 }
-    );
-
-    // 设置访问令牌为Cookie
-    response.cookies.set('access_token', accessToken, {
-      httpOnly: true,
-      secure: true,
-      sameSite: 'lax',
-      path: '/',
-      maxAge: 15 * 60, // 15 minutes
-    });
-
-    // 设置刷新令牌为HttpOnly Cookie
-    response.cookies.set('refreshToken', refreshToken, {
-      httpOnly: true,
-      secure: true,
-      sameSite: 'lax',
-      path: '/',
-      maxAge: 30 * 24 * 60 * 60, // 30 days
-    });
-
-    return response;
-  } catch (error) {
-    console.error('Registration error:', error);
-    return NextResponse.json(
-      { error: 'Registration failed' },
-      { status: 500 }
-    );
-  }
+  return response;
 }
+
+export const POST = withApiHandler(handleRegister);

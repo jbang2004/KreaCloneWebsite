@@ -1,12 +1,12 @@
 'use client';
 
-import { useRef, useState } from 'react';
+import { useRef, useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Progress } from '@/components/ui/progress';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { useMediaTask } from '@/hooks/use-media-task';
+import { useMediaWorkflow } from '@/hooks/use-media-workflow';
 import { Upload, Video, Volume2, FileText } from 'lucide-react';
 
 interface MediaUploaderProps {
@@ -19,13 +19,18 @@ export default function MediaUploader({ onTaskCompleted }: MediaUploaderProps) {
   const [style, setStyle] = useState('normal');
   
   const { 
-    task, 
-    isCreating, 
-    error, 
+    task,
+    isCreating,
+    isUploading,
+    uploadProgress,
+    isProcessing,
     progress,
-    createTask, 
-    resetTask 
-  } = useMediaTask();
+    error,
+    uploadError,
+    processingError,
+    createAndUploadTask,
+    resetWorkflow
+  } = useMediaWorkflow();
 
   const handleFileSelect = () => {
     fileInputRef.current?.click();
@@ -44,7 +49,7 @@ export default function MediaUploader({ onTaskCompleted }: MediaUploaderProps) {
 
     // 文件类型检查
     const supportedTypes = [
-      'video/mp4', 'video/webm', 'video/mov', 'video/avi',
+      'video/mp4', 'video/webm', 'video/mov', 'video/avi', 'video/x-matroska',
       'audio/mp3', 'audio/wav', 'audio/m4a', 'audio/flac', 
       'audio/aac', 'audio/ogg'
     ];
@@ -55,16 +60,21 @@ export default function MediaUploader({ onTaskCompleted }: MediaUploaderProps) {
     }
 
     try {
-      await createTask(file, { targetLanguage, style });
-      if (onTaskCompleted && task?.id) {
-        onTaskCompleted(task.id);
-      }
+      await createAndUploadTask(file, { targetLanguage, style });
+      // onTaskCompleted 回调在工作流完成时触发
     } catch (err) {
-      console.error('创建任务失败:', err);
+      console.error('工作流处理失败:', err);
     }
   };
 
   const showResults = task?.status === 'completed';
+
+  // 处理任务完成回调
+  useEffect(() => {
+    if (task?.status === 'completed' && task.id && onTaskCompleted) {
+      onTaskCompleted(task.id);
+    }
+  }, [task?.status, task?.id, onTaskCompleted]);
 
   return (
     <Card className="w-full max-w-4xl mx-auto">
@@ -79,10 +89,10 @@ export default function MediaUploader({ onTaskCompleted }: MediaUploaderProps) {
       </CardHeader>
       
       <CardContent className="space-y-6">
-        {error && (
+        {(error || uploadError || processingError) && (
           <Alert variant="destructive">
             <AlertDescription>
-              {error.message}
+              {error?.message || uploadError?.message || processingError?.message}
             </AlertDescription>
           </Alert>
         )}
@@ -130,10 +140,12 @@ export default function MediaUploader({ onTaskCompleted }: MediaUploaderProps) {
               </div>
               <Button 
                 onClick={handleFileSelect}
-                disabled={isCreating}
+                disabled={isCreating || isUploading || isProcessing}
                 className="mt-4"
               >
-                {isCreating ? '创建中...' : '选择文件'}
+                {isCreating ? '创建中...' : 
+                 isUploading ? '上传中...' :
+                 isProcessing ? '处理中...' : '选择文件'}
               </Button>
               <input
                 ref={fileInputRef}
@@ -148,23 +160,34 @@ export default function MediaUploader({ onTaskCompleted }: MediaUploaderProps) {
           <div className="space-y-4">
             <div className="flex items-center justify-between">
               <h3 className="text-lg font-medium">处理状态</h3>
-              <Button variant="outline" onClick={resetTask}>
+              <Button variant="outline" onClick={resetWorkflow}>
                 重新开始
               </Button>
             </div>
 
             <div className="space-y-2">
               <div className="flex justify-between text-sm">
-                <span>任务进度</span>
-                <span>{progress}%</span>
+                <span>
+                  {isCreating ? '创建任务' :
+                   isUploading ? '上传文件' :
+                   isProcessing ? '处理中' : '任务进度'}
+                </span>
+                <span>
+                  {isUploading ? `${uploadProgress}%` : `${progress}%`}
+                </span>
               </div>
-              <Progress value={progress} className="w-full" />
+              <Progress 
+                value={isUploading ? uploadProgress : progress} 
+                className="w-full" 
+              />
               <p className="text-sm text-gray-600">
                 状态: {
-                  task.status === 'pending' ? '等待中' :
-                  task.status === 'processing' ? '处理中' :
-                  task.status === 'completed' ? '已完成' :
-                  task.status === 'failed' ? '失败' : task.status
+                  isCreating ? '创建任务中' :
+                  isUploading ? '上传文件中' :
+                  isProcessing ? '处理中' :
+                  task?.status === 'completed' ? '已完成' :
+                  task?.status === 'failed' ? '失败' :
+                  task?.status || '等待中'
                 }
               </p>
             </div>

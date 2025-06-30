@@ -30,7 +30,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const { toast } = useToast();
 
   // 获取当前用户信息（基于HttpOnly cookies）
-  const fetchUser = useCallback(async () => {
+  const fetchUser = useCallback(async (retryCount = 0) => {
     try {
       const response = await fetch('/api/auth/me', {
         method: 'GET',
@@ -41,10 +41,24 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         const data: { user: User } = await response.json();
         setUser(data.user);
       } else {
+        // 如果是401且是首次尝试，可能是cookie同步延迟，重试一次
+        if (response.status === 401 && retryCount === 0) {
+          setTimeout(() => {
+            fetchUser(1);
+          }, 100);
+          return;
+        }
         // 没有有效的认证cookie
         setUser(null);
       }
     } catch (error) {
+      // 如果是网络错误且是首次尝试，重试一次
+      if (retryCount === 0) {
+        setTimeout(() => {
+          fetchUser(1);
+        }, 100);
+        return;
+      }
       console.error('Failed to fetch user:', error);
       setUser(null);
     } finally {
@@ -70,17 +84,25 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         throw new Error(data.error || 'Login failed');
       }
 
-      // 设置用户状态（token已通过cookie设置）
+      // 立即设置用户状态（token已通过cookie设置）
       setUser(data.user);
+      setIsLoading(false); // 确保loading状态也立即更新
 
       toast({
         title: '登录成功！',
-        description: '正在重定向到首页...',
+        description: '欢迎回来！',
       });
 
-      // 跳转到首页或之前访问的页面
+      // 智能重定向：只有在登录页面或有明确回调时才重定向
       const callbackUrl = new URLSearchParams(window.location.search).get('callbackUrl');
-      router.push(callbackUrl || '/');
+      const currentPath = window.location.pathname;
+      const isOnAuthPage = currentPath === '/auth' || currentPath.startsWith('/auth/');
+      
+      if (isOnAuthPage || callbackUrl) {
+        // 立即重定向，不需要延迟（用户状态已经通过setUser设置）
+        router.push(callbackUrl || '/');
+      }
+      // 如果不在登录页面，用户状态已经更新，UI会立即刷新
     } catch (error) {
       toast({
         title: '登录失败',
@@ -111,6 +133,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
       // 设置用户状态（token已通过cookie设置）
       setUser(data.user);
+      setIsLoading(false); // 确保loading状态也立即更新
 
       toast({
         title: '注册成功！',
@@ -156,12 +179,12 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   // 刷新用户信息
   const refreshUser = async () => {
-    await fetchUser();
+    await fetchUser(0);
   };
 
   // 初始化时检查用户登录状态
   useEffect(() => {
-    fetchUser();
+    fetchUser(0);
   }, [fetchUser]);
 
   const value = {

@@ -94,14 +94,19 @@ export default function Header() {
   const handleProtectedNavigation = (path: string, e: React.MouseEvent) => {
     const protectedPaths = ['/audio-transcription', '/text-to-speech', '/video-translation'];
     
-    // 只有当用户未登录且试图访问受保护路径时才拦截
+    // 如果还在加载认证状态，不拦截导航（让middleware处理）
+    if (authLoading) {
+      return;
+    }
+    
+    // 只有当明确用户未登录且试图访问受保护路径时才拦截
     if (protectedPaths.includes(path) && !user) {
       e.preventDefault();
       router.push('/auth');
       return;
     }
     
-    // 其他情况（包括用户已登录）都允许正常导航，不做任何处理
+    // 其他情况（包括用户已登录或正在验证）都允许正常导航，让middleware处理最终验证
   };
 
   // 获取用户显示名称
