@@ -1,35 +1,67 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { createDb } from '@/db/drizzle';
-import { sentences } from '@/db/schema';
-import { eq, asc } from 'drizzle-orm';
+import { getCloudflareContext } from '@opennextjs/cloudflare';
+import { drizzle } from 'drizzle-orm/d1';
+import { mediaTasks, transcriptions, transcriptionSegments } from '@/db/schema-media';
+import { eq, asc, and } from 'drizzle-orm';
 import { verifyAuth } from '@/lib/auth/verify-request';
-
-function getDb() {
-  if (typeof globalThis.process === 'undefined') {
-    // @ts-expect-error - Cloudflare Workers global variables
-    return createDb(globalThis.DB || globalThis.env?.DB);
-  }
-  return createDb({} as any);
-}
 
 export async function GET(
   request: NextRequest,
   { params }: { params: Promise<{ taskId: string }> }
 ) {
   try {
-    const payload = await verifyAuth(request);
-    if (!payload) {
+    // 验证用户身份
+    const authResult = await verifyAuth(request);
+    if (!authResult.authenticated || !authResult.user) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    const db = getDb();
-    const { taskId } = await params;
-    const subtitles = await db.query.sentences.findMany({
-      where: eq(sentences.taskId, taskId),
-      orderBy: [asc(sentences.sentenceIndex)],
-    });
+    // 获取 Cloudflare 环境
+    const context = await getCloudflareContext({ async: true });
+    const env = context.env as any;
+    const db = drizzle(env.DB);
 
-    return NextResponse.json({ sentences: subtitles });
+    const { taskId } = await params;
+
+    // 查询任务，验证所有权
+    const [task] = await db.select()
+      .from(mediaTasks)
+      .where(and(
+        eq(mediaTasks.id, taskId),
+        eq(mediaTasks.userId, authResult.user.id)
+      ))
+      .limit(1);
+
+    if (!task) {
+      return NextResponse.json({ error: 'Task not found' }, { status: 404 });
+    }
+
+    // 如果没有转录ID，返回空数组
+    if (!task.transcriptionId) {
+      return NextResponse.json({ sentences: [] });
+    }
+
+    // 获取转录片段
+    const segments = await db.select()
+      .from(transcriptionSegments)
+      .where(eq(transcriptionSegments.transcriptionId, task.transcriptionId))
+      .orderBy(asc(transcriptionSegments.sequence));
+
+    // 转换为旧格式兼容
+    const sentences = segments.map((segment, index) => ({
+      id: index + 1,
+      taskId: taskId,
+      sentenceIndex: segment.sequence,
+      startMs: parseFloat(segment.start) * 1000, // 转换为毫秒
+      endMs: parseFloat(segment.end) * 1000,
+      rawText: segment.original,
+      transText: segment.translation,
+      speakerId: segment.speaker,
+      createdAt: segment.createdAt,
+      updatedAt: segment.createdAt,
+    }));
+
+    return NextResponse.json({ sentences });
   } catch (error) {
     console.error('Get subtitles error:', error);
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
@@ -41,24 +73,40 @@ export async function PATCH(
   { params }: { params: Promise<{ taskId: string }> }
 ) {
   try {
-    const payload = await verifyAuth(request);
-    if (!payload) {
+    // 验证用户身份
+    const authResult = await verifyAuth(request);
+    if (!authResult.authenticated || !authResult.user) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
+    // 获取 Cloudflare 环境
+    const context = await getCloudflareContext({ async: true });
+    const env = context.env as any;
+    const db = drizzle(env.DB);
+
     const body = await request.json() as any;
     const { taskId } = await params;
-    const db = getDb();
-    const now = new Date();
+
+    // 查询任务，验证所有权
+    const [task] = await db.select()
+      .from(mediaTasks)
+      .where(and(
+        eq(mediaTasks.id, taskId),
+        eq(mediaTasks.userId, authResult.user.id)
+      ))
+      .limit(1);
+
+    if (!task || !task.transcriptionId) {
+      return NextResponse.json({ error: 'Task not found' }, { status: 404 });
+    }
     
     // 如果是清空操作
     if (body.action === 'clear') {
-      await db.update(sentences)
+      await db.update(transcriptionSegments)
         .set({ 
-          transText: null,
-          updatedAt: now
+          translation: '',
         })
-        .where(eq(sentences.taskId, taskId));
+        .where(eq(transcriptionSegments.transcriptionId, task.transcriptionId));
       
       return NextResponse.json({ success: true });
     }
@@ -70,12 +118,15 @@ export async function PATCH(
       return NextResponse.json({ error: 'Invalid data' }, { status: 400 });
     }
     
-    await db.update(sentences)
+    // 根据序号更新转录片段
+    await db.update(transcriptionSegments)
       .set({ 
-        transText: newTranslation,
-        updatedAt: now
+        translation: newTranslation,
       })
-      .where(eq(sentences.id, sentenceId));
+      .where(and(
+        eq(transcriptionSegments.transcriptionId, task.transcriptionId),
+        eq(transcriptionSegments.sequence, sentenceId)
+      ));
 
     return NextResponse.json({ success: true });
   } catch (error) {

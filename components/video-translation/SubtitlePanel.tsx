@@ -18,10 +18,6 @@ import { useState, useEffect, useRef } from "react";
 import Skeleton, { SkeletonTheme } from 'react-loading-skeleton';
 import 'react-loading-skeleton/dist/skeleton.css';
 
-// 后端API配置
-const BACKEND_URL = process.env.NEXT_PUBLIC_BACKEND_URL as string;
-const BACKEND_PORT = process.env.NEXT_PUBLIC_BACKEND_PORT as string;
-const API_BASE_URL = BACKEND_PORT ? `${BACKEND_URL}:${BACKEND_PORT}` : BACKEND_URL;
 
 interface SubtitlesPanelProps {
   theme: string | undefined;
@@ -191,20 +187,9 @@ export default function SubtitlesPanel({
       // 稍微延迟确保数据库更新完成
       await new Promise(resolve => setTimeout(resolve, 500));
       
-      // 调用后端翻译API
-      const response = await fetch(`${API_BASE_URL}/api/translation`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ 
-          task_id: currentTaskId,
-          target_language: targetLanguage
-        }),
-      });
-
-      if (!response.ok) {
-        const errorData = await response.json() as any;
-        throw new Error(errorData.detail || '翻译请求失败');
-      }
+      // TODO: 在新架构中，翻译功能已集成到workflow中
+      // 这里可能需要调用新的翻译API或直接从数据库获取结果
+      console.log('Translation will be handled by workflow in new architecture');
 
       if (process.env.NODE_ENV === 'development') {
         console.log('翻译请求已发送，开始轮询结果...');

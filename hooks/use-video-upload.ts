@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useCallback } from 'react';
 import { useAuth } from '@/contexts/auth-context';
 
 interface VideoUploadState {
@@ -14,7 +14,7 @@ interface VideoUploadState {
 }
 
 interface VideoUploadActions {
-  initiateUpload: (fileToUpload: File) => Promise<void>;
+  initiateUpload: (fileToUpload: File, options?: { targetLanguage?: string; style?: string }) => Promise<void>;
   resetUploadState: () => void;
 }
 
@@ -28,13 +28,7 @@ const CHUNK_SIZE = 5 * 1024 * 1024; // 5MB per chunk (S3 minimum)
 const MAX_CONCURRENT_UPLOADS = 3; // 并发上传数量
 const RETRY_ATTEMPTS = 3; // 重试次数
 
-// 后端 API 地址（视频预处理服务）
-const BACKEND_URL = process.env.NEXT_PUBLIC_BACKEND_URL as string;
-const BACKEND_PORT = process.env.NEXT_PUBLIC_BACKEND_PORT as string;
-const API_BASE_URL = BACKEND_PORT ? `${BACKEND_URL}:${BACKEND_PORT}` : BACKEND_URL;
-
 // R2 存储配置
-const R2_BUCKET_NAME = process.env.NEXT_PUBLIC_R2_BUCKET_NAME ?? 'videos';
 const R2_CUSTOM_DOMAIN = process.env.NEXT_PUBLIC_R2_CUSTOM_DOMAIN as string;
 
 // 分块上传 API 路径
@@ -51,8 +45,18 @@ export function useVideoUpload(): VideoUploadState & VideoUploadActions {
   const [uploadError, setUploadError] = useState<Error | null>(null);
   const [processingError, setProcessingError] = useState<Error | null>(null);
   const [taskId, setTaskId] = useState<string | null>(null);
+  const [eventSource, setEventSource] = useState<EventSource | null>(null);
 
-  const resetUploadState = () => {
+  // 清理 EventSource
+  const cleanupEventSource = useCallback(() => {
+    if (eventSource) {
+      eventSource.close();
+      setEventSource(null);
+    }
+  }, [eventSource]);
+
+  const resetUploadState = useCallback(() => {
+    cleanupEventSource();
     setIsUploading(false);
     setUploadProgress(0);
     setUploadComplete(false);
@@ -62,7 +66,57 @@ export function useVideoUpload(): VideoUploadState & VideoUploadActions {
     setUploadError(null);
     setProcessingError(null);
     setTaskId(null);
-  };
+  }, [cleanupEventSource]);
+
+  // 开始 SSE 监听
+  const startStatusMonitoring = useCallback((taskId: string) => {
+    if (!user) return;
+
+    const es = new EventSource(`/api/workflow/${taskId}/status`);
+
+    es.onmessage = (event) => {
+      try {
+        const update = JSON.parse(event.data);
+        
+        if (update.error) {
+          setProcessingError(new Error(update.error));
+          setIsProcessing(false);
+          es.close();
+          return;
+        }
+
+        // 根据状态更新处理状态
+        if (update.status === 'completed') {
+          setIsProcessing(false);
+          setProcessingComplete(true);
+          
+          // 设置视频预览URL
+          if (update.videoUrl) {
+            setVideoPreviewUrl(update.videoUrl);
+          }
+          
+          es.close();
+        } else if (update.status === 'failed') {
+          setProcessingError(new Error(update.error || 'Task failed'));
+          setIsProcessing(false);
+          es.close();
+        } else if (update.status === 'separating' || update.status === 'transcribing') {
+          setIsProcessing(true);
+        }
+      } catch (err) {
+        console.error('Error parsing SSE message:', err);
+      }
+    };
+
+    es.onerror = (err) => {
+      console.error('EventSource error:', err);
+      setProcessingError(new Error('Connection error'));
+      setIsProcessing(false);
+      es.close();
+    };
+
+    setEventSource(es);
+  }, [user]);
 
   // 上传单个分块
   const uploadChunk = async (
@@ -225,7 +279,10 @@ export function useVideoUpload(): VideoUploadState & VideoUploadActions {
     }
   };
 
-  const initiateUpload = async (fileToUpload: File) => {
+  const initiateUpload = async (
+    fileToUpload: File,
+    options: { targetLanguage?: string; style?: string } = {}
+  ) => {
     if (!user?.id) {
       setUploadError(new Error('User not authenticated'));
       return;
@@ -234,96 +291,67 @@ export function useVideoUpload(): VideoUploadState & VideoUploadActions {
     resetUploadState();
     setIsUploading(true);
 
-    const fileExt = fileToUpload.name.split('.').pop();
-    const objectName = `${user.id}_${Date.now()}.${fileExt}`;
-    const bucketName = R2_BUCKET_NAME;
-
     try {
-      // 使用分块上传
+      // 1. 创建任务并获取上传信息（使用新的workflow API）
+      const createResponse = await fetch('/api/workflow/create', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          fileName: fileToUpload.name,
+          fileSize: fileToUpload.size,
+          mimeType: fileToUpload.type,
+        }),
+      });
+
+      if (!createResponse.ok) {
+        const errorData = await createResponse.json() as { error?: string };
+        throw new Error(errorData.error || 'Failed to create task');
+      }
+
+      const result = await createResponse.json() as { taskId: string; uploadUrl: string; objectName: string };
+      const { taskId, uploadUrl, objectName } = result;
+      setTaskId(taskId);
+
+      // 2. 使用现有的分块上传逻辑到R2
       await uploadFileInChunks(fileToUpload, objectName, setUploadProgress);
 
-      // 生成公开 URL
+      // 3. 生成公开 URL
       const publicUrl = `${R2_CUSTOM_DOMAIN}/${objectName}`;
       setVideoPreviewUrl(publicUrl);
 
-      // 获取视频宽高
-      const metadataUrl = URL.createObjectURL(fileToUpload);
-      const tmpVideo = document.createElement('video');
-      tmpVideo.preload = 'metadata';
-      tmpVideo.src = metadataUrl;
-      await new Promise<void>(resolve => (tmpVideo.onloadedmetadata = () => resolve()));
-      const width = tmpVideo.videoWidth;
-      const height = tmpVideo.videoHeight;
-      URL.revokeObjectURL(metadataUrl);
+      // 4. 上传完成，进入处理阶段
+      setIsUploading(false);
+      setUploadComplete(true);
+      setIsProcessing(true);
+      setProcessingError(null);
 
-      // TODO: 需要实现相应的API路由来创建视频记录
-      // 暂时跳过数据库记录创建
-      const videoId = Date.now();
-      if (videoId) {
-        // 上传完成，进入预处理阶段
-        setIsUploading(false);
-        setUploadComplete(true);
-        setIsProcessing(true);
-        setProcessingError(null);
+      // 5. 触发工作流处理（使用新的workflow API）
+      const processResponse = await fetch(`/api/workflow/${taskId}/process`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          targetLanguage: options.targetLanguage || 'chinese',
+          style: options.style || 'normal',
+        }),
+      });
 
-        try {
-          // 触发后端预处理，并获取任务 ID
-          const res = await fetch(`${API_BASE_URL}/api/preprovideo`, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ videoId: String(videoId) }),
-          });
-
-          if (!res.ok) {
-            const text = await res.text();
-            let errMsg = text;
-            try {
-              const errJson = JSON.parse(text);
-              if (errJson.detail) {
-                errMsg = errJson.detail;
-              }
-            } catch {
-              // ignore
-            }
-            throw new Error(errMsg);
-          }
-
-          const respJson = await res.json() as any;
-          const newTaskId = respJson.task_id;
-          setTaskId(newTaskId);
-
-          // 轮询任务状态直到完成或发生错误
-          let status = '';
-          while (status !== 'preprocessed' && status !== 'error') {
-            await new Promise(r => setTimeout(r, 3000));
-            
-            // 使用新的 API 路由查询状态
-            const statusRes = await fetch(`/api/tasks/${newTaskId}/status`);
-            if (statusRes.ok) {
-              const taskData = await statusRes.json() as any;
-              status = taskData.status;
-            } else {
-              console.error("轮询任务状态失败:", statusRes.statusText);
-              continue;
-            }
-          }
-
-          if (status === 'preprocessed') {
-            setProcessingComplete(true);
-          } else if (status === 'error') {
-            setProcessingError(new Error('TASK_ERROR'));
-          }
-        } catch (err: any) {
-          console.error("触发预处理失败:", err);
-          setProcessingError(err instanceof Error ? err : new Error(String(err)));
-        } finally {
-          setIsProcessing(false);
-        }
+      if (!processResponse.ok) {
+        const errorData = await processResponse.json() as { error?: string };
+        throw new Error(errorData.error || 'Failed to start processing');
       }
+
+      // 6. 开始SSE实时状态监听（替代轮询）
+      startStatusMonitoring(taskId);
+
     } catch (err: any) {
-      console.error('分块上传失败:', err);
+      console.error('上传或处理失败:', err);
       setUploadError(err instanceof Error ? err : new Error(String(err)));
       setIsUploading(false);
+      setIsProcessing(false);
     }
   };
 

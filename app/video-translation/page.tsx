@@ -32,10 +32,6 @@ const WabiSabiBackground = dynamic(() => import("@/components/wabi-sabi-backgrou
   ssr: false,
 });
 
-// 新增: 后端 API 基础地址配置
-// const BACKEND_URL = process.env.NEXT_PUBLIC_BACKEND_URL as string;
-// const BACKEND_PORT = process.env.NEXT_PUBLIC_BACKEND_PORT as string;
-// const API_BASE_URL = BACKEND_PORT ? `${BACKEND_URL}:${BACKEND_PORT}` : BACKEND_URL;
 
 const AnimatePresence = dynamic(() => import("framer-motion").then(mod => mod.AnimatePresence), {
   ssr: false,
@@ -188,7 +184,10 @@ export default function VideoTranslation() {
       return;
     }
     if (userIdForUpload) {
-      await initiateUpload(fileToUpload); 
+      await initiateUpload(fileToUpload, {
+        targetLanguage: targetLanguage === "en" ? "english" : "chinese",
+        style: "normal"
+      }); 
     }
   };
 

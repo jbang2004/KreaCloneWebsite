@@ -13,10 +13,8 @@ interface HLSPlayerActions {
   resetHLSState: () => void;
 }
 
-// 后端 API 配置
-const BACKEND_URL = process.env.NEXT_PUBLIC_BACKEND_URL as string;
-const BACKEND_PORT = process.env.NEXT_PUBLIC_BACKEND_PORT as string;
-const API_BASE_URL = BACKEND_PORT ? `${BACKEND_URL}:${BACKEND_PORT}` : BACKEND_URL;
+// Note: 这个hook暂时禁用外部后端调用，因为新架构中TTS功能已集成到workflow中
+// 如果需要TTS功能，应该通过内部API路由实现
 
 export function useHLSPlayer(): HLSPlayerState & HLSPlayerActions {
   const [isGenerating, setIsGenerating] = useState<boolean>(false);
@@ -50,17 +48,9 @@ export function useHLSPlayer(): HLSPlayerState & HLSPlayerActions {
     setCanPlay(false);
 
     try {
-      // 调用后端TTS接口
-      const response = await fetch(`${API_BASE_URL}/api/tts`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ task_id: taskId }),
-      });
-
-      if (!response.ok) {
-        const errorData = await response.json() as any;
-        throw new Error(errorData.detail || 'TTS 请求失败');
-      }
+      // TODO: 在新架构中，TTS功能应该通过内部API路由实现
+      // 目前暂时跳过外部API调用，直接开始轮询状态
+      console.log('TTS功能暂未在新架构中实现，跳过外部API调用');
 
       // 开始轮询任务状态，检查HLS播放列表是否可用
       pollIntervalRef.current = setInterval(async () => {

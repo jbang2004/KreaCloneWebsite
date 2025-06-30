@@ -7,6 +7,14 @@
     "nodejs_compat",
     "global_fetch_strictly_public"
   ],
+  "observability": {
+    "enabled": true,
+    "logs": {
+      "enabled": true,
+      "head_sampling_rate": 1,
+      "invocation_logs": true
+    }
+  },
   "assets": {
     "directory": ".open-next/assets",
     "binding": "ASSETS"
@@ -15,7 +23,8 @@
     {
       "binding": "DB",
       "database_name": "waveshift-database",
-      "database_id": "d470dd8b-cd07-468a-8090-706b152f56dd"
+      "database_id": "005024c1-ef6e-4f7d-8b86-07995a53dc49",
+      "migrations_dir": "db/migrations"
     }
   ],
   "r2_buckets": [
@@ -28,18 +37,23 @@
     {
       "binding": "WORKER_SELF_REFERENCE",
       "service": "waveshift-frontend"
+    },
+    {
+      "binding": "WORKFLOW_SERVICE",
+      "service": "waveshift-workflow",
+      "environment": "production"
     }
   ],
   "vars": {
     "NEXTJS_ENV": "production",
     "NODE_ENV": "production",
-    "JWT_SECRET": "your-jwt-secret-key-change-this-in-production",
     "NEXT_PUBLIC_R2_CUSTOM_DOMAIN": "https://r2.waveshift.net",
     "NEXT_PUBLIC_R2_BUCKET_NAME": "videos",
     "R2_BUCKET_NAME": "videos",
     "R2_ENDPOINT": "https://1298fa35ac940c688dc1b6d8f5eead72.r2.cloudflarestorage.com",
     "R2_REGION": "auto",
     "R2_ACCESS_KEY_ID": "edd17237d9d959330bee4958000c3598",
-    "R2_SECRET_ACCESS_KEY": "37acd15528b06e4d09055cbec8b2380f1bb30a7b057c0b880815d5579eb1ef4a"
+    "R2_SECRET_ACCESS_KEY": "37acd15528b06e4d09055cbec8b2380f1bb30a7b057c0b880815d5579eb1ef4a",
+    "WORKFLOW_CALLBACK_SECRET": "waveshift-callback-secret-2025"
   }
 } 
